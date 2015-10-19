@@ -83,9 +83,10 @@ public class TopicDetailFragment extends BaseFragment {
                                 + "." + topicEntity.getHits() + "次阅读");
                         sdvDetailUserAvatar.setImageURI(Uri.parse(Config.getImageUrl(topicEntity.getUser().getAvatar_url())));
 
+                        showWebContent(topicEntity.getBody_html());
 
-//                        showWebContent(topicEntity.getBody_html());
-                         tvDetailBody.loadMarkdown(topicEntity.getBody(),"file:///android_asset/markdown_css_themes/classic.css");
+//                         tvDetailBody.loadMarkdown(topicEntity.getBody().replace("![](/photo/", "![](https://testerhome.com/photo/")
+//                                 ,"file:///android_asset/markdown_css_themes/alt.css");
                     }
 
                     @Override
@@ -100,7 +101,7 @@ public class TopicDetailFragment extends BaseFragment {
         AssetManager assetManager = getActivity().getResources().getAssets();
 
         try{
-            InputStream inputStream = assetManager.open("upgrade.html");
+            InputStream inputStream = assetManager.open("h5_template.html");
             byte[] b = new byte[inputStream.available()];
             inputStream.read(b);
             prompt = new String(b);
