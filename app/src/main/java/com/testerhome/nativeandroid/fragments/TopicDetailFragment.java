@@ -84,8 +84,8 @@ public class TopicDetailFragment extends BaseFragment {
                         sdvDetailUserAvatar.setImageURI(Uri.parse(Config.getImageUrl(topicEntity.getUser().getAvatar_url())));
 
 
-                        showWebContent(topicEntity.getBody_html());
-                        // tvDetailBody.loadMarkdown(topicEntity.getBody());
+//                        showWebContent(topicEntity.getBody_html());
+                         tvDetailBody.loadMarkdown(topicEntity.getBody(),"file:///android_asset/markdown_css_themes/classic.css");
                     }
 
                     @Override
