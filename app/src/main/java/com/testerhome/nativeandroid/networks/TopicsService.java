@@ -4,6 +4,7 @@ import com.testerhome.nativeandroid.models.NotificationResponse;
 import com.testerhome.nativeandroid.models.TopicDetailResponse;
 import com.testerhome.nativeandroid.models.TopicReplyResponse;
 import com.testerhome.nativeandroid.models.TopicsResponse;
+import com.testerhome.nativeandroid.models.UserDetailResponse;
 import com.testerhome.nativeandroid.models.UserResponse;
 
 import retrofit.Callback;
@@ -50,6 +51,12 @@ public interface TopicsService {
     void getUserInfo(@Path("username") String username,
                      @Query("access_token") String accessToken,
                      Callback<UserResponse> callback);
+
+
+    @GET("/greet.json")
+    void getCurrentUserInfo(
+                     @Query("access_token") String accessToken,
+                     Callback<UserDetailResponse> callback);
 
     @GET("/topics/{id}/replies.json")
     void getTopicsReplies(@Path("id") String id,
