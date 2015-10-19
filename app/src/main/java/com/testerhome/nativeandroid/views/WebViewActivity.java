@@ -9,7 +9,6 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 
-import com.squareup.okhttp.Callback;
 import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
@@ -18,7 +17,7 @@ import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
 import com.testerhome.nativeandroid.R;
 import com.testerhome.nativeandroid.auth.TesterHomeAccountService;
-import com.testerhome.nativeandroid.models.UserResponse;
+import com.testerhome.nativeandroid.models.UserDetailResponse;
 import com.testerhome.nativeandroid.networks.TesterHomeApi;
 import com.testerhome.nativeandroid.oauth2.AuthenticationService;
 import com.testerhome.nativeandroid.views.base.BackBaseActivity;
@@ -57,7 +56,7 @@ public class WebViewActivity extends BackBaseActivity {
 
                 Log.d("test", url);
                 // http://testerhome.com/oauth/authorize/
-                if (url.startsWith(AuthenticationService.HTTP_AUTHORIZATION_URL) || url.startsWith(AuthenticationService.AUTHORIZATION_URL)) {
+                if (url.startsWith(AuthenticationService.AUTHORIZATION_URL)) {
                     try {
                         auth_code = url.substring(url.lastIndexOf("/") + 1);
                         //Generate URL for requesting Access Token
@@ -67,9 +66,7 @@ public class WebViewActivity extends BackBaseActivity {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                } else if (url.contains(AuthenticationService.LOGIN_URL)) {
-                    url = AuthenticationService.HTTPS_LOGIN_URL;
-                } else if (url.contains(AuthenticationService.BASEURL)) {
+                } else if (url.equals(AuthenticationService.HTTPS_BASEURL)) {
                     url = AuthenticationService.getAuthorizationUrl();
                 }
 //                return super.shouldOverrideUrlLoading(view, url);
@@ -142,7 +139,7 @@ public class WebViewActivity extends BackBaseActivity {
 //                            editor.putString("accessToken", accessToken);
 //                            editor.commit();
 
-                            getUsername(accessToken);
+                            getUserInfo(accessToken);
 
                             return true;
                         }
@@ -172,41 +169,15 @@ public class WebViewActivity extends BackBaseActivity {
 
     }
 
-    ;
 
-    private void getUsername(final String token) {
-        OkHttpClient client = new OkHttpClient();
-        Request request = new Request.Builder()
-                .url("https://testerhome.com/api/v3/hello.json?access_token=" + token)
-                .build();
 
-        client.newCall(request).enqueue(new Callback() {
+    private void getUserInfo(final String token) {
+        TesterHomeApi.getInstance().getTopicsService().getCurrentUserInfo(token, new retrofit.Callback<UserDetailResponse>() {
             @Override
-            public void onFailure(Request request, IOException e) {
-
-            }
-
-            @Override
-            public void onResponse(Response response) throws IOException {
-                try {
-                    JSONObject resultJson = new JSONObject(response.body().string());
-                    String login = resultJson.optJSONObject("user").optString("login");
-                    getUserInfo(login, token);
-                } catch (Exception ex) {
-
-                }
-            }
-        });
-    }
-
-    private void getUserInfo(final String login, final String token) {
-        TesterHomeApi.getInstance().getTopicsService().getUserInfo(login, token, new retrofit.Callback<UserResponse>() {
-            @Override
-            public void success(UserResponse userResponse, retrofit.client.Response response) {
-                if (userResponse.getUser() != null){
+            public void success(UserDetailResponse userDetailResponse, retrofit.client.Response response) {
+                if (userDetailResponse.getUser() != null) {
                     TesterHomeAccountService.getInstance(WebViewActivity.this)
-                            .signIn(login, token, userResponse.getUser());
-
+                            .signIn(userDetailResponse.getUser().getLogin(), token, userDetailResponse.getUser());
                     setResult(RESULT_OK, intent);
                     WebViewActivity.this.finish();
                 }
