@@ -81,7 +81,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:drawableLeft="@drawable/ic_comment_outline_grey"
-                android:text="32条回复" />
+                tools:text="0条回复" />
         </LinearLayout>
 
         <us.feras.mdv.MarkdownView
