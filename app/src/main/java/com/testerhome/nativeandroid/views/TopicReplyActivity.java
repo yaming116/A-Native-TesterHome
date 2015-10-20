@@ -11,7 +11,6 @@ import com.testerhome.nativeandroid.views.base.BackBaseActivity;
  */
 public class TopicReplyActivity extends BackBaseActivity {
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -22,12 +21,8 @@ public class TopicReplyActivity extends BackBaseActivity {
 
     private void setupView() {
         getSupportFragmentManager().beginTransaction().replace(R.id.container,
-                TopicReplyFragment.newInstance(String.valueOf(getIntent().getIntExtra("topic_id", 0))))
+                TopicReplyFragment.newInstance(getIntent().getStringExtra("topic_id")))
                 .commit();
     }
-
-
-
-
 
 }

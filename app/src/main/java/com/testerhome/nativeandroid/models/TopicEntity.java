@@ -21,7 +21,7 @@ public class TopicEntity {
      * abilities : {"update":false,"destroy":false}
      */
 
-    private int id;
+    private String id;
     private String title;
     private String created_at;
     private String updated_at;
@@ -35,7 +35,7 @@ public class TopicEntity {
     private boolean deleted;
     private AbilitiesEntity abilities;
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -87,7 +87,7 @@ public class TopicEntity {
         this.abilities = abilities;
     }
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
