@@ -8,11 +8,9 @@
             android:title="@string/main_tab_topic" />
         <item android:id="@+id/nav_job" android:icon="@drawable/tab_main_job"
             android:title="@string/main_tab_job" />
-        <item android:id="@+id/nav_my" android:icon="@drawable/tab_main_my"
-            android:title="@string/main_tab_my" />
     </group>
 
-    <item android:title="Communicate">
+    <item android:title="Settings">
         <menu>
             <item android:id="@+id/nav_share" android:icon="@android:drawable/ic_menu_share"
                 android:title="Share" />
