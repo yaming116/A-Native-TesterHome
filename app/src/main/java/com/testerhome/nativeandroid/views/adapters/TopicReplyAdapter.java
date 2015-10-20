@@ -79,6 +79,7 @@ public class TopicReplyAdapter extends BaseAdapter<TopicReplyEntity> {
 
         @Bind(R.id.id_topic_reply_layout)
         RelativeLayout topicReplyLayout;
+
         @Bind(R.id.id_topic_item_author)
         TextView topicItemAuthor;
 

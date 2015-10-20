@@ -60,7 +60,7 @@ public class TopicsListAdapter extends BaseAdapter<TopicEntity> {
         holder.topicItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Integer topicId = (Integer)v.getTag();
+                String topicId = (String)v.getTag();
                 mContext.startActivity(new Intent(mContext, TopicDetailActivity.class).putExtra("topic_id", topicId));
             }
         });
