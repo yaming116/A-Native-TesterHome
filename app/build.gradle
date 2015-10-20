@@ -38,6 +38,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.SigningConfig
         }
+        debug {
+            signingConfig signingConfigs.SigningConfig
+        }
     }
 }
 
