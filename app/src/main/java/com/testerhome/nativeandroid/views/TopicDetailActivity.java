@@ -1,7 +1,10 @@
 package com.testerhome.nativeandroid.views;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.ShareActionProvider;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -14,37 +17,54 @@ import com.testerhome.nativeandroid.views.base.BackBaseActivity;
  */
 public class TopicDetailActivity extends BackBaseActivity {
 
+    private String mTopicId;
+    private ShareActionProvider mShareActionProvider;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_back_base);
         setCustomTitle("帖子详情");
 
-        setupView();
+        if (getIntent().hasExtra("topic_id")) {
+            mTopicId = getIntent().getStringExtra("topic_id");
+            setupView(mTopicId);
+        } else {
+            finish();
+        }
+
     }
 
-    private void setupView() {
-        getSupportFragmentManager().beginTransaction().replace(R.id.container,
-                TopicDetailFragment.newInstance(getIntent().getStringExtra("topic_id")))
+    private void setupView(String topicId) {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.container, TopicDetailFragment.newInstance(topicId))
                 .commit();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_topic_detail, menu);
-        return true;
+
+        MenuItem item = menu.findItem(R.id.action_share);
+
+        mShareActionProvider = new ShareActionProvider(this);
+        MenuItemCompat.setActionProvider(item, mShareActionProvider);
+
+        if (!TextUtils.isEmpty(mTopicId)){
+            updateTopicShareUrl(String.format("https://testerhome.com/topics/%s", mTopicId));
+        }
+
+        return super.onCreateOptionsMenu(menu);
     }
 
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_share:
-                // TODO: 15/10/20 start to share
-                Snackbar.make(toolbar, "share", Snackbar.LENGTH_SHORT).show();
-                break;
+    public void updateTopicShareUrl(String videoUrl) {
+        if (mShareActionProvider != null){
+            Intent intent = new Intent();
+            intent.setAction(Intent.ACTION_SEND);
+            intent.setType("text/plain");
+            intent.putExtra(Intent.EXTRA_TEXT, videoUrl);
+            mShareActionProvider.setShareIntent(intent);
         }
-        return super.onOptionsItemSelected(item);
     }
 
 }
