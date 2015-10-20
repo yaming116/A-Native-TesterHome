@@ -10,7 +10,6 @@ import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 
 import com.squareup.okhttp.FormEncodingBuilder;
-import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
@@ -34,11 +33,9 @@ import retrofit.RetrofitError;
  */
 public class WebViewActivity extends BackBaseActivity {
 
-    private WebView mWebView;
     private ProgressDialog pd;
-
     private String auth_code = "";
-    private Intent intent;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,16 +43,16 @@ public class WebViewActivity extends BackBaseActivity {
         setCustomTitle("登录");
 
         FrameLayout layout = (FrameLayout) findViewById(R.id.container);
-        layout.addView(mWebView = new WebView(this));
-        intent = getIntent();
+
+        WebView mWebView = new WebView(this);
+
+        layout.addView(mWebView);
+
         mWebView.getSettings().getJavaScriptEnabled();
         mWebView.setWebViewClient(new WebViewClient() {
 
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-
-                Log.d("test", url);
-                // http://testerhome.com/oauth/authorize/
                 if (url.startsWith(AuthenticationService.AUTHORIZATION_URL)) {
                     try {
                         auth_code = url.substring(url.lastIndexOf("/") + 1);
@@ -76,7 +73,6 @@ public class WebViewActivity extends BackBaseActivity {
 
         });
 
-        Log.e("test", AuthenticationService.getAuthorizationUrl());
         mWebView.loadUrl(AuthenticationService.getAuthorizationUrl());
 
     }
@@ -91,8 +87,6 @@ public class WebViewActivity extends BackBaseActivity {
         @Override
         protected Boolean doInBackground(String... urls) {
             if (urls.length > 0) {
-
-                MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
                 String url = urls[0];
                 OkHttpClient okHttpClient = new OkHttpClient();
@@ -132,14 +126,7 @@ public class WebViewActivity extends BackBaseActivity {
                             calendar.add(Calendar.SECOND, expiresIn);
                             long expireDate = calendar.getTimeInMillis();
 
-                            ////Store both expires in and access token in shared preferences
-//                            SharedPreferences preferences = getSharedPreferences("user_info", 0);
-//                            SharedPreferences.Editor editor = preferences.edit();
-//                            editor.putLong("expires", expireDate);
-//                            editor.putString("accessToken", accessToken);
-//                            editor.commit();
-
-                            getUserInfo(accessToken);
+                            getUserInfo(accessToken, expireDate);
 
                             return true;
                         }
@@ -160,25 +147,19 @@ public class WebViewActivity extends BackBaseActivity {
             if (pd != null && pd.isShowing()) {
                 pd.dismiss();
             }
-            //if (status) {
-                //If everything went Ok, change to another activity.
-                //Intent startProfileActivity = new Intent(WebViewActivity.this, MainActivity.class);
-                //startActivity(startProfileActivity);
-            //}
         }
 
     }
 
 
-
-    private void getUserInfo(final String token) {
+    private void getUserInfo(final String token, long expireDate) {
         TesterHomeApi.getInstance().getTopicsService().getCurrentUserInfo(token, new retrofit.Callback<UserDetailResponse>() {
             @Override
             public void success(UserDetailResponse userDetailResponse, retrofit.client.Response response) {
                 if (userDetailResponse.getUser() != null) {
                     TesterHomeAccountService.getInstance(WebViewActivity.this)
                             .signIn(userDetailResponse.getUser().getLogin(), token, userDetailResponse.getUser());
-                    setResult(RESULT_OK, intent);
+                    setResult(RESULT_OK, new Intent(WebViewActivity.this, MainActivity.class));
                     WebViewActivity.this.finish();
                 }
             }
