@@ -57,12 +57,12 @@ public class TopicDetailActivity extends BackBaseActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
-    public void updateTopicShareUrl(String videoUrl) {
+    public void updateTopicShareUrl(String topicUrl) {
         if (mShareActionProvider != null){
             Intent intent = new Intent();
             intent.setAction(Intent.ACTION_SEND);
             intent.setType("text/plain");
-            intent.putExtra(Intent.EXTRA_TEXT, videoUrl);
+            intent.putExtra(Intent.EXTRA_TEXT, topicUrl);
             mShareActionProvider.setShareIntent(intent);
         }
     }
