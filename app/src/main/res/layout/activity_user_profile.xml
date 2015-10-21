@@ -200,9 +200,26 @@
             android:src="@drawable/icn_detail" />
     </RelativeLayout>
 
-    <Button
-        android:id="@+id/btn_logout"
+
+    <RelativeLayout
+        android:id="@+id/id_logout_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="logout" />
+        android:background="@drawable/item_selector"
+        android:gravity="center_vertical"
+        android:layout_marginTop="20dip"
+        android:padding="16dip">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:text="@string/logout"
+            android:textSize="18sp"
+            android:textColor="@color/tab_item_tint_focused"/>
+
+    </RelativeLayout>
+
 </LinearLayout>

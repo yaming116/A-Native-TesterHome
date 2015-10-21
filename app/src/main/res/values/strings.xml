@@ -22,4 +22,5 @@
     <string name="introduce">简介:</string>
     <string name="follow">开始关注你了。</string>
     <string name="action_topic_detail_share">分享</string>
+    <string name="logout">退出登录</string>
 </resources>
