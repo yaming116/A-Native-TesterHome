@@ -3,6 +3,8 @@ package com.testerhome.nativeandroid.views;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
 import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -65,8 +67,11 @@ public class UserProfileActivity extends BackBaseActivity {
         startActivity(new Intent(this, AccountNotificationActivity.class));
     }
 
-    @OnClick(R.id.btn_logout)
+    @OnClick(R.id.id_logout_layout)
     void onLogoutClick() {
+        CookieSyncManager.createInstance(this);
+        CookieSyncManager.getInstance().startSync();
+        CookieManager.getInstance().removeSessionCookie();
         TesterHomeAccountService.getInstance(this).logout();
         this.finish();
     }
