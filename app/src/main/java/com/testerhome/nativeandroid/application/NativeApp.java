@@ -23,6 +23,7 @@ public class NativeApp extends Application {
     private RefWatcher refWatcher;
 
     @Override public void onCreate() {
+//        FIR.init(this);
         super.onCreate();
         refWatcher = LeakCanary.install(this);
 
