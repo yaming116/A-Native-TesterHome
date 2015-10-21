@@ -1,5 +1,6 @@
 package com.testerhome.nativeandroid.networks;
 
+import com.testerhome.nativeandroid.models.CreateReplyResponse;
 import com.testerhome.nativeandroid.models.NotificationResponse;
 import com.testerhome.nativeandroid.models.TopicDetailResponse;
 import com.testerhome.nativeandroid.models.TopicReplyResponse;
@@ -8,8 +9,8 @@ import com.testerhome.nativeandroid.models.UserDetailResponse;
 import com.testerhome.nativeandroid.models.UserResponse;
 
 import retrofit.Callback;
-import retrofit.client.Response;
 import retrofit.http.GET;
+import retrofit.http.POST;
 import retrofit.http.Path;
 import retrofit.http.Query;
 
@@ -67,8 +68,9 @@ public interface TopicsService {
                           @Query("offset") int offset,
                           Callback<NotificationResponse> callback);
 
-    @GET("/topics/{path}/replies.json")
-    void createReply(@Query("id") String id,
+    @POST("/topics/{id}/replies.json")
+    void createReply(@Path("id") String id,
                      @Query("body") String body,
-                     Callback<Response> callback);
+                     @Query("access_token") String accessToken,
+                     Callback<CreateReplyResponse> callback);
 }

@@ -3,7 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.testerhome.nativeandroid">
 
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <!--<uses-permission android:name="android.permission.READ_PHONE_STATE" />-->
+    <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <!--account manager-->
@@ -24,8 +28,8 @@
             android:name=".views.MainActivity"
             android:configChanges="keyboardHidden|screenSize|screenLayout"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:launchMode="singleInstance">
+            android:launchMode="singleInstance"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -49,10 +53,14 @@
         <activity
             android:name=".views.AccountTopicsActivity"
             android:configChanges="keyboardHidden|screenSize|screenLayout" />
-        <activity android:name=".views.TopicReplyActivity"
+        <activity
+            android:name=".views.TopicReplyActivity"
+            android:configChanges="keyboardHidden|screenSize|screenLayout"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".views.AccountNotificationActivity"
             android:configChanges="keyboardHidden|screenSize|screenLayout" />
-        <activity android:name=".views.AccountNotificationActivity"
-            android:configChanges="keyboardHidden|screenSize|screenLayout"/>
+
         <service
             android:name=".auth.UserAccountService"
             tools:ignore="ExportedService">
@@ -64,5 +72,9 @@
                 android:name="android.accounts.AccountAuthenticator"
                 android:resource="@xml/authenticator" />
         </service>
+
+        <meta-data
+            android:name="BUG_HD_SDK_GENERAL_KEY"
+            android:value="772bad6e8f4453b59426264a4309dced" />
     </application>
 </manifest>
