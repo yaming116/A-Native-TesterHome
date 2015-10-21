@@ -176,6 +176,10 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             mAccountAvatar.setImageURI(Uri.parse(Config.getImageUrl(mTesterHomeAccount.getAvatar_url())));
             mAccountUsername.setText(mTesterHomeAccount.getName());
             mAccountEmail.setText(mTesterHomeAccount.getEmail());
+        }else{
+            mAccountAvatar.setImageResource(android.R.drawable.sym_def_app_icon);
+            mAccountUsername.setText("Android Studio");
+            mAccountEmail.setText("android.studio@android.com");
         }
     }
 }
