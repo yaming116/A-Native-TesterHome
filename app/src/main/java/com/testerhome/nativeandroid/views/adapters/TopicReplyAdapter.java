@@ -8,7 +8,6 @@ import android.text.Html;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -84,8 +83,6 @@ public class TopicReplyAdapter extends BaseAdapter<TopicReplyEntity> {
         @Bind(R.id.id_praise_reply_layout)
         LinearLayout praiseReplyLayout;
 
-        @Bind(R.id.id_topic_reply_layout)
-        RelativeLayout topicReplyLayout;
 
         @Bind(R.id.id_topic_item_author)
         TextView topicItemAuthor;
