@@ -52,14 +52,14 @@ public class AccountTopicsFragment extends BaseFragment {
         if (mTesterHomeAccount == null) {
             getUserInfo();
         }
-
+        loadTopics(true);
     }
 
     @Override
     public void onStart() {
         super.onStart();
 
-        loadTopics();
+
     }
 
     @Override
@@ -70,7 +70,7 @@ public class AccountTopicsFragment extends BaseFragment {
             public void onListEnded() {
                 if (mNextCursor > 0) {
                     mNextCursor = mNextCursor + 1;
-                    loadTopics();
+                    loadTopics(false);
                 }
             }
         });
@@ -84,7 +84,7 @@ public class AccountTopicsFragment extends BaseFragment {
             @Override
             public void onRefresh() {
                 mNextCursor = 0;
-                loadTopics();
+                loadTopics(false);
             }
         });
 
@@ -97,7 +97,9 @@ public class AccountTopicsFragment extends BaseFragment {
     }
 
 
-    private void loadTopics() {
+    private void loadTopics(boolean showloading) {
+        if (showloading)
+            showLoadingView();
 
         TesterHomeApi.getInstance().getTopicsService().getUserTopics(mTesterHomeAccount.getLogin(),
                 mTesterHomeAccount.getAccess_token(),
@@ -105,7 +107,7 @@ public class AccountTopicsFragment extends BaseFragment {
                 new Callback<TopicsResponse>() {
                     @Override
                     public void success(TopicsResponse topicsResponse, Response response) {
-
+                        hideLoadingView();
                         if (swipeRefreshLayout.isRefreshing()) {
                             swipeRefreshLayout.setRefreshing(false);
                         }
@@ -122,6 +124,7 @@ public class AccountTopicsFragment extends BaseFragment {
 
                     @Override
                     public void failure(RetrofitError error) {
+                        hideLoadingView();
                         if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
                             swipeRefreshLayout.setRefreshing(false);
                         }

@@ -52,6 +52,8 @@ public class AccountFavoriteFragment extends BaseFragment {
         if (mTesterHomeAccount == null){
             getUserInfo();
         }
+
+        loadTopics(true);
     }
 
     @Override
@@ -62,7 +64,7 @@ public class AccountFavoriteFragment extends BaseFragment {
             public void onListEnded() {
                 if (mNextCursor > 0) {
                     mNextCursor = mNextCursor + 1;
-                    loadTopics();
+                    loadTopics(false);
                 }
             }
         });
@@ -76,11 +78,10 @@ public class AccountFavoriteFragment extends BaseFragment {
             @Override
             public void onRefresh() {
                 mNextCursor = 0;
-                loadTopics();
+                loadTopics(false);
             }
         });
 
-        loadTopics();
     }
 
     private TesterUser mTesterHomeAccount;
@@ -89,7 +90,10 @@ public class AccountFavoriteFragment extends BaseFragment {
         mTesterHomeAccount = TesterHomeAccountService.getInstance(getContext()).getActiveAccountInfo();
     }
 
-    private void loadTopics() {
+    private void loadTopics(boolean showloading) {
+
+        if (showloading)
+            showLoadingView();
 
         TesterHomeApi.getInstance().getTopicsService().getUserFavorite(mTesterHomeAccount.getLogin(),
                 mTesterHomeAccount.getAccess_token(),
@@ -97,7 +101,7 @@ public class AccountFavoriteFragment extends BaseFragment {
                 new Callback<TopicsResponse>() {
                     @Override
                     public void success(TopicsResponse topicsResponse, Response response) {
-
+                        hideLoadingView();
                         if (swipeRefreshLayout.isRefreshing()) {
                             swipeRefreshLayout.setRefreshing(false);
                         }
@@ -114,6 +118,7 @@ public class AccountFavoriteFragment extends BaseFragment {
 
                     @Override
                     public void failure(RetrofitError error) {
+                        hideLoadingView();
                         if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
                             swipeRefreshLayout.setRefreshing(false);
                         }
