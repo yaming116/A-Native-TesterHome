@@ -30,7 +30,7 @@ public class TopicReplyFragment extends BaseFragment {
     private int mNextCursor = 0;
 
     private TopicReplyAdapter mAdatper;
-    private String topicId;
+    private String mTopicId;
 
     public static TopicReplyFragment newInstance(String id) {
         Bundle args = new Bundle();
@@ -48,8 +48,8 @@ public class TopicReplyFragment extends BaseFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        topicId = getArguments().getString("id");
-        loadTopicReplies(topicId);
+        mTopicId = getArguments().getString("id");
+        loadTopicReplies(true);
     }
 
     @Override
@@ -60,7 +60,7 @@ public class TopicReplyFragment extends BaseFragment {
             @Override
             public void onListEnded() {
                 if (mNextCursor > 0) {
-                    loadTopicReplies(topicId);
+                    loadTopicReplies(false);
                 }
             }
         });
@@ -75,20 +75,27 @@ public class TopicReplyFragment extends BaseFragment {
             @Override
             public void onRefresh() {
                 mNextCursor = 0;
-                loadTopicReplies(topicId);
+                loadTopicReplies(false);
             }
         });
     }
 
 
-    private void loadTopicReplies(String topicId) {
+    private void loadTopicReplies(boolean showloading) {
 
-        TesterHomeApi.getInstance().getTopicsService().getTopicsReplies(topicId,
-                mNextCursor*20,
+        if (swipeRefreshLayout != null) {
+            swipeRefreshLayout.setRefreshing(true);
+        }
+
+        if (showloading)
+            showLoadingView();
+
+        TesterHomeApi.getInstance().getTopicsService().getTopicsReplies(mTopicId,
+                mNextCursor * 20,
                 new Callback<TopicReplyResponse>() {
                     @Override
                     public void success(TopicReplyResponse topicReplyResponse, Response response) {
-
+                        hideLoadingView();
                         if (swipeRefreshLayout.isRefreshing()) {
                             swipeRefreshLayout.setRefreshing(false);
                         }
@@ -100,9 +107,9 @@ public class TopicReplyFragment extends BaseFragment {
                                 mAdatper.addItems(topicReplyResponse.getTopicReply());
                             }
 
-                            if(topicReplyResponse.getTopicReply().size()==20){
+                            if (topicReplyResponse.getTopicReply().size() == 20) {
                                 mNextCursor += 1;
-                            }else{
+                            } else {
                                 mNextCursor = 0;
                             }
                         } else {
@@ -112,6 +119,7 @@ public class TopicReplyFragment extends BaseFragment {
 
                     @Override
                     public void failure(RetrofitError error) {
+                        hideLoadingView();
                         if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
                             swipeRefreshLayout.setRefreshing(false);
                         }
