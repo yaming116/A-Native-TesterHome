@@ -7,10 +7,14 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.testerhome.nativeandroid.Config;
 import com.testerhome.nativeandroid.R;
+import com.testerhome.nativeandroid.auth.TesterHomeAccountService;
+import com.testerhome.nativeandroid.models.CollectTopicResonse;
+import com.testerhome.nativeandroid.models.TesterUser;
 import com.testerhome.nativeandroid.models.TopicDetailEntity;
 import com.testerhome.nativeandroid.models.TopicDetailResponse;
 import com.testerhome.nativeandroid.networks.TesterHomeApi;
@@ -47,7 +51,7 @@ public class TopicDetailFragment extends BaseFragment {
     TextView tvDetailRepliesCount;
 
     private String mTopicId;
-
+    private TesterUser mCurrentUser;
     @Bind(R.id.tv_detail_body)
     MarkdownView tvDetailBody;
 
@@ -127,5 +131,25 @@ public class TopicDetailFragment extends BaseFragment {
     void onDetailRepliesClick() {
         startActivity(new Intent(getContext(), TopicReplyActivity.class)
                 .putExtra("topic_id", mTopicId));
+    }
+
+    @OnClick(R.id.tv_detail_collect)
+    void onDetailCollectClick() {
+        if (mCurrentUser==null){
+            mCurrentUser = TesterHomeAccountService.getInstance(getActivity()).getActiveAccountInfo();
+        }
+        TesterHomeApi.getInstance().getTopicsService().collectTopic(mTopicId, mCurrentUser.getAccess_token(), new Callback<CollectTopicResonse>() {
+            @Override
+            public void success(CollectTopicResonse collectTopicResonse, Response response) {
+                if (collectTopicResonse.getOk()==1){
+                    Toast.makeText(getActivity(),"收藏成功",Toast.LENGTH_SHORT).show();
+                }
+            }
+            @Override
+            public void failure(RetrofitError error) {
+                Toast.makeText(getActivity(),error.getMessage(),Toast.LENGTH_SHORT).show();
+            }
+        });
+
     }
 }

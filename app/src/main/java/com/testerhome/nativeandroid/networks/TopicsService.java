@@ -1,5 +1,6 @@
 package com.testerhome.nativeandroid.networks;
 
+import com.testerhome.nativeandroid.models.CollectTopicResonse;
 import com.testerhome.nativeandroid.models.CreateReplyResponse;
 import com.testerhome.nativeandroid.models.NotificationResponse;
 import com.testerhome.nativeandroid.models.TopicDetailResponse;
@@ -73,4 +74,9 @@ public interface TopicsService {
                      @Query("body") String body,
                      @Query("access_token") String accessToken,
                      Callback<CreateReplyResponse> callback);
+
+    @POST("/topics/{id}/favorite.json")
+    void collectTopic(@Path("id") String id,
+                      @Query("access_token") String accessToken,
+                      Callback<CollectTopicResonse> callback);
 }
