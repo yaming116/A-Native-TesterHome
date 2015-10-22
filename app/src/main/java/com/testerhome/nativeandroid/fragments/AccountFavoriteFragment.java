@@ -52,11 +52,10 @@ public class AccountFavoriteFragment extends BaseFragment {
         if (mTesterHomeAccount == null){
             getUserInfo();
         }
-
-        setupView();
     }
 
-    private void setupView() {
+    @Override
+    protected void setupView() {
         mAdatper = new TopicsListAdapter(getActivity());
         mAdatper.setListener(new TopicsListAdapter.EndlessListener() {
             @Override

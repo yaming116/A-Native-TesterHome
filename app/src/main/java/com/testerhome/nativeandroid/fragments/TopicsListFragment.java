@@ -44,7 +44,7 @@ public class TopicsListFragment extends BaseFragment {
         return fragment;
     }
 
-    public static TopicsListFragment newInstance(int  nodeId) {
+    public static TopicsListFragment newInstance(int nodeId) {
         Bundle args = new Bundle();
         args.putInt("nodeId", nodeId);
         TopicsListFragment fragment = new TopicsListFragment();
@@ -58,19 +58,18 @@ public class TopicsListFragment extends BaseFragment {
     }
 
     @Override
-    public void onActivityCreated( Bundle savedInstanceState) {
+    public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if(!isViewLoad){
-            type = getArguments().getString("type");
-            if(type == null){
-                nodeId = getArguments().getInt("nodeId");
-            }
-            setupView();
+        type = getArguments().getString("type");
+        if (type == null) {
+            nodeId = getArguments().getInt("nodeId");
         }
-        isViewLoad = true;
+
+        loadTopics();
     }
 
-    private void setupView() {
+    @Override
+    protected void setupView() {
         mAdatper = new TopicsListAdapter(getActivity());
         mAdatper.setListener(new TopicsListAdapter.EndlessListener() {
             @Override
@@ -94,18 +93,17 @@ public class TopicsListFragment extends BaseFragment {
             }
         });
 
-        loadTopics();
     }
 
     private void loadTopics() {
 
-        if(type!=null){
+        if (type != null) {
             TesterHomeApi.getInstance().getTopicsService().getTopicsByType(type,
-                    mNextCursor*20,
+                    mNextCursor * 20,
                     new Callback<TopicsResponse>() {
                         @Override
                         public void success(TopicsResponse topicsResponse, Response response) {
-                            Log.d("topic",type+"i load");
+                            Log.d("topic", type + "i load");
                             loadSuccess(topicsResponse);
 
                         }
@@ -115,9 +113,9 @@ public class TopicsListFragment extends BaseFragment {
                             loadFail(error);
                         }
                     });
-        }else{
+        } else {
             TesterHomeApi.getInstance().getTopicsService().getTopicsByNodeId(nodeId,
-                    mNextCursor*20,
+                    mNextCursor * 20,
                     new Callback<TopicsResponse>() {
                         @Override
                         public void success(TopicsResponse topicsResponse, Response response) {
@@ -135,7 +133,7 @@ public class TopicsListFragment extends BaseFragment {
     }
 
     private void loadSuccess(TopicsResponse topicsResponse) {
-        if (swipeRefreshLayout.isRefreshing()) {
+        if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
             swipeRefreshLayout.setRefreshing(false);
         }
 
@@ -145,9 +143,9 @@ public class TopicsListFragment extends BaseFragment {
             } else {
                 mAdatper.addItems(topicsResponse.getTopics());
             }
-            if(topicsResponse.getTopics().size()==20){
+            if (topicsResponse.getTopics().size() == 20) {
                 mNextCursor += 1;
-            }else{
+            } else {
                 mNextCursor = 0;
             }
 
@@ -156,7 +154,7 @@ public class TopicsListFragment extends BaseFragment {
         }
     }
 
-    private void loadFail(RetrofitError error){
+    private void loadFail(RetrofitError error) {
         if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
             swipeRefreshLayout.setRefreshing(false);
         }

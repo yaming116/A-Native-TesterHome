@@ -56,14 +56,12 @@ public class TopicDetailFragment extends BaseFragment {
         args.putString("topic_id", topicId);
         TopicDetailFragment fragment = new TopicDetailFragment();
         fragment.setArguments(args);
-        fragment.mTopicId = topicId.toString();
+        fragment.mTopicId = topicId;
         return fragment;
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
+    protected void setupView() {
         loadInfo();
     }
 
