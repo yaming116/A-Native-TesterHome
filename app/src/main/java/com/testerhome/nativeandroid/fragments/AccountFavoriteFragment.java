@@ -63,7 +63,7 @@ public class AccountFavoriteFragment extends BaseFragment {
             @Override
             public void onListEnded() {
                 if (mNextCursor > 0) {
-                    mNextCursor = mNextCursor + 1;
+
                     loadTopics(false);
                 }
             }
@@ -97,7 +97,7 @@ public class AccountFavoriteFragment extends BaseFragment {
 
         TesterHomeApi.getInstance().getTopicsService().getUserFavorite(mTesterHomeAccount.getLogin(),
                 mTesterHomeAccount.getAccess_token(),
-                mNextCursor,
+                mNextCursor*20,
                 new Callback<TopicsResponse>() {
                     @Override
                     public void success(TopicsResponse topicsResponse, Response response) {
@@ -106,10 +106,17 @@ public class AccountFavoriteFragment extends BaseFragment {
                             swipeRefreshLayout.setRefreshing(false);
                         }
                         if (topicsResponse.getTopics().size() > 0) {
+
                             if (mNextCursor == 0) {
                                 mAdatper.setItems(topicsResponse.getTopics());
                             } else {
                                 mAdatper.addItems(topicsResponse.getTopics());
+                            }
+
+                            if (topicsResponse.getTopics().size() == 20) {
+                                mNextCursor += 1;
+                            } else {
+                                mNextCursor = 0;
                             }
                         } else {
                             mNextCursor = 0;
