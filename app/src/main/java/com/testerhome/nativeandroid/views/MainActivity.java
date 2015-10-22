@@ -126,10 +126,12 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             }
             fragmentTransaction.show(jobFragment);
 
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+        } else if (id == R.id.nav_settings) {
+            startActivity(new Intent(this, SettingsActivity.class));
+            return true;
+        } else if (id == R.id.nav_about) {
+            startActivity(new Intent(this, AboutActivity.class));
+            return true;
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -177,7 +179,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             mAccountUsername.setText(mTesterHomeAccount.getName());
             mAccountEmail.setText(mTesterHomeAccount.getEmail());
         }else{
-            mAccountAvatar.setImageResource(android.R.drawable.sym_def_app_icon);
+            mAccountAvatar.setImageResource(R.mipmap.ic_launcher);
             mAccountUsername.setText("Android Studio");
             mAccountEmail.setText("android.studio@android.com");
         }

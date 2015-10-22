@@ -1,31 +1,26 @@
 package com.testerhome.nativeandroid.application;
 
+import android.Manifest;
 import android.app.Application;
-import android.content.Context;
+import android.content.pm.PackageManager;
+import android.util.Log;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.imagepipeline.backends.okhttp.OkHttpImagePipelineConfigFactory;
 import com.facebook.imagepipeline.core.ImagePipelineConfig;
-import com.squareup.leakcanary.LeakCanary;
-import com.squareup.leakcanary.RefWatcher;
 import com.squareup.okhttp.OkHttpClient;
+
+import im.fir.sdk.FIR;
 
 /**
  * Created by Bin Li on 2015/9/15.
  */
 public class NativeApp extends Application {
 
-    public static RefWatcher getRefWatcher(Context context) {
-        NativeApp application = (NativeApp) context.getApplicationContext();
-        return application.refWatcher;
-    }
-
-    private RefWatcher refWatcher;
-
-    @Override public void onCreate() {
-//        FIR.init(this);
+    @Override
+    public void onCreate() {
+        checkFIRPermission();
         super.onCreate();
-        refWatcher = LeakCanary.install(this);
 
         // initialize fresco with OK HTTP
         ImagePipelineConfig config = OkHttpImagePipelineConfigFactory
@@ -33,4 +28,18 @@ public class NativeApp extends Application {
                 .build();
         Fresco.initialize(this, config);
     }
+
+    private void checkFIRPermission() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            int hasReadPhoneStatePermission = checkSelfPermission(Manifest.permission.READ_PHONE_STATE);
+            if (hasReadPhoneStatePermission != PackageManager.PERMISSION_GRANTED) {
+                Log.e("bugHD", "bugHD init fail!");
+                return;
+            }
+        }
+
+        FIR.init(this);
+        Log.e("bugHD", "bugHD init!");
+    }
+
 }
