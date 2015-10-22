@@ -47,6 +47,7 @@
         tools:text="topic content" />
 
     <LinearLayout
+        android:id="@+id/id_praise_reply_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/id_topic_item_content"

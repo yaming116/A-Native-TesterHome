@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -45,9 +46,11 @@ public class TopicReplyAdapter extends BaseAdapter<TopicReplyEntity> {
             holder.userAvatar.setVisibility(View.INVISIBLE);
             holder.topicItemAuthor.setVisibility(View.INVISIBLE);
             holder.topicTime.setVisibility(View.INVISIBLE);
+            holder.praiseReplyLayout.setVisibility(View.INVISIBLE);
             holder.topicItemBody.setText("该楼层已被删除");
             holder.topicItemBody.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG); //中划线
         } else {
+            holder.praiseReplyLayout.setVisibility(View.VISIBLE);
             holder.userAvatar.setVisibility(View.VISIBLE);
             holder.topicItemAuthor.setVisibility(View.VISIBLE);
             holder.topicTime.setVisibility(View.VISIBLE);
@@ -76,6 +79,10 @@ public class TopicReplyAdapter extends BaseAdapter<TopicReplyEntity> {
     }
 
     public static class ReplyViewHolder extends RecyclerView.ViewHolder {
+
+
+        @Bind(R.id.id_praise_reply_layout)
+        LinearLayout praiseReplyLayout;
 
         @Bind(R.id.id_topic_reply_layout)
         RelativeLayout topicReplyLayout;
