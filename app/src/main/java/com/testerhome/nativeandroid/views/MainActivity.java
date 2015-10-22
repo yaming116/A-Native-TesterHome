@@ -15,6 +15,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.testerhome.nativeandroid.Config;
@@ -25,11 +26,16 @@ import com.testerhome.nativeandroid.fragments.TopicsListFragment;
 import com.testerhome.nativeandroid.models.TesterUser;
 import com.testerhome.nativeandroid.views.base.BaseActivity;
 
+import butterknife.Bind;
+
 public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private Fragment homeFragment;
     private Fragment jobFragment;
     private Fragment topicFragment;
+
+    @Bind(R.id.drawer_layout)
+    DrawerLayout drawer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +52,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
     private void setupView() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -133,8 +138,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             return true;
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
+
         fragmentTransaction.commit();
         return true;
     }
@@ -177,6 +182,22 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             mAccountAvatar.setImageResource(R.mipmap.ic_launcher);
             mAccountUsername.setText("Android Studio");
             mAccountEmail.setText("android.studio@android.com");
+        }
+    }
+
+    private static long back_pressed;
+
+    @Override
+    public void onBackPressed() {
+        if (drawer.isDrawerVisible(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            if (back_pressed + 2000 > System.currentTimeMillis()) {
+                super.onBackPressed();
+            } else {
+                Toast.makeText(this, "再次点击退出", Toast.LENGTH_SHORT).show();
+            }
+            back_pressed = System.currentTimeMillis();
         }
     }
 }
