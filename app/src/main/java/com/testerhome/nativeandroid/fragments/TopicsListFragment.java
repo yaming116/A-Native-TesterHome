@@ -20,7 +20,7 @@ import retrofit.client.Response;
 /**
  * Created by Bin Li on 2015/9/16.
  */
-public class TopicsListFragment extends BaseFragment {
+public class TopicsListFragment extends BaseFragment implements Callback<TopicsResponse> {
 
     @Bind(R.id.rv_topic_list)
     RecyclerView recyclerViewTopicList;
@@ -65,7 +65,7 @@ public class TopicsListFragment extends BaseFragment {
             nodeId = getArguments().getInt("nodeId");
         }
 
-        loadTopics();
+        loadTopics(true);
     }
 
     @Override
@@ -75,7 +75,7 @@ public class TopicsListFragment extends BaseFragment {
             @Override
             public void onListEnded() {
                 if (mNextCursor > 0) {
-                    loadTopics();
+                    loadTopics(false);
                 }
             }
         });
@@ -84,55 +84,45 @@ public class TopicsListFragment extends BaseFragment {
         recyclerViewTopicList.addItemDecoration(new DividerItemDecoration(getActivity(),
                 DividerItemDecoration.VERTICAL_LIST));
         recyclerViewTopicList.setAdapter(mAdatper);
-        swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_light, android.R.color.holo_red_light, android.R.color.holo_orange_light, android.R.color.holo_green_light);
+        swipeRefreshLayout.setColorSchemeResources(
+                android.R.color.holo_blue_light,
+                android.R.color.holo_red_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_green_light);
+
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 mNextCursor = 0;
-                loadTopics();
+                loadTopics(false);
             }
         });
 
     }
 
-    private void loadTopics() {
+    private void loadTopics(boolean showloading) {
+
+        if (swipeRefreshLayout != null) {
+            swipeRefreshLayout.setRefreshing(true);
+        }
+
+        if (showloading)
+            showLoadingView();
 
         if (type != null) {
             TesterHomeApi.getInstance().getTopicsService().getTopicsByType(type,
-                    mNextCursor * 20,
-                    new Callback<TopicsResponse>() {
-                        @Override
-                        public void success(TopicsResponse topicsResponse, Response response) {
-                            Log.d("topic", type + "i load");
-                            loadSuccess(topicsResponse);
-
-                        }
-
-                        @Override
-                        public void failure(RetrofitError error) {
-                            loadFail(error);
-                        }
-                    });
+                    mNextCursor * 20, this);
         } else {
             TesterHomeApi.getInstance().getTopicsService().getTopicsByNodeId(nodeId,
-                    mNextCursor * 20,
-                    new Callback<TopicsResponse>() {
-                        @Override
-                        public void success(TopicsResponse topicsResponse, Response response) {
-                            loadSuccess(topicsResponse);
-
-                        }
-
-                        @Override
-                        public void failure(RetrofitError error) {
-                            loadFail(error);
-                        }
-                    });
+                    mNextCursor * 20, this);
         }
 
     }
 
-    private void loadSuccess(TopicsResponse topicsResponse) {
+
+    @Override
+    public void success(TopicsResponse topicsResponse, Response response) {
+        hideLoadingView();
         if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
             swipeRefreshLayout.setRefreshing(false);
         }
@@ -154,7 +144,9 @@ public class TopicsListFragment extends BaseFragment {
         }
     }
 
-    private void loadFail(RetrofitError error) {
+    @Override
+    public void failure(RetrofitError error) {
+        hideLoadingView();
         if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
             swipeRefreshLayout.setRefreshing(false);
         }
