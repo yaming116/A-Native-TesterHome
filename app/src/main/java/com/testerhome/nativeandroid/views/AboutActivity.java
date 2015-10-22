@@ -1,6 +1,5 @@
 package com.testerhome.nativeandroid.views;
 
-import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -33,26 +32,15 @@ public class AboutActivity extends BackBaseActivity {
 
     private String getAppInfo() {
 
-        PackageInfo info = getPackageInfo(this);
-
-        return String.format("%s build %s", info.versionName, info.versionCode);
-    }
-
-    public static PackageInfo getPackageInfo(Context context) {
         PackageInfo info = null;
         try {
-            info = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
-            // 当前应用的版本名
-            String versionName = info.versionName;
-            // 当前版本的版本号
-            int versionCode = info.versionCode;
-            // 当前版本的包
-            String packageNames = info.packageName;
+            info = getPackageManager().getPackageInfo(getPackageName(), 0);
+            return String.format("%s build %s", info.versionName, info.versionCode);
         } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        } catch (Exception e) {
-            e.printStackTrace();
+            // do nothing
         }
-        return info;
+
+        return "";
     }
+
 }
