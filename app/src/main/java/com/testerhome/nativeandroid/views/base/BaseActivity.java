@@ -5,9 +5,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.widget.TextView;
 
-import com.squareup.leakcanary.RefWatcher;
 import com.testerhome.nativeandroid.R;
-import com.testerhome.nativeandroid.application.NativeApp;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -50,8 +48,5 @@ public class BaseActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         ButterKnife.unbind(this);
-
-        RefWatcher refWatcher = NativeApp.getRefWatcher(this);
-        refWatcher.watch(this);
     }
 }
