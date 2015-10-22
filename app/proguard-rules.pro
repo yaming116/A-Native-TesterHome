@@ -36,3 +36,6 @@
 
 -keep class com.testerhome.nativeandroid.models.** {*;}
 -dontwarn com.testerhome.nativeandroid.models.**
+
+-keep class im.fir.sdk.** {*;}
+-dontwarn im.fir.sdk.**
