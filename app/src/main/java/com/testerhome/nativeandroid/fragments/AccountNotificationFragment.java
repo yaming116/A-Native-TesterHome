@@ -48,11 +48,11 @@ public class AccountNotificationFragment extends BaseFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (mTesterHomeAccount == null){
+        if (mTesterHomeAccount == null) {
             getUserInfo();
         }
         setupView();
-
+        loadNotification(true);
 
     }
 
@@ -63,7 +63,7 @@ public class AccountNotificationFragment extends BaseFragment {
             @Override
             public void onListEnded() {
                 if (mNextCursor > 0) {
-                    loadNotification();
+                    loadNotification(false);
                 }
             }
         });
@@ -77,28 +77,29 @@ public class AccountNotificationFragment extends BaseFragment {
             @Override
             public void onRefresh() {
                 mNextCursor = 0;
-                loadNotification();
+                loadNotification(false);
             }
         });
 
-        loadNotification();
+
     }
 
     private TesterUser mTesterHomeAccount;
 
-    private void getUserInfo(){
+    private void getUserInfo() {
         mTesterHomeAccount = TesterHomeAccountService.getInstance(getContext()).getActiveAccountInfo();
     }
 
 
-    private void loadNotification() {
-
+    private void loadNotification(boolean showloading) {
+        if (showloading)
+            showLoadingView();
         TesterHomeApi.getInstance().getTopicsService().getNotifications(mTesterHomeAccount.getAccess_token(),
                 mNextCursor * 20,
                 new Callback<NotificationResponse>() {
                     @Override
                     public void success(NotificationResponse notificationResponse, Response response) {
-
+                        hideLoadingView();
                         if (swipeRefreshLayout.isRefreshing()) {
                             swipeRefreshLayout.setRefreshing(false);
                         }
@@ -121,6 +122,7 @@ public class AccountNotificationFragment extends BaseFragment {
 
                     @Override
                     public void failure(RetrofitError error) {
+                        hideLoadingView();
                         if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
                             swipeRefreshLayout.setRefreshing(false);
                         }
