@@ -56,7 +56,8 @@ public class AccountNotificationFragment extends BaseFragment {
 
     }
 
-    private void setupView() {
+    @Override
+    protected void setupView() {
         mAdatper = new NotificationAdapter(getActivity());
         mAdatper.setListener(new NotificationAdapter.EndlessListener() {
             @Override

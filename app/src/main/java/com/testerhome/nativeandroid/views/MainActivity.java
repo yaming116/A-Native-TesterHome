@@ -30,12 +30,12 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     private Fragment homeFragment;
     private Fragment jobFragment;
     private Fragment topicFragment;
-    private Fragment myFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         setupView();
     }
 
@@ -125,7 +125,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
             }
             fragmentTransaction.show(jobFragment);
-
         } else if (id == R.id.nav_settings) {
             startActivity(new Intent(this, SettingsActivity.class));
             return true;
@@ -141,7 +140,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
     private void hideAllFragment(FragmentTransaction fragmentTransaction) {
-
         if (homeFragment != null) {
             fragmentTransaction.hide(homeFragment);
         }
@@ -150,9 +148,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         }
         if (jobFragment != null) {
             fragmentTransaction.hide(jobFragment);
-        }
-        if (myFragment != null) {
-            fragmentTransaction.hide(myFragment);
         }
     }
 
@@ -178,7 +173,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             mAccountAvatar.setImageURI(Uri.parse(Config.getImageUrl(mTesterHomeAccount.getAvatar_url())));
             mAccountUsername.setText(mTesterHomeAccount.getName());
             mAccountEmail.setText(mTesterHomeAccount.getEmail());
-        }else{
+        } else {
             mAccountAvatar.setImageResource(R.mipmap.ic_launcher);
             mAccountUsername.setText("Android Studio");
             mAccountEmail.setText("android.studio@android.com");

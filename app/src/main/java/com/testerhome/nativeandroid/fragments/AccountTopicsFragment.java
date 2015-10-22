@@ -48,7 +48,6 @@ public class AccountTopicsFragment extends BaseFragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        setupView();
 
         if (mTesterHomeAccount == null) {
             getUserInfo();
@@ -63,7 +62,8 @@ public class AccountTopicsFragment extends BaseFragment {
         loadTopics();
     }
 
-    private void setupView() {
+    @Override
+    protected void setupView() {
         mAdatper = new TopicsListAdapter(getActivity());
         mAdatper.setListener(new TopicsListAdapter.EndlessListener() {
             @Override

@@ -1,6 +1,5 @@
 package com.testerhome.nativeandroid.fragments;
 
-import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -32,15 +31,11 @@ public class HomeFragment extends BaseFragment {
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        setupView();
-    }
-
-    private void setupView(){
+    protected void setupView() {
 
         mAdapter = new TopicViewPagerAdapter(getActivity().getSupportFragmentManager());
         viewPagerTopics.setAdapter(mAdapter);
+        viewPagerTopics.setOffscreenPageLimit(4);
 
         tabLayoutTopicsTab.setupWithViewPager(viewPagerTopics);
         tabLayoutTopicsTab.setTabsFromPagerAdapter(mAdapter);

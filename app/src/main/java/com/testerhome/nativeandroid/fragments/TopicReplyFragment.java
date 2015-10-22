@@ -49,11 +49,11 @@ public class TopicReplyFragment extends BaseFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         topicId = getArguments().getString("id");
-        setupView();
-
+        loadTopicReplies(topicId);
     }
 
-    private void setupView() {
+    @Override
+    protected void setupView() {
 
         mAdatper = new TopicReplyAdapter(getActivity());
         mAdatper.setListener(new TopicReplyAdapter.EndlessListener() {
@@ -78,8 +78,6 @@ public class TopicReplyFragment extends BaseFragment {
                 loadTopicReplies(topicId);
             }
         });
-
-        loadTopicReplies(topicId);
     }
 
 
