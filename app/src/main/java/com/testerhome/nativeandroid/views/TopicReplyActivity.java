@@ -1,6 +1,7 @@
 package com.testerhome.nativeandroid.views;
 
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.text.TextUtils;
 import android.widget.Button;
@@ -8,6 +9,7 @@ import android.widget.EditText;
 
 import com.testerhome.nativeandroid.R;
 import com.testerhome.nativeandroid.auth.TesterHomeAccountService;
+import com.testerhome.nativeandroid.fragments.SettingsFragment;
 import com.testerhome.nativeandroid.fragments.TopicReplyFragment;
 import com.testerhome.nativeandroid.models.CreateReplyResponse;
 import com.testerhome.nativeandroid.models.TesterUser;
@@ -28,6 +30,8 @@ public class TopicReplyActivity extends BackBaseActivity {
     private String mTopicId;
     private TesterUser mCurrentUser;
 
+    private boolean isCommentWithSnack = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,6 +45,8 @@ public class TopicReplyActivity extends BackBaseActivity {
             finish();
         }
 
+        isCommentWithSnack = PreferenceManager.getDefaultSharedPreferences(this)
+                .getBoolean(SettingsFragment.KEY_PREF_COMMENT_WITH_SNACK, true);
     }
 
     private void setupView(String topicId) {
@@ -64,6 +70,10 @@ public class TopicReplyActivity extends BackBaseActivity {
         } else {
             String replyBody = mEtComment.getText().toString();
 
+            if (isCommentWithSnack){
+                replyBody = replyBody.concat("\n").concat("来自Android客户端");
+            }
+
             if (mCurrentUser == null) {
                 mCurrentUser = TesterHomeAccountService.getInstance(this).getActiveAccountInfo();
             }
@@ -73,7 +83,7 @@ public class TopicReplyActivity extends BackBaseActivity {
                             mCurrentUser.getAccess_token(), new Callback<CreateReplyResponse>() {
                                 @Override
                                 public void success(CreateReplyResponse createReplyResponse, Response response) {
-                                    if (createReplyResponse.getError() == null){
+                                    if (createReplyResponse.getError() == null) {
                                         // 发送成功
                                         mEtComment.setText("");
                                         // TODO: 15/10/21 hide soft keyboard

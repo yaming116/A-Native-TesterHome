@@ -2,21 +2,30 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <group android:checkableBehavior="single">
-        <item android:id="@+id/nav_home" android:icon="@drawable/tab_main_home"
+        <item
+            android:id="@+id/nav_home"
+            android:icon="@drawable/tab_main_home"
             android:title="@string/main_tab_home" />
-        <item android:id="@+id/nav_topic" android:icon="@drawable/tab_main_topic"
+        <item
+            android:id="@+id/nav_topic"
+            android:icon="@drawable/tab_main_topic"
             android:title="@string/main_tab_topic" />
-        <item android:id="@+id/nav_job" android:icon="@drawable/tab_main_job"
+        <item
+            android:id="@+id/nav_job"
+            android:icon="@drawable/tab_main_job"
             android:title="@string/main_tab_job" />
     </group>
 
-    <item android:title="Settings">
-        <menu>
-            <item android:id="@+id/nav_settings" android:icon="@android:drawable/ic_menu_preferences"
-                android:title="Settings" />
-            <item android:id="@+id/nav_about" android:icon="@android:drawable/ic_menu_info_details"
-                android:title="About" />
-        </menu>
-    </item>
+    <group android:id="@+id/group_settings"
+        android:checkableBehavior="none">
+        <item
+            android:id="@+id/nav_settings"
+            android:icon="@android:drawable/ic_menu_preferences"
+            android:title="@string/main_drawer_settings" />
+        <item
+            android:id="@+id/nav_about"
+            android:icon="@android:drawable/ic_menu_info_details"
+            android:title="@string/main_drawer_about" />
+    </group>
 
 </menu>
