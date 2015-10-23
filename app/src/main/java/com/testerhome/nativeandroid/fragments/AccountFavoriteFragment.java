@@ -63,7 +63,6 @@ public class AccountFavoriteFragment extends BaseFragment {
             @Override
             public void onListEnded() {
                 if (mNextCursor > 0) {
-
                     loadTopics(false);
                 }
             }

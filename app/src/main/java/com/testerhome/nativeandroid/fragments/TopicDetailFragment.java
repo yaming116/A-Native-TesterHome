@@ -2,6 +2,8 @@ package com.testerhome.nativeandroid.fragments;
 
 import android.content.Intent;
 import android.content.res.AssetManager;
+import android.database.Cursor;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -13,6 +15,7 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.testerhome.nativeandroid.Config;
 import com.testerhome.nativeandroid.R;
 import com.testerhome.nativeandroid.auth.TesterHomeAccountService;
+import com.testerhome.nativeandroid.db.DBManager;
 import com.testerhome.nativeandroid.models.CollectTopicResonse;
 import com.testerhome.nativeandroid.models.TesterUser;
 import com.testerhome.nativeandroid.models.TopicDetailEntity;
@@ -55,6 +58,10 @@ public class TopicDetailFragment extends BaseFragment {
     @Bind(R.id.tv_detail_body)
     MarkdownView tvDetailBody;
 
+    @Bind(R.id.tv_detail_collect)
+    TextView tvDetailCollect;
+    DBManager dbManager;
+
     public static TopicDetailFragment newInstance(String topicId) {
         Bundle args = new Bundle();
         args.putString("topic_id", topicId);
@@ -66,6 +73,21 @@ public class TopicDetailFragment extends BaseFragment {
 
     @Override
     protected void setupView() {
+        dbManager = DBManager.getInstance(getActivity());
+        dbManager.open();
+        try {
+            Cursor cursor = dbManager.find(DBManager.TABLE_NAME, new String[]{"_id"}, new String[]{mTopicId}, null, null, null);
+            if (cursor.getCount()!=0){
+                Drawable drawable= getResources().getDrawable(R.drawable.bookmark_on);
+                /// 这一步必须要做,否则不会显示.
+                drawable.setBounds(0, 0, drawable.getMinimumWidth(), drawable.getMinimumHeight());
+                tvDetailCollect.setCompoundDrawables(drawable, null,null,null);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        dbManager.close();
         loadInfo();
     }
 
