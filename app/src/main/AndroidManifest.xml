@@ -9,7 +9,7 @@
     <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
-    <!--account manager-->
+    <!-- account manager -->
     <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
     <uses-permission
         android:name="android.permission.ACCOUNT_MANAGER"
@@ -40,11 +40,9 @@
         <activity
             android:name=".views.WebViewActivity"
             android:configChanges="keyboardHidden|orientation|screenSize" />
-
         <activity
             android:name=".views.UserProfileActivity"
             android:configChanges="keyboardHidden|orientation|screenSize" />
-
         <activity
             android:name=".views.AccountFavoriteActivity"
             android:configChanges="keyboardHidden|orientation|screenSize" />
@@ -58,11 +56,6 @@
         <activity
             android:name=".views.AccountNotificationActivity"
             android:configChanges="keyboardHidden|orientation|screenSize" />
-
-        <activity
-            android:name=".views.SettingsActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize" />
-
         <activity
             android:name=".views.AboutActivity"
             android:configChanges="keyboardHidden|orientation|screenSize" />
@@ -82,5 +75,12 @@
         <meta-data
             android:name="BUG_HD_SDK_GENERAL_KEY"
             android:value="772bad6e8f4453b59426264a4309dced" />
+
+        <activity
+            android:name=".views.SettingsActivity"
+            android:theme="@style/AppTheme.ActionBar"
+            android:label="@string/main_drawer_settings"
+            android:configChanges="keyboardHidden|orientation|screenSize"/>
     </application>
+
 </manifest>

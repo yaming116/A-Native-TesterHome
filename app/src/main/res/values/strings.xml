@@ -24,4 +24,23 @@
     <string name="action_topic_detail_share">分享</string>
     <string name="logout">退出登录</string>
     <string name="string_loading">Loading&#8230;</string>
+
+    <string name="main_drawer_settings">设置</string>
+    <string name="main_drawer_about">关于</string>
+    <string name="title_activity_settings">Settings</string>
+
+    <!-- Strings related to Settings -->
+
+    <!-- Example General settings -->
+
+    <string name="pref_title_theme">主题样式</string>
+    <string-array name="pref_theme_list_titles">
+        <item>Light</item>
+        <item>Dark</item>
+    </string-array>
+    <string-array name="pref_theme_list_values">
+        <item>0</item>
+        <item>1</item>
+    </string-array>
+
 </resources>
