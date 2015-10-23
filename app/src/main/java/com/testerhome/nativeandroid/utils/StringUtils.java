@@ -44,4 +44,39 @@ public class StringUtils {
         }
         return time;
     }
+
+    /**
+     * 将标准时间转换成时间戳的形式
+     * @param times
+     * @return
+     */
+    public static long timeToTimeStamp(String times){
+        if (times==null){
+            return -1;
+        }else{
+            SimpleDateFormat sDate = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.getDefault());
+            Date date ;
+            try {
+                date = sDate.parse(times);
+                return date.getTime();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+        return -1;
+    }
+
+
+    /***
+     * 时间戳转标准时间
+     * @param times
+     * @return
+     */
+    public static String timeStampToTime(long times){
+        if (times==-1){
+            return null;
+        }else{
+            return  new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ", Locale.getDefault()).format(new Date(times * 1000));
+        }
+    }
 }

@@ -72,8 +72,6 @@
                 android:resource="@xml/authenticator" />
         </service>
 
-        <service android:name=".auth.UserAccountDataService"/>
-
         <meta-data
             android:name="BUG_HD_SDK_GENERAL_KEY"
             android:value="772bad6e8f4453b59426264a4309dced" />
