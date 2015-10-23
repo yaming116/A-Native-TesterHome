@@ -1,7 +1,6 @@
 package com.testerhome.nativeandroid.views;
 
 import android.app.ProgressDialog;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,7 +15,6 @@ import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
 import com.testerhome.nativeandroid.R;
 import com.testerhome.nativeandroid.auth.TesterHomeAccountService;
-import com.testerhome.nativeandroid.auth.UserAccountDataService;
 import com.testerhome.nativeandroid.models.UserDetailResponse;
 import com.testerhome.nativeandroid.networks.TesterHomeApi;
 import com.testerhome.nativeandroid.oauth2.AuthenticationService;
@@ -160,7 +158,6 @@ public class WebViewActivity extends BackBaseActivity {
                 if (userDetailResponse.getUser() != null) {
                     TesterHomeAccountService.getInstance(WebViewActivity.this)
                             .signIn(userDetailResponse.getUser().getLogin(), token, userDetailResponse.getUser());
-                    startService(new Intent(WebViewActivity.this, UserAccountDataService.class));
                     WebViewActivity.this.finish();
                 }
             }
