@@ -23,9 +23,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
 
         addPreferencesFromResource(R.xml.pref_general);
 
-        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String themePref = sharedPref.getString(KEY_PREF_THEME, "");
-        findPreference(KEY_PREF_THEME).setSummary(getKeyPrefThemeString(themePref));
+        findPreference(KEY_PREF_THEME).setSummary(getKeyPrefThemeString(KEY_PREF_THEME));
 
     }
 
@@ -51,11 +49,12 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         }
     }
 
-    private String getKeyPrefThemeString(String value){
+    private String getKeyPrefThemeString(String key) {
         try {
-            return getResources().getStringArray(R.array.pref_theme_list_titles)[Integer.parseInt(value)];
-        }catch (Exception ex){
-            return value;
+            Integer index = Integer.parseInt(PreferenceManager.getDefaultSharedPreferences(getActivity()).getString(key, ""));
+            return getResources().getStringArray(R.array.pref_theme_list_titles)[index];
+        } catch (Exception ex) {
+            return "Light";
         }
     }
 
