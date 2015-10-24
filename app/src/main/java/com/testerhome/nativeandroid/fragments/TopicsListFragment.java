@@ -8,6 +8,10 @@ import android.util.Log;
 
 import com.testerhome.nativeandroid.Config;
 import com.testerhome.nativeandroid.R;
+import com.testerhome.nativeandroid.dao.TopicDB;
+import com.testerhome.nativeandroid.dao.TopicDBDao;
+import com.testerhome.nativeandroid.dao.UserDB;
+import com.testerhome.nativeandroid.dao.UserDBDao;
 import com.testerhome.nativeandroid.db.DBManager;
 import com.testerhome.nativeandroid.models.TopicEntity;
 import com.testerhome.nativeandroid.models.TopicsResponse;
@@ -22,10 +26,6 @@ import java.util.List;
 
 import butterknife.Bind;
 import de.greenrobot.dao.query.QueryBuilder;
-import greendao.TopicDB;
-import greendao.TopicDBDao;
-import greendao.UserDB;
-import greendao.UserDBDao;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -168,8 +168,12 @@ public class TopicsListFragment extends BaseFragment implements Callback<TopicsR
 
 
     private List<TopicEntity> getDataFromDB() {
-        TopicDBDao topicDBDao = DBManager.getInstance().getDaoSession().getTopicDBDao();
-        UserDBDao userDBDao = DBManager.getInstance().getDaoSession().getUserDBDao();
+
+        DBManager dbManager = DBManager.getInstance(getActivity());
+
+        TopicDBDao topicDBDao = dbManager.getTopicDao();
+        UserDBDao userDBDao = dbManager.getUserDao();
+
         QueryBuilder<TopicDB> qb = topicDBDao.queryBuilder();
         List<TopicDB> topicDBList ;
         List<TopicEntity> topicList = new ArrayList<>();
@@ -237,8 +241,11 @@ public class TopicsListFragment extends BaseFragment implements Callback<TopicsR
 
 
     private void updateDaoDb(TopicsResponse topics) {
-        TopicDBDao topicDBDao = DBManager.getInstance().getDaoSession().getTopicDBDao();
-        UserDBDao userDBDao = DBManager.getInstance().getDaoSession().getUserDBDao();
+        DBManager dbManager = DBManager.getInstance(getActivity());
+
+        TopicDBDao topicDBDao = dbManager.getTopicDao();
+        UserDBDao userDBDao = dbManager.getUserDao();
+
         List<UserDB> userDBList = new ArrayList<>();
         for(int i=0;i<topics.getTopics().size();i++){
             TopicEntity topic = topics.getTopics().get(i);

@@ -4,7 +4,7 @@ project(':TesterHomeDaoGenerator') {
 
     mainClassName = "pl.surecase.eu.TesterHomeDaoGenerator"
     // edit output direction
-    def outputDir = "../app/src/main/java-gen"
+    def outputDir = "../app/src/main/java"
 
     dependencies {
         compile fileTree(dir: 'libs', include: ['*.jar'])
@@ -19,4 +19,7 @@ project(':TesterHomeDaoGenerator') {
     run {
         args outputDir
     }
+}
+dependencies {
+    compile 'de.greenrobot:greendao-generator:2.0.0'
 }

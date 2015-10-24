@@ -6,7 +6,6 @@ import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.imagepipeline.backends.okhttp.OkHttpImagePipelineConfigFactory;
 import com.facebook.imagepipeline.core.ImagePipelineConfig;
 import com.squareup.okhttp.OkHttpClient;
-import com.testerhome.nativeandroid.db.DBManager;
 
 import im.fir.sdk.FIR;
 
@@ -25,7 +24,6 @@ public class NativeApp extends Application {
                 .newBuilder(this, new OkHttpClient())
                 .build();
         Fresco.initialize(this, config);
-        DBManager.init(this);
     }
 
 }

@@ -2,45 +2,37 @@ package com.testerhome.nativeandroid.db;
 
 import android.content.Context;
 
-import greendao.DaoMaster;
-import greendao.DaoSession;
+import com.testerhome.nativeandroid.dao.DaoMaster;
+import com.testerhome.nativeandroid.dao.DaoSession;
+import com.testerhome.nativeandroid.dao.TopicDBDao;
+import com.testerhome.nativeandroid.dao.UserDBDao;
 
 /**
  * Created by cvtpc on 2015/4/6.
  */
 public class DBManager {
-    private static Context sContext;
-    private static volatile DBManager sInstance = null;
+
+    private static DBManager sInstance = null;
     private DaoMaster daoMaster;
     private DaoSession daoSession;
 
-    private DBManager() {
-        if (sContext == null)
-            throw new IllegalAccessError("should initial DbManager before calling this constructor.");
-    }
-
-    public static DBManager getInstance() {
+    public static synchronized DBManager getInstance(Context ctx) {
         if (sInstance == null)
-            sInstance = new DBManager();
+            sInstance = new DBManager(ctx.getApplicationContext());
         return sInstance;
     }
 
-    public static void init(Context paramContext) {
-        sContext = paramContext;
+    private DBManager(Context context) {
+        DaoMaster.DevOpenHelper helper = new DaoMaster.DevOpenHelper(context, "testerhome.db", null);
+        daoMaster = new DaoMaster(helper.getWritableDatabase());
+        daoSession = daoMaster.newSession();
     }
 
-    public DaoMaster getDaoMaster() {
-        if (this.daoMaster == null)
-            this.daoMaster = new DaoMaster(new DaoMaster.DevOpenHelper(sContext, "testerhome.db", null).getWritableDatabase());
-        return this.daoMaster;
+    public TopicDBDao getTopicDao(){
+        return daoSession.getTopicDBDao();
     }
 
-    public DaoSession getDaoSession() {
-        if (this.daoSession == null) {
-            if (this.daoMaster == null)
-                this.daoMaster = getDaoMaster();
-            this.daoSession = this.daoMaster.newSession();
-        }
-        return this.daoSession;
+    public UserDBDao getUserDao(){
+        return daoSession.getUserDBDao();
     }
 }

@@ -7,7 +7,7 @@ import de.greenrobot.daogenerator.Schema;
 public class TesterHomeDaoGenerator {
 
     public static void main(String args[]) throws Exception {
-        Schema schema = new Schema(1, "greendao");
+        Schema schema = new Schema(1, "com.testerhome.nativeandroid.dao");
         initTopic(schema);
         initUser(schema);
         new DaoGenerator().generateAll(schema, args[0]);
@@ -18,6 +18,8 @@ public class TesterHomeDaoGenerator {
 
     private static void initUser(Schema schema) {
         Entity user = schema.addEntity("UserDB");
+        user.implementsSerializable();
+        user.setHasKeepSections(true);
         user.addLongProperty("user_id").primaryKey();
         user.addStringProperty("login");
         user.addStringProperty("name");
@@ -26,6 +28,8 @@ public class TesterHomeDaoGenerator {
 
     private static void initTopic(Schema schema) {
         Entity topic = schema.addEntity("TopicDB");
+        topic.implementsSerializable();
+        topic.setHasKeepSections(true);
         topic.addLongProperty("id").primaryKey();
         topic.addStringProperty("title");
         topic.addBooleanProperty("is_hot");
