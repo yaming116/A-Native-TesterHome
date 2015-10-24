@@ -19,6 +19,9 @@ public class Config {
     public static final String FOLLOW = "Follow";
     public static final String TOPIC = "Topic";
 
+    public static final String PRAISE_TOPIC = "topic";
+    public static final String PRAISE_REPLY = "reply";
+
     public static String getImageUrl(String imagePath){
         if(!imagePath.contains("https://testerhome.com")){
             return "https://testerhome.com".concat(imagePath);
