@@ -116,6 +116,9 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 fragmentTransaction.add(R.id.realtabcontent, homeFragment);
             }
             fragmentTransaction.show(homeFragment);
+            if (toolbar != null) {
+                toolbar.setTitle("社区");
+            }
         } else if (id == R.id.nav_topic) {
             if (topicFragment == null) {
                 topicFragment = TopicsListFragment.newInstance(Config.TOPICS_TYPE_LAST_ACTIVED);
@@ -123,6 +126,9 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
             }
             fragmentTransaction.show(topicFragment);
+            if (toolbar != null) {
+                toolbar.setTitle("话题");
+            }
         } else if (id == R.id.nav_job) {
             if (jobFragment == null) {
                 jobFragment = TopicsListFragment.newInstance(Config.TOPIC_JOB_NODE_ID);
@@ -130,6 +136,9 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
             }
             fragmentTransaction.show(jobFragment);
+            if (toolbar != null) {
+                toolbar.setTitle("招聘");
+            }
         } else if (id == R.id.nav_settings) {
             startActivity(new Intent(this, SettingsActivity.class));
             return true;
