@@ -5,7 +5,7 @@ package com.testerhome.nativeandroid.dao;
 // KEEP INCLUDES - put your custom includes here
 // KEEP INCLUDES END
 /**
- * Entity mapped to table TOPIC_DB.
+ * Entity mapped to table "TOPIC_DB".
  */
 public class TopicDB implements java.io.Serializable {
 
