@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.webkit.WebView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,7 +30,6 @@ import butterknife.OnClick;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
-import us.feras.mdv.MarkdownView;
 
 /**
  * Created by vclub on 15/9/17.
@@ -53,7 +53,7 @@ public class TopicDetailFragment extends BaseFragment {
     private String mTopicId;
     private TesterUser mCurrentUser;
     @Bind(R.id.tv_detail_body)
-    MarkdownView tvDetailBody;
+    WebView tvDetailBody;
 
     @Bind(R.id.tv_detail_collect)
     TextView tvDetailCollect;
