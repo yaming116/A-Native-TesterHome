@@ -1,5 +1,6 @@
 package com.testerhome.nativeandroid.networks;
 
+import com.testerhome.nativeandroid.BuildConfig;
 import com.testerhome.nativeandroid.Config;
 
 import retrofit.RestAdapter;
@@ -27,6 +28,7 @@ public class TesterHomeApi {
 
     private RestAdapter buildRestAdapter() {
         return new RestAdapter.Builder()
+                .setLogLevel(BuildConfig.DEBUG? RestAdapter.LogLevel.FULL: RestAdapter.LogLevel.NONE)
                 .setEndpoint(Config.BASE_URL)
                 .setClient(new OkClient())
                 .build();
@@ -35,4 +37,5 @@ public class TesterHomeApi {
     public TopicsService getTopicsService() {
         return topicsService;
     }
+
 }

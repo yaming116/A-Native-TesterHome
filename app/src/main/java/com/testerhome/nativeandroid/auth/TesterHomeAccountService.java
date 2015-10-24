@@ -33,13 +33,6 @@ public class TesterHomeAccountService {
     private AccountManager mAccountManager;
     private Context mContext;
 
-
-//    private String access_token;
-//    private String token_type;
-//    private String expires_in;
-//    private String refresh_token;
-//    private String craete_at;
-
     public static synchronized TesterHomeAccountService getInstance(Context ctx){
         if (mInstance == null){
             mInstance = new TesterHomeAccountService(ctx.getApplicationContext());

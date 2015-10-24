@@ -125,7 +125,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             fragmentTransaction.show(topicFragment);
         } else if (id == R.id.nav_job) {
             if (jobFragment == null) {
-                jobFragment = TopicsListFragment.newInstance(Config.TOPIC_JOB_NODEID);
+                jobFragment = TopicsListFragment.newInstance(Config.TOPIC_JOB_NODE_ID);
                 fragmentTransaction.add(R.id.realtabcontent, jobFragment);
 
             }
