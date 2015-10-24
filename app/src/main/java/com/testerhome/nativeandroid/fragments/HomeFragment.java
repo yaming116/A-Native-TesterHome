@@ -39,6 +39,7 @@ public class HomeFragment extends BaseFragment {
 
         tabLayoutTopicsTab.setupWithViewPager(viewPagerTopics);
         tabLayoutTopicsTab.setTabsFromPagerAdapter(mAdapter);
+
     }
 
     public class TopicViewPagerAdapter extends FragmentPagerAdapter {

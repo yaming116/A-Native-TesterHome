@@ -15,6 +15,7 @@ import com.testerhome.nativeandroid.Config;
 import com.testerhome.nativeandroid.R;
 import com.testerhome.nativeandroid.auth.TesterHomeAccountService;
 import com.testerhome.nativeandroid.models.CollectTopicResonse;
+import com.testerhome.nativeandroid.models.PraiseEntity;
 import com.testerhome.nativeandroid.models.TesterUser;
 import com.testerhome.nativeandroid.models.TopicDetailEntity;
 import com.testerhome.nativeandroid.models.TopicDetailResponse;
@@ -57,6 +58,8 @@ public class TopicDetailFragment extends BaseFragment {
 
     @Bind(R.id.tv_detail_collect)
     TextView tvDetailCollect;
+    @Bind(R.id.tv_detail_praise)
+    TextView tvDetailPraise;
 
     public static TopicDetailFragment newInstance(String topicId) {
         Bundle args = new Bundle();
@@ -148,6 +151,27 @@ public class TopicDetailFragment extends BaseFragment {
                     Toast.makeText(getActivity(), "收藏成功", Toast.LENGTH_SHORT).show();
                     tvDetailCollect.setCompoundDrawablesWithIntrinsicBounds(R.drawable.btn_bookmark_off, 0, 0, 0);
                 }
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+                Toast.makeText(getActivity(), error.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+    }
+
+
+    @OnClick(R.id.tv_detail_praise)
+    void onDetailPraiseClick() {
+        if (mCurrentUser == null) {
+            mCurrentUser = TesterHomeAccountService.getInstance(getActivity()).getActiveAccountInfo();
+        }
+        TesterHomeApi.getInstance().getTopicsService().praiseTopic(Config.PRAISE_TOPIC, mTopicId, mCurrentUser.getAccess_token(), new Callback<PraiseEntity>() {
+            @Override
+            public void success(PraiseEntity praiseEntity, Response response) {
+                Toast.makeText(getActivity(), "点赞成功", Toast.LENGTH_SHORT).show();
+                tvDetailPraise.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_heart_red, 0, 0, 0);
             }
 
             @Override

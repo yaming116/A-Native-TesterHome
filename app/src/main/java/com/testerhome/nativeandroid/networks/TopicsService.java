@@ -3,6 +3,7 @@ package com.testerhome.nativeandroid.networks;
 import com.testerhome.nativeandroid.models.CollectTopicResonse;
 import com.testerhome.nativeandroid.models.CreateReplyResponse;
 import com.testerhome.nativeandroid.models.NotificationResponse;
+import com.testerhome.nativeandroid.models.PraiseEntity;
 import com.testerhome.nativeandroid.models.TopicDetailResponse;
 import com.testerhome.nativeandroid.models.TopicReplyResponse;
 import com.testerhome.nativeandroid.models.TopicsResponse;
@@ -79,4 +80,10 @@ public interface TopicsService {
     void collectTopic(@Path("id") String id,
                       @Query("access_token") String accessToken,
                       Callback<CollectTopicResonse> callback);
+
+    @POST("/likes.json")
+    void praiseTopic(@Query("obj_type") String objType,
+                     @Query("obj_id") String objId,
+                     @Query("access_token") String accessToken,
+                     Callback<PraiseEntity> callback);
 }

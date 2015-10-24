@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
@@ -43,7 +44,7 @@ public class WebViewActivity extends BackBaseActivity {
 
         FrameLayout layout = (FrameLayout) findViewById(R.id.container);
 
-        WebView mWebView = new WebView(this);
+        final WebView mWebView = new WebView(this);
 
         layout.addView(mWebView);
 
@@ -64,6 +65,7 @@ public class WebViewActivity extends BackBaseActivity {
                     }
                 } else if (url.equals(AuthenticationService.HTTPS_BASEURL)) {
                     url = AuthenticationService.getAuthorizationUrl();
+                    mWebView.setVisibility(View.INVISIBLE);
                 }
 //                return super.shouldOverrideUrlLoading(view, url);
                 view.loadUrl(url);
