@@ -5,6 +5,7 @@ import android.graphics.Paint;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -40,8 +41,9 @@ public class TopicReplyAdapter extends BaseAdapter<TopicReplyEntity> {
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
         ReplyViewHolder holder = (ReplyViewHolder) viewHolder;
 
-        holder.topic = mItems.get(position);
-        if (holder.topic.isDeleted()) {
+        TopicReplyEntity topicReplyEntity = mItems.get(position);
+
+        if (topicReplyEntity.isDeleted()) {
             holder.userAvatar.setVisibility(View.INVISIBLE);
             holder.topicItemAuthor.setVisibility(View.INVISIBLE);
             holder.topicTime.setVisibility(View.INVISIBLE);
@@ -53,13 +55,13 @@ public class TopicReplyAdapter extends BaseAdapter<TopicReplyEntity> {
             holder.userAvatar.setVisibility(View.VISIBLE);
             holder.topicItemAuthor.setVisibility(View.VISIBLE);
             holder.topicTime.setVisibility(View.VISIBLE);
-            holder.topicTime.setText(StringUtils.formatPublishDateTime(holder.topic.getCreated_at()));
-            holder.topicItemAuthor.setText(holder.topic.getUser().getName());
-            String html = holder.topic.getBody_html();
+            holder.topicTime.setText(StringUtils.formatPublishDateTime(topicReplyEntity.getCreated_at()));
+            holder.topicItemAuthor.setText(TextUtils.isEmpty(topicReplyEntity.getUser().getName()) ? topicReplyEntity.getUser().getLogin() : topicReplyEntity.getUser().getName());
+            String html = topicReplyEntity.getBody_html();
 //            html = html.replaceAll("src=\"/photo", "src=\"" + Config.BASEURL + "/photo");
             holder.topicItemBody.setText(Html.fromHtml(html));
             holder.topicItemBody.getPaint().setFlags(0);
-            holder.userAvatar.setImageURI(Uri.parse(Config.getImageUrl(holder.topic.getUser().getAvatar_url())));
+            holder.userAvatar.setImageURI(Uri.parse(Config.getImageUrl(topicReplyEntity.getUser().getAvatar_url())));
 
             if (position == mItems.size() - 1 && mListener != null) {
                 mListener.onListEnded();
@@ -79,10 +81,8 @@ public class TopicReplyAdapter extends BaseAdapter<TopicReplyEntity> {
 
     public static class ReplyViewHolder extends RecyclerView.ViewHolder {
 
-
         @Bind(R.id.id_praise_reply_layout)
         LinearLayout praiseReplyLayout;
-
 
         @Bind(R.id.id_topic_item_author)
         TextView topicItemAuthor;
@@ -94,8 +94,6 @@ public class TopicReplyAdapter extends BaseAdapter<TopicReplyEntity> {
 
         @Bind(R.id.id_user_avatar)
         SimpleDraweeView userAvatar;
-
-        public TopicReplyEntity topic;
 
         public ReplyViewHolder(View itemView) {
             super(itemView);

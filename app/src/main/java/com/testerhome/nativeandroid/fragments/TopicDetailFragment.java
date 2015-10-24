@@ -138,19 +138,21 @@ public class TopicDetailFragment extends BaseFragment {
 
     @OnClick(R.id.tv_detail_collect)
     void onDetailCollectClick() {
-        if (mCurrentUser==null){
+        if (mCurrentUser == null) {
             mCurrentUser = TesterHomeAccountService.getInstance(getActivity()).getActiveAccountInfo();
         }
         TesterHomeApi.getInstance().getTopicsService().collectTopic(mTopicId, mCurrentUser.getAccess_token(), new Callback<CollectTopicResonse>() {
             @Override
             public void success(CollectTopicResonse collectTopicResonse, Response response) {
-                if (collectTopicResonse.getOk()==1){
-                    Toast.makeText(getActivity(),"收藏成功",Toast.LENGTH_SHORT).show();
+                if (collectTopicResonse.getOk() == 1) {
+                    Toast.makeText(getActivity(), "收藏成功", Toast.LENGTH_SHORT).show();
+                    tvDetailCollect.setCompoundDrawablesWithIntrinsicBounds(R.drawable.btn_bookmark_off, 0, 0, 0);
                 }
             }
+
             @Override
             public void failure(RetrofitError error) {
-                Toast.makeText(getActivity(),error.getMessage(),Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), error.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
 

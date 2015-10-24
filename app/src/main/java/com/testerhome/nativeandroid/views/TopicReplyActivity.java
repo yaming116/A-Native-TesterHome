@@ -14,6 +14,7 @@ import com.testerhome.nativeandroid.fragments.TopicReplyFragment;
 import com.testerhome.nativeandroid.models.CreateReplyResponse;
 import com.testerhome.nativeandroid.models.TesterUser;
 import com.testerhome.nativeandroid.networks.TesterHomeApi;
+import com.testerhome.nativeandroid.utils.DeviceUtil;
 import com.testerhome.nativeandroid.views.base.BackBaseActivity;
 
 import butterknife.Bind;
@@ -49,9 +50,11 @@ public class TopicReplyActivity extends BackBaseActivity {
                 .getBoolean(SettingsFragment.KEY_PREF_COMMENT_WITH_SNACK, true);
     }
 
+    private TopicReplyFragment fragment;
+
     private void setupView(String topicId) {
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.container, TopicReplyFragment.newInstance(topicId))
+                .replace(R.id.container, fragment = TopicReplyFragment.newInstance(topicId))
                 .commit();
     }
 
@@ -71,7 +74,8 @@ public class TopicReplyActivity extends BackBaseActivity {
             String replyBody = mEtComment.getText().toString();
 
             if (isCommentWithSnack){
-                replyBody = replyBody.concat("\n").concat("来自Android客户端");
+                replyBody = replyBody.concat("\n\n")
+                        .concat("—— 来自TesterHome官方 [安卓客户端](http://fir.im/p9vs)");
             }
 
             if (mCurrentUser == null) {
@@ -87,6 +91,11 @@ public class TopicReplyActivity extends BackBaseActivity {
                                         // 发送成功
                                         mEtComment.setText("");
                                         // TODO: 15/10/21 hide soft keyboard
+                                        DeviceUtil.hideSoftInput(TopicReplyActivity.this);
+                                        // refresh list and move to end
+                                        if (fragment != null){
+                                            fragment.scrollToEnd();
+                                        }
                                     } else {
                                         Snackbar.make(mSendComment, createReplyResponse.getError().toString(), Snackbar.LENGTH_SHORT).show();
                                     }

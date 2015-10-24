@@ -64,7 +64,10 @@ public class TopicReplyFragment extends BaseFragment {
                 }
             }
         });
-        swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_light, android.R.color.holo_red_light, android.R.color.holo_orange_light, android.R.color.holo_green_light);
+        swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_light,
+                android.R.color.holo_red_light,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_green_light);
 
         recyclerViewTopicList.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerViewTopicList.addItemDecoration(new DividerItemDecoration(getActivity(),
@@ -79,7 +82,6 @@ public class TopicReplyFragment extends BaseFragment {
             }
         });
     }
-
 
     private void loadTopicReplies(boolean showloading) {
 
@@ -127,6 +129,11 @@ public class TopicReplyFragment extends BaseFragment {
                                 + error.getUrl());
                     }
                 });
+    }
+
+
+    public void scrollToEnd() {
+        recyclerViewTopicList.scrollToPosition(mAdatper.getItemCount());
     }
 
 }

@@ -47,7 +47,7 @@ public class TopicsListAdapter extends BaseAdapter<TopicEntity> {
 
         holder.textViewTopicTitle.setText(topic.getTitle());
 
-        holder.topicUsername.setText(TextUtils.isEmpty(topic.getUser().getLogin()) ? "匿名用户" : topic.getUser().getName());
+        holder.topicUsername.setText(TextUtils.isEmpty(topic.getUser().getName()) ? topic.getUser().getLogin() : topic.getUser().getName());
 
         holder.topicPublishDate.setText(StringUtils.formatPublishDateTime(topic.getCreated_at()));
 
@@ -60,7 +60,7 @@ public class TopicsListAdapter extends BaseAdapter<TopicEntity> {
         holder.topicItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String topicId = (String)v.getTag();
+                String topicId = (String) v.getTag();
                 mContext.startActivity(new Intent(mContext, TopicDetailActivity.class).putExtra("topic_id", topicId));
             }
         });
@@ -106,7 +106,7 @@ public class TopicsListAdapter extends BaseAdapter<TopicEntity> {
 
         public TopicItemViewHolder(View itemView) {
             super(itemView);
-            badgeView= new BadgeView(itemView.getContext());
+            badgeView = new BadgeView(itemView.getContext());
             ButterKnife.bind(this, itemView);
         }
     }
