@@ -115,6 +115,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 homeFragment = new HomeFragment();
                 fragmentTransaction.add(R.id.realtabcontent, homeFragment);
             }
+
             fragmentTransaction.show(homeFragment);
             if (toolbar != null) {
                 toolbar.setTitle("社区");

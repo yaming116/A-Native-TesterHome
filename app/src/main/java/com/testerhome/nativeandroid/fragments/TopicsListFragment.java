@@ -70,6 +70,8 @@ public class TopicsListFragment extends BaseFragment implements Callback<TopicsR
         loadTopics(true);
     }
 
+
+
     @Override
     protected void setupView() {
         mAdatper = new TopicsListAdapter(getActivity());
