@@ -3,7 +3,9 @@ package com.testerhome.nativeandroid.views;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -15,6 +17,7 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,13 +26,16 @@ import com.testerhome.nativeandroid.Config;
 import com.testerhome.nativeandroid.R;
 import com.testerhome.nativeandroid.auth.TesterHomeAccountService;
 import com.testerhome.nativeandroid.fragments.MarkdownFragment;
+import com.testerhome.nativeandroid.fragments.SettingsFragment;
 import com.testerhome.nativeandroid.fragments.TopicReplyFragment;
 import com.testerhome.nativeandroid.models.CollectTopicResonse;
+import com.testerhome.nativeandroid.models.CreateReplyResponse;
 import com.testerhome.nativeandroid.models.PraiseEntity;
 import com.testerhome.nativeandroid.models.TesterUser;
 import com.testerhome.nativeandroid.models.TopicDetailEntity;
 import com.testerhome.nativeandroid.models.TopicDetailResponse;
 import com.testerhome.nativeandroid.networks.TesterHomeApi;
+import com.testerhome.nativeandroid.utils.DeviceUtil;
 import com.testerhome.nativeandroid.utils.StringUtils;
 import com.testerhome.nativeandroid.views.base.BackBaseActivity;
 
@@ -74,7 +80,7 @@ public class TopicDetailActivity extends BackBaseActivity {
         mShareActionProvider = new ShareActionProvider(this);
         MenuItemCompat.setActionProvider(item, mShareActionProvider);
 
-        if (!TextUtils.isEmpty(mTopicId)){
+        if (!TextUtils.isEmpty(mTopicId)) {
             updateTopicShareUrl(String.format("https://testerhome.com/topics/%s", mTopicId));
         }
 
@@ -82,7 +88,7 @@ public class TopicDetailActivity extends BackBaseActivity {
     }
 
     public void updateTopicShareUrl(String topicUrl) {
-        if (mShareActionProvider != null){
+        if (mShareActionProvider != null) {
             Intent intent = new Intent();
             intent.setAction(Intent.ACTION_SEND);
             intent.setType("text/plain");
@@ -99,7 +105,7 @@ public class TopicDetailActivity extends BackBaseActivity {
 
     private TopicDetailPagerAdapter mAdapter;
 
-    private void setupView(){
+    private void setupView() {
         mAdapter = new TopicDetailPagerAdapter(getSupportFragmentManager());
         viewPagerTopics.setAdapter(mAdapter);
 
@@ -111,7 +117,7 @@ public class TopicDetailActivity extends BackBaseActivity {
 
     public class TopicDetailPagerAdapter extends FragmentPagerAdapter {
 
-        private String[] typeName = {"帖子","评论"};
+        private String[] typeName = {"帖子", "评论"};
         private String[] typeValue = {Config.TOPICS_TYPE_RECENT,
                 Config.TOPICS_TYPE_POPULAR};
 
@@ -121,12 +127,12 @@ public class TopicDetailActivity extends BackBaseActivity {
 
         @Override
         public Fragment getItem(int position) {
-            if (position == 0){
-                if (mMarkdownFragment == null){
+            if (position == 0) {
+                if (mMarkdownFragment == null) {
                     mMarkdownFragment = new MarkdownFragment();
                 }
                 return mMarkdownFragment;
-            }else
+            } else
                 return TopicReplyFragment.newInstance(mTopicId);
         }
 
@@ -173,7 +179,7 @@ public class TopicDetailActivity extends BackBaseActivity {
                         // 用户回复数
                         tvDetailRepliesCount.setText(String.format("%s条回复", topicEntity.getReplies_count()));
 
-                        if (mMarkdownFragment != null){
+                        if (mMarkdownFragment != null) {
                             mMarkdownFragment.showWebContent(topicDetailResponse.getTopic().getBody_html());
                         }
                     }
@@ -233,6 +239,7 @@ public class TopicDetailActivity extends BackBaseActivity {
         });
 
     }
+
     @Bind(R.id.llAddComment)
     View mAddCommentPanel;
 
@@ -240,8 +247,62 @@ public class TopicDetailActivity extends BackBaseActivity {
     FloatingActionButton mFabAddComment;
 
     @OnClick(R.id.fab_add_comment)
-    void onFabClick(){
+    void onFabClick() {
         mAddCommentPanel.setVisibility(View.VISIBLE);
         mFabAddComment.setVisibility(View.GONE);
+    }
+
+    @Bind(R.id.etComment)
+    EditText mEtComment;
+
+    // 回帖子
+    @OnClick(R.id.btnSendComment)
+    void onSendCommentClick() {
+        mEtComment.setError(null);
+
+        if (TextUtils.isEmpty(mEtComment.getText().toString())) {
+            mEtComment.setError("请输入回复内容");
+        } else {
+            String replyBody = mEtComment.getText().toString();
+
+            if (PreferenceManager.getDefaultSharedPreferences(this)
+                    .getBoolean(SettingsFragment.KEY_PREF_COMMENT_WITH_SNACK, true)) {
+                replyBody = replyBody.concat("\n\n")
+                        .concat("—— 来自TesterHome官方 [安卓客户端](http://fir.im/p9vs)");
+            }
+
+            if (mCurrentUser == null) {
+                mCurrentUser = TesterHomeAccountService.getInstance(this).getActiveAccountInfo();
+            }
+            TesterHomeApi.getInstance().getTopicsService()
+                    .createReply(mTopicId,
+                            replyBody,
+                            mCurrentUser.getAccess_token(),
+                            new Callback<CreateReplyResponse>() {
+                                @Override
+                                public void success(CreateReplyResponse createReplyResponse, Response response) {
+                                    if (createReplyResponse.getError() == null) {
+                                        // 发送成功
+                                        mEtComment.setText("");
+                                        DeviceUtil.hideSoftInput(TopicDetailActivity.this);
+                                        mAddCommentPanel.setVisibility(View.GONE);
+                                        // TODO: refresh list and move to end
+                                    } else {
+                                        Snackbar.make(mFabAddComment,
+                                                createReplyResponse.getError().toString(),
+                                                Snackbar.LENGTH_SHORT)
+                                                .show();
+                                    }
+                                }
+
+                                @Override
+                                public void failure(RetrofitError error) {
+                                    Snackbar.make(mFabAddComment,
+                                            error.getMessage(),
+                                            Snackbar.LENGTH_SHORT)
+                                            .show();
+                                }
+                            });
+        }
     }
 }
