@@ -17,6 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_toLeftOf="@+id/sdv_detail_user_avatar"
+            android:textColor="@android:color/white"
             tools:text="2015 Selenium 大会" />
 
         <com.facebook.drawee.view.SimpleDraweeView
@@ -32,6 +33,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/tv_detail_title"
+            android:textColor="@android:color/white"
             tools:text="node name." />
 
         <TextView
@@ -40,6 +42,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/tv_detail_title"
             android:layout_toRightOf="@+id/tv_detail_name"
+            android:textColor="@android:color/white"
             tools:text="username." />
 
         <TextView
@@ -47,6 +50,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/tv_detail_name"
+            android:textColor="@android:color/white"
             tools:text="datetime." />
     </RelativeLayout>
 
@@ -63,7 +67,9 @@
             android:layout_height="wrap_content"
             android:clickable="true"
             android:drawableLeft="@drawable/btn_heart"
-            android:text="赞" />
+            android:drawablePadding="3dp"
+            android:text="赞"
+            android:textColor="@android:color/white" />
 
         <TextView
             android:id="@+id/tv_detail_collect"
@@ -73,7 +79,9 @@
             android:layout_marginRight="16dp"
             android:clickable="true"
             android:drawableLeft="@drawable/btn_bookmark"
-            android:text="收藏" />
+            android:drawablePadding="3dp"
+            android:text="收藏"
+            android:textColor="@android:color/white" />
 
         <TextView
             android:id="@+id/tv_detail_replies_count"
@@ -81,6 +89,8 @@
             android:layout_height="wrap_content"
             android:clickable="true"
             android:drawableLeft="@drawable/ic_comment_outline_grey"
+            android:drawablePadding="3dp"
+            android:textColor="@android:color/white"
             tools:text="0条回复" />
     </LinearLayout>
 
