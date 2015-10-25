@@ -3,6 +3,7 @@ package com.testerhome.nativeandroid.views;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -13,6 +14,7 @@ import android.support.v7.widget.ShareActionProvider;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -230,5 +232,16 @@ public class TopicDetailActivity extends BackBaseActivity {
             }
         });
 
+    }
+    @Bind(R.id.llAddComment)
+    View mAddCommentPanel;
+
+    @Bind(R.id.fab_add_comment)
+    FloatingActionButton mFabAddComment;
+
+    @OnClick(R.id.fab_add_comment)
+    void onFabClick(){
+        mAddCommentPanel.setVisibility(View.VISIBLE);
+        mFabAddComment.setVisibility(View.GONE);
     }
 }
