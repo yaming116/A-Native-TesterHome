@@ -51,10 +51,6 @@
             android:name=".views.AccountTopicsActivity"
             android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity
-            android:name=".views.TopicReplyActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:windowSoftInputMode="adjustResize" />
-        <activity
             android:name=".views.AccountNotificationActivity"
             android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity
