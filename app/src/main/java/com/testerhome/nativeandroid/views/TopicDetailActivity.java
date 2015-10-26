@@ -48,7 +48,7 @@ import retrofit.client.Response;
 /**
  * Created by vclub on 15/9/17.
  */
-public class TopicDetailActivity extends BackBaseActivity {
+public class TopicDetailActivity extends BackBaseActivity implements TopicReplyFragment.ReplyUpdateListener {
 
     private String mTopicId;
     private ShareActionProvider mShareActionProvider;
@@ -64,7 +64,6 @@ public class TopicDetailActivity extends BackBaseActivity {
             mTopicId = getIntent().getStringExtra("topic_id");
 
             setupView();
-
             loadInfo();
         } else {
             finish();
@@ -114,6 +113,14 @@ public class TopicDetailActivity extends BackBaseActivity {
     }
 
     private MarkdownFragment mMarkdownFragment;
+    private TopicReplyFragment mTopicReplyFragment;
+
+    @Override
+    public void updateReplyCount(int count) {
+        if (tvDetailRepliesCount != null){
+            tvDetailRepliesCount.setText(String.valueOf(count));
+        }
+    }
 
     public class TopicDetailPagerAdapter extends FragmentPagerAdapter {
 
@@ -132,8 +139,11 @@ public class TopicDetailActivity extends BackBaseActivity {
                     mMarkdownFragment = new MarkdownFragment();
                 }
                 return mMarkdownFragment;
-            } else
-                return TopicReplyFragment.newInstance(mTopicId);
+            } else {
+                if (mTopicReplyFragment == null)
+                    mTopicReplyFragment = TopicReplyFragment.newInstance(mTopicId, TopicDetailActivity.this);
+                return mTopicReplyFragment;
+            }
         }
 
         @Override
@@ -287,6 +297,7 @@ public class TopicDetailActivity extends BackBaseActivity {
                                         DeviceUtil.hideSoftInput(TopicDetailActivity.this);
                                         mAddCommentPanel.setVisibility(View.GONE);
                                         // TODO: refresh list and move to end
+                                        mTopicReplyFragment.refreshReply();
                                     } else {
                                         Snackbar.make(mFabAddComment,
                                                 createReplyResponse.getError().toString(),

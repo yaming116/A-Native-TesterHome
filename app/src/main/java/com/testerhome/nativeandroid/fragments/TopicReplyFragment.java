@@ -32,10 +32,11 @@ public class TopicReplyFragment extends BaseFragment {
     private TopicReplyAdapter mAdatper;
     private String mTopicId;
 
-    public static TopicReplyFragment newInstance(String id) {
+    public static TopicReplyFragment newInstance(String id, ReplyUpdateListener listener) {
         Bundle args = new Bundle();
         args.putString("id", id);
         TopicReplyFragment fragment = new TopicReplyFragment();
+        fragment.setReplyUpdateListener(listener);
         fragment.setArguments(args);
         return fragment;
     }
@@ -83,6 +84,10 @@ public class TopicReplyFragment extends BaseFragment {
         });
     }
 
+    public void refreshReply(){
+        loadTopicReplies(true);
+    }
+
     private void loadTopicReplies(boolean showloading) {
 
         if (swipeRefreshLayout != null) {
@@ -105,6 +110,9 @@ public class TopicReplyFragment extends BaseFragment {
 
                             if (mNextCursor == 0) {
                                 mAdatper.setItems(topicReplyResponse.getTopicReply());
+                                if (mReplyUpdateListener != null) {
+                                    mReplyUpdateListener.updateReplyCount(topicReplyResponse.getTopicReply().size());
+                                }
                             } else {
                                 mAdatper.addItems(topicReplyResponse.getTopicReply());
                             }
@@ -131,6 +139,15 @@ public class TopicReplyFragment extends BaseFragment {
                 });
     }
 
+    public interface ReplyUpdateListener{
+        void updateReplyCount(int count);
+    }
+
+    private ReplyUpdateListener mReplyUpdateListener;
+
+    public void setReplyUpdateListener(ReplyUpdateListener mReplyUpdateListener) {
+        this.mReplyUpdateListener = mReplyUpdateListener;
+    }
 
     public void scrollToEnd() {
         recyclerViewTopicList.scrollToPosition(mAdatper.getItemCount());

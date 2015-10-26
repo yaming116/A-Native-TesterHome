@@ -2,10 +2,12 @@ package com.testerhome.nativeandroid.views.adapters;
 
 import android.content.Context;
 import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -68,7 +70,7 @@ public class TopicReplyAdapter extends BaseAdapter<TopicReplyEntity> {
             holder.topicItemAuthor.setText(TextUtils.isEmpty(topicReplyEntity.getUser().getName()) ? topicReplyEntity.getUser().getLogin() : topicReplyEntity.getUser().getName());
             String html = topicReplyEntity.getBody_html();
 //            html = html.replaceAll("src=\"/photo", "src=\"" + Config.BASEURL + "/photo");
-            holder.topicItemBody.setText(Html.fromHtml(html));
+            holder.topicItemBody.setText(Html.fromHtml(html, imgGetter, null));
             holder.topicItemBody.getPaint().setFlags(0);
             holder.userAvatar.setImageURI(Uri.parse(Config.getImageUrl(topicReplyEntity.getUser().getAvatar_url())));
 
@@ -84,6 +86,22 @@ public class TopicReplyAdapter extends BaseAdapter<TopicReplyEntity> {
             mListener.onListEnded();
         }
     }
+
+    static Html.ImageGetter imgGetter = new Html.ImageGetter() {
+        @Override
+        public Drawable getDrawable(String source) {
+            Drawable drawable = null;
+            try {
+                drawable = Drawable.createFromPath(source);  // Or fetch it from the URL
+                // Important
+                drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable
+                        .getIntrinsicHeight());
+            }catch (Exception ex){
+                Log.e("error", ex.getMessage() + ", source+" + source);
+            }
+            return drawable;
+        }
+    };
 
     private EndlessListener mListener;
 
