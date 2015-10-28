@@ -6,6 +6,7 @@ import android.support.v7.widget.Toolbar;
 import android.widget.TextView;
 
 import com.testerhome.nativeandroid.R;
+import com.umeng.analytics.MobclickAgent;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -48,5 +49,17 @@ public class BaseActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         ButterKnife.unbind(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        MobclickAgent.onResume(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        MobclickAgent.onResume(this);
     }
 }
