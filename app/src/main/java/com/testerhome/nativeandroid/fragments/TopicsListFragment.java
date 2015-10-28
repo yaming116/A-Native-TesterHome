@@ -8,11 +8,15 @@ import android.util.Log;
 
 import com.testerhome.nativeandroid.Config;
 import com.testerhome.nativeandroid.R;
+import com.testerhome.nativeandroid.models.BannerEntity;
+import com.testerhome.nativeandroid.models.TopicEntity;
 import com.testerhome.nativeandroid.models.TopicsResponse;
 import com.testerhome.nativeandroid.networks.RestAdapterUtils;
 import com.testerhome.nativeandroid.networks.TopicsService;
 import com.testerhome.nativeandroid.views.adapters.TopicsListAdapter;
 import com.testerhome.nativeandroid.views.widgets.DividerItemDecoration;
+
+import java.util.ArrayList;
 
 import butterknife.Bind;
 import retrofit.Callback;
@@ -69,7 +73,6 @@ public class TopicsListFragment extends BaseFragment implements Callback<TopicsR
 
         loadTopics(true);
     }
-
 
 
     @Override
@@ -136,6 +139,9 @@ public class TopicsListFragment extends BaseFragment implements Callback<TopicsR
 
         if (topicsResponse.getTopics().size() > 0) {
             if (mNextCursor == 0) {
+                if (type == Config.TOPICS_TYPE_RECENT) {
+                    topicsResponse.getTopics().add(0, new TopicEntity(TopicsListAdapter.TOPIC_LIST_TYPE_BANNER, new ArrayList<BannerEntity>()));
+                }
                 mAdatper.setItems(topicsResponse.getTopics());
             } else {
                 mAdatper.addItems(topicsResponse.getTopics());

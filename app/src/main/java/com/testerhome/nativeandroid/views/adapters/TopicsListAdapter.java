@@ -3,6 +3,7 @@ package com.testerhome.nativeandroid.views.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -26,6 +27,9 @@ import butterknife.ButterKnife;
  */
 public class TopicsListAdapter extends BaseAdapter<TopicEntity> {
 
+    public static final int TOPIC_LIST_TYPE_BANNER = 0;
+    public static final int TOPIC_LIST_TYPE_TOPIC = 1;
+
 
     public TopicsListAdapter(Context context) {
         super(context);
@@ -33,37 +37,60 @@ public class TopicsListAdapter extends BaseAdapter<TopicEntity> {
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.list_item_topic, parent, false);
-        return new TopicItemViewHolder(view);
+        View view;
+
+        switch (viewType){
+            case TOPIC_LIST_TYPE_BANNER:
+                view = LayoutInflater.from(mContext).inflate(R.layout.list_item_banner, parent, false);
+                return new TopicBannerViewHolder(view);
+            default:
+                view = LayoutInflater.from(mContext).inflate(R.layout.list_item_topic, parent, false);
+                return new TopicItemViewHolder(view);
+        }
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return mItems.get(position).getType();
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
-        TopicItemViewHolder holder = (TopicItemViewHolder) viewHolder;
 
-        TopicEntity topic = mItems.get(position);
+        switch (getItemViewType(position)) {
+            case TOPIC_LIST_TYPE_BANNER:
+                TopicBannerViewHolder bannerViewHolder = (TopicBannerViewHolder)viewHolder;
+                bannerViewHolder.mTopicBanner.setAdapter(new TopicBannerAdapter());
+                break;
+            default:
+                TopicItemViewHolder holder = (TopicItemViewHolder) viewHolder;
 
-        holder.topicUserAvatar.setImageURI(Uri.parse(Config.getImageUrl(topic.getUser().getAvatar_url())));
+                TopicEntity topic = mItems.get(position);
 
-        holder.textViewTopicTitle.setText(topic.getTitle());
+                holder.topicUserAvatar.setImageURI(Uri.parse(Config.getImageUrl(topic.getUser().getAvatar_url())));
 
-        holder.topicUsername.setText(TextUtils.isEmpty(topic.getUser().getName()) ? topic.getUser().getLogin() : topic.getUser().getName());
+                holder.textViewTopicTitle.setText(topic.getTitle());
 
-        holder.topicPublishDate.setText(StringUtils.formatPublishDateTime(topic.getCreated_at()));
+                holder.topicUsername.setText(TextUtils.isEmpty(topic.getUser().getName()) ? topic.getUser().getLogin() : topic.getUser().getName());
 
-        holder.topicName.setText(topic.getNode_name());
+                holder.topicPublishDate.setText(StringUtils.formatPublishDateTime(topic.getCreated_at()));
 
-        holder.badgeView.setTargetView(holder.topicRepliesCount);
-        holder.badgeView.setHideOnNull(false);
-        holder.badgeView.setBadgeCount(topic.getReplies_count());
-        holder.topicItem.setTag(topic.getId());
-        holder.topicItem.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String topicId = (String) v.getTag();
-                mContext.startActivity(new Intent(mContext, TopicDetailActivity.class).putExtra("topic_id", topicId));
-            }
-        });
+                holder.topicName.setText(topic.getNode_name());
+
+                holder.badgeView.setTargetView(holder.topicRepliesCount);
+                holder.badgeView.setHideOnNull(false);
+                holder.badgeView.setBadgeCount(topic.getReplies_count());
+                holder.topicItem.setTag(topic.getId());
+                holder.topicItem.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String topicId = (String) v.getTag();
+                        mContext.startActivity(new Intent(mContext, TopicDetailActivity.class).putExtra("topic_id", topicId));
+                    }
+                });
+                break;
+        }
+
         if (position == mItems.size() - 1 && mListener != null) {
             mListener.onListEnded();
         }
@@ -107,6 +134,17 @@ public class TopicsListAdapter extends BaseAdapter<TopicEntity> {
         public TopicItemViewHolder(View itemView) {
             super(itemView);
             badgeView = new BadgeView(itemView.getContext());
+            ButterKnife.bind(this, itemView);
+        }
+    }
+
+    public class TopicBannerViewHolder extends RecyclerView.ViewHolder {
+
+        @Bind(R.id.vp_topic_banner)
+        ViewPager mTopicBanner;
+
+        public TopicBannerViewHolder(View itemView) {
+            super(itemView);
             ButterKnife.bind(this, itemView);
         }
     }
