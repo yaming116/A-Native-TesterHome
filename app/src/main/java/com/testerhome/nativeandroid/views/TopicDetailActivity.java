@@ -117,8 +117,8 @@ public class TopicDetailActivity extends BackBaseActivity implements TopicReplyF
 
     @Override
     public void updateReplyCount(int count) {
-        if (tvDetailRepliesCount != null){
-            tvDetailRepliesCount.setText(String.valueOf(count));
+        if (tvDetailRepliesCount != null) {
+            tvDetailRepliesCount.setText(getString(R.string.reply_count_info, count));
         }
     }
 
@@ -187,7 +187,7 @@ public class TopicDetailActivity extends BackBaseActivity implements TopicReplyF
                         sdvDetailUserAvatar.setImageURI(Uri.parse(Config.getImageUrl(topicEntity.getUser().getAvatar_url())));
 
                         // 用户回复数
-                        tvDetailRepliesCount.setText(String.format("%s条回复", topicEntity.getReplies_count()));
+                        tvDetailRepliesCount.setText(getString(R.string.reply_count_info, topicEntity.getReplies_count()));
 
                         if (mMarkdownFragment != null) {
                             mMarkdownFragment.showWebContent(topicDetailResponse.getTopic().getBody_html());
