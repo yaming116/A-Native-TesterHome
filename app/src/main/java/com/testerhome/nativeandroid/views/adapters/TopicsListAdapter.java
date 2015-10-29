@@ -21,6 +21,7 @@ import com.testerhome.nativeandroid.views.TopicDetailActivity;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import retrofit.http.HEAD;
 
 /**
  * Created by Bin Li on 2015/9/16.
@@ -68,9 +69,7 @@ public class TopicsListAdapter extends BaseAdapter<TopicEntity> {
                 TopicEntity topic = mItems.get(position);
 
                 holder.topicUserAvatar.setImageURI(Uri.parse(Config.getImageUrl(topic.getUser().getAvatar_url())));
-
                 holder.textViewTopicTitle.setText(topic.getTitle());
-
                 holder.topicUsername.setText(TextUtils.isEmpty(topic.getUser().getName()) ? topic.getUser().getLogin() : topic.getUser().getName());
 
                 holder.topicPublishDate.setText(StringUtils.formatPublishDateTime(topic.getCreated_at()));
@@ -133,6 +132,7 @@ public class TopicsListAdapter extends BaseAdapter<TopicEntity> {
 
         public TopicItemViewHolder(View itemView) {
             super(itemView);
+
             badgeView = new BadgeView(itemView.getContext());
             ButterKnife.bind(this, itemView);
         }
