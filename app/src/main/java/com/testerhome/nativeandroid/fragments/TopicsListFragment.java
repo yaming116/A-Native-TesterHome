@@ -139,7 +139,7 @@ public class TopicsListFragment extends BaseFragment implements Callback<TopicsR
 
         if (topicsResponse.getTopics().size() > 0) {
             if (mNextCursor == 0) {
-                if (type == Config.TOPICS_TYPE_RECENT) {
+                if (type.equals(Config.TOPICS_TYPE_RECENT)) {
                     topicsResponse.getTopics().add(0, new TopicEntity(TopicsListAdapter.TOPIC_LIST_TYPE_BANNER, new ArrayList<BannerEntity>()));
                 }
                 mAdatper.setItems(topicsResponse.getTopics());
