@@ -70,6 +70,12 @@ public class TopicDetailActivity extends BackBaseActivity implements TopicReplyF
         }
     }
 
+
+    @Override
+    public boolean enableTheme() {
+        return true;
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_topic_detail, menu);
