@@ -43,11 +43,15 @@ public class TopicsListAdapter extends BaseAdapter<TopicEntity> {
 
         TopicEntity topic = mItems.get(position);
 
+
+        String userName = TextUtils.isEmpty(topic.getUser().getName()) ? topic.getUser().getLogin() : topic.getUser().getName();
+
+
         holder.topicUserAvatar.setImageURI(Uri.parse(Config.getImageUrl(topic.getUser().getAvatar_url())));
 
         holder.textViewTopicTitle.setText(topic.getTitle());
 
-        holder.topicUsername.setText(TextUtils.isEmpty(topic.getUser().getName()) ? topic.getUser().getLogin() : topic.getUser().getName());
+        holder.topicUsername.setText(userName);
 
         holder.topicPublishDate.setText(StringUtils.formatPublishDateTime(topic.getCreated_at()));
 
@@ -106,6 +110,7 @@ public class TopicsListAdapter extends BaseAdapter<TopicEntity> {
 
         public TopicItemViewHolder(View itemView) {
             super(itemView);
+
             badgeView = new BadgeView(itemView.getContext());
             ButterKnife.bind(this, itemView);
         }
