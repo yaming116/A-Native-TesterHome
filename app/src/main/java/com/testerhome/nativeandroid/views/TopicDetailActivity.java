@@ -10,7 +10,6 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.ShareActionProvider;
 import android.text.TextUtils;
@@ -79,27 +78,18 @@ public class TopicDetailActivity extends BackBaseActivity implements TopicReplyF
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_topic_detail, menu);
-
-        MenuItem item = menu.findItem(R.id.action_share);
-
-        mShareActionProvider = new ShareActionProvider(this);
-        MenuItemCompat.setActionProvider(item, mShareActionProvider);
-
-        if (!TextUtils.isEmpty(mTopicId)) {
-            updateTopicShareUrl(String.format("https://testerhome.com/topics/%s", mTopicId));
-        }
-
         return super.onCreateOptionsMenu(menu);
     }
 
-    public void updateTopicShareUrl(String topicUrl) {
-        if (mShareActionProvider != null) {
-            Intent intent = new Intent();
-            intent.setAction(Intent.ACTION_SEND);
-            intent.setType("text/plain");
-            intent.putExtra(Intent.EXTRA_TEXT, topicUrl);
-            mShareActionProvider.setShareIntent(intent);
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.action_share){
+            final Intent target = new Intent(Intent.ACTION_SEND);
+            target.setType("text/plain");
+            target.putExtra(Intent.EXTRA_TEXT, String.format("https://testerhome.com/topics/%s", mTopicId));
+            startActivity(Intent.createChooser(target, "分享到"));
         }
+        return super.onOptionsItemSelected(item);
     }
 
     @Bind(R.id.tab_layout)
