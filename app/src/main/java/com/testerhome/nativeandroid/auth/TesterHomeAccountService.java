@@ -141,9 +141,13 @@ public class TesterHomeAccountService {
         user.setAccess_token(mAccountManager.getUserData(account, KEY_USER_DATA_TOKEN));
         user.setCompany(mAccountManager.getUserData(account, KEY_USER_DATA_COMPANY));
         user.setTagline(mAccountManager.getUserData(account, KEY_USER_DATA_TAGLINE));
-        user.setExpireDate(Long.valueOf(mAccountManager.getUserData(account, KEY_USER_DATA_EXPIRE_DATE)));
-        user.setRefresh_token(mAccountManager.getUserData(account, KEY_USER_DATA_REFRESH_TOKEN));
-        user.setCreate_at(Long.valueOf(mAccountManager.getUserData(account, KEY_USER_DATA_CREATE_AT)));
+
+        if (mAccountManager.getUserData(account,KEY_USER_DATA_REFRESH_TOKEN) != null){
+            user.setExpireDate(Long.valueOf(mAccountManager.getUserData(account, KEY_USER_DATA_EXPIRE_DATE)));
+            user.setRefresh_token(mAccountManager.getUserData(account, KEY_USER_DATA_REFRESH_TOKEN));
+            user.setCreate_at(Long.valueOf(mAccountManager.getUserData(account, KEY_USER_DATA_CREATE_AT)));
+        }
+
         return user;
     }
 
@@ -163,9 +167,12 @@ public class TesterHomeAccountService {
         mAccountManager.setUserData(account, KEY_USER_DATA_TOKEN, userProfile.getAccess_token());
         mAccountManager.setUserData(account,KEY_USER_DATA_COMPANY,userProfile.getCompany());
         mAccountManager.setUserData(account,KEY_USER_DATA_TAGLINE,userProfile.getTagline());
-        mAccountManager.setUserData(account, KEY_USER_DATA_EXPIRE_DATE, String.valueOf(userProfile.getExpireDate()));
-        mAccountManager.setUserData(account,KEY_USER_DATA_REFRESH_TOKEN,userProfile.getRefresh_token());
-        mAccountManager.setUserData(account,KEY_USER_DATA_CREATE_AT,String.valueOf(userProfile.getCreate_at()));
+        if (userProfile.getRefresh_token() != null) {
+            mAccountManager.setUserData(account, KEY_USER_DATA_EXPIRE_DATE, String.valueOf(userProfile.getExpireDate()));
+            mAccountManager.setUserData(account,KEY_USER_DATA_REFRESH_TOKEN,userProfile.getRefresh_token());
+            mAccountManager.setUserData(account,KEY_USER_DATA_CREATE_AT,String.valueOf(userProfile.getCreate_at()));
+        }
+
     }
 
     private Account findAccountByUsername(String username) {
