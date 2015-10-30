@@ -3,11 +3,10 @@ package com.testerhome.nativeandroid.views.adapters;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.view.PagerAdapter;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
-import com.facebook.drawee.generic.GenericDraweeHierarchy;
 import com.facebook.drawee.view.SimpleDraweeView;
 import com.testerhome.nativeandroid.Config;
 import com.testerhome.nativeandroid.R;
@@ -55,13 +54,10 @@ public class TopicBannerAdapter extends PagerAdapter implements View.OnClickList
     }
 
     public View getItemView(ViewGroup container, int position) {
-        SimpleDraweeView imageView = new SimpleDraweeView(container.getContext());
-        GenericDraweeHierarchy hierarchy = imageView.getHierarchy();
-        hierarchy.setPlaceholderImage(R.drawable.btn_heart);
-        imageView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT));
 
-        imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+        SimpleDraweeView imageView = (SimpleDraweeView)LayoutInflater.from(container.getContext()).inflate(R.layout.banner_view, container, false);
+
+
         // TODO: 15/10/28 加载正式图片
         imageView.setImageURI(Uri.parse(Config.getImageUrl(mItems.get(position).getCover().getUrl())));
         imageView.setTag(mItems.get(position).getTopic_id());
