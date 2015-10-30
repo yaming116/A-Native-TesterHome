@@ -45,7 +45,7 @@ public class TopicsListAdapter extends BaseAdapter<TopicEntity> {
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view;
 
-        switch (viewType){
+        switch (viewType) {
             case TOPIC_LIST_TYPE_BANNER:
                 view = LayoutInflater.from(mContext).inflate(R.layout.list_item_banner, parent, false);
                 loadToutiao();
@@ -69,8 +69,8 @@ public class TopicsListAdapter extends BaseAdapter<TopicEntity> {
 
         switch (getItemViewType(position)) {
             case TOPIC_LIST_TYPE_BANNER:
-                TopicBannerViewHolder bannerViewHolder = (TopicBannerViewHolder)viewHolder;
-                if (mBannerAdapter == null){
+                TopicBannerViewHolder bannerViewHolder = (TopicBannerViewHolder) viewHolder;
+                if (mBannerAdapter == null) {
                     mBannerAdapter = new TopicBannerAdapter();
                 }
                 bannerViewHolder.mTopicBanner.setAdapter(mBannerAdapter);
@@ -103,7 +103,7 @@ public class TopicsListAdapter extends BaseAdapter<TopicEntity> {
                 });
                 break;
         }
-        Log.d("adapter",position+","+mItems.size());
+        Log.d("adapter", position + "," + mItems.size());
         if (position == mItems.size() - 1 && mListener != null) {
             mListener.onListEnded();
         }
@@ -172,7 +172,8 @@ public class TopicsListAdapter extends BaseAdapter<TopicEntity> {
 
                 @Override
                 public void onPageSelected(int position) {
-                    mTopicBannerTitle.setText(mBannerAdapter.getItems().get(position).getTopic_title());
+                    if (mTopicBannerTitle != null)
+                        mTopicBannerTitle.setText(mBannerAdapter.getPageTitle(position));
                 }
 
                 @Override
@@ -185,17 +186,23 @@ public class TopicsListAdapter extends BaseAdapter<TopicEntity> {
 
 
     // region
-    private void loadToutiao(){
+    private void loadToutiao() {
         TesterHomeApi.getInstance().getTopicsService().getToutiao(new Callback<ToutiaoResponse>() {
             @Override
             public void success(ToutiaoResponse toutiaoResponse, Response response) {
-                mBannerAdapter.setItems(toutiaoResponse.getAds());
-                mTopicBannerTitle.setText(toutiaoResponse.getAds().get(0).getTopic_title());
+
+                if (toutiaoResponse.getAds().size() > 0) {
+                    mBannerAdapter.setItems(toutiaoResponse.getAds());
+                    if (mBannerAdapter != null)
+                        mTopicBannerTitle.setText(mBannerAdapter.getPageTitle(0));
+                } else {
+                    // no info
+                }
             }
 
             @Override
             public void failure(RetrofitError error) {
-
+                Log.e("TopicsListAdapter", error.getMessage());
             }
         });
     }

@@ -81,4 +81,9 @@ public class TopicBannerAdapter extends PagerAdapter implements View.OnClickList
         v.getContext().startActivity(new Intent(v.getContext(), TopicDetailActivity.class)
                 .putExtra("topic_id", topicId));
     }
+
+    @Override
+    public CharSequence getPageTitle(int position) {
+        return mItems.get(position).getTopic_title();
+    }
 }
