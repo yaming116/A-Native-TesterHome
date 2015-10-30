@@ -33,6 +33,7 @@ public class NativeApp extends Application {
     private static NativeApp instance;
 
     public static String TAG = "NativeApp";
+    public static long timerTime = 82800;
     private Timer timer = null;
 
     public static NativeApp getInstance() {
@@ -49,7 +50,7 @@ public class NativeApp extends Application {
         Log.d(TAG, testerUser.getCreate_at() + "");
         Log.d(TAG, testerUser.getExpireDate() + "");
         Log.d(TAG,System.currentTimeMillis()+"");
-        long leftTime = 3600-(System.currentTimeMillis()/1000-testerUser.getCreate_at());
+        long leftTime = timerTime -(System.currentTimeMillis()/1000-testerUser.getCreate_at());
         if (leftTime < 0 ){
             leftTime = 0;
         }
