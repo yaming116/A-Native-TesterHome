@@ -103,7 +103,7 @@ public class TopicsListAdapter extends BaseAdapter<TopicEntity> {
                 });
                 break;
         }
-        Log.d("adapter", position + "," + mItems.size());
+
         if (position == mItems.size() - 1 && mListener != null) {
             mListener.onListEnded();
         }
