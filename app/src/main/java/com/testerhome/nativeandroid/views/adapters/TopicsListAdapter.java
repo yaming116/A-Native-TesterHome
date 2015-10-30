@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +22,6 @@ import com.testerhome.nativeandroid.views.TopicDetailActivity;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import retrofit.http.HEAD;
 
 /**
  * Created by Bin Li on 2015/9/16.
@@ -89,7 +89,7 @@ public class TopicsListAdapter extends BaseAdapter<TopicEntity> {
                 });
                 break;
         }
-
+        Log.d("adapter",position+","+mItems.size());
         if (position == mItems.size() - 1 && mListener != null) {
             mListener.onListEnded();
         }
