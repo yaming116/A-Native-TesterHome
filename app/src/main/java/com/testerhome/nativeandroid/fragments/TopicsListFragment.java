@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.testerhome.nativeandroid.Config;
@@ -139,14 +140,14 @@ public class TopicsListFragment extends BaseFragment implements Callback<TopicsR
 
         if (topicsResponse.getTopics().size() > 0) {
             if (mNextCursor == 0) {
-                if (type == Config.TOPICS_TYPE_RECENT ) {
+                if (!TextUtils.isEmpty(type) && type.equals(Config.TOPICS_TYPE_RECENT)) {
                     topicsResponse.getTopics().add(0, new TopicEntity(TopicsListAdapter.TOPIC_LIST_TYPE_BANNER, new ArrayList<BannerEntity>()));
                 }
                 mAdatper.setItems(topicsResponse.getTopics());
             } else {
                 mAdatper.addItems(topicsResponse.getTopics());
             }
-            if (topicsResponse.getTopics().size() >=20) {
+            if (topicsResponse.getTopics().size() >= 20) {
                 mNextCursor += 1;
             } else {
                 mNextCursor = 0;
