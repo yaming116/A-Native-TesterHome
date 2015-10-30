@@ -17,11 +17,16 @@ import com.jauker.widget.BadgeView;
 import com.testerhome.nativeandroid.Config;
 import com.testerhome.nativeandroid.R;
 import com.testerhome.nativeandroid.models.TopicEntity;
+import com.testerhome.nativeandroid.models.ToutiaoResponse;
+import com.testerhome.nativeandroid.networks.TesterHomeApi;
 import com.testerhome.nativeandroid.utils.StringUtils;
 import com.testerhome.nativeandroid.views.TopicDetailActivity;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 /**
  * Created by Bin Li on 2015/9/16.
@@ -43,6 +48,7 @@ public class TopicsListAdapter extends BaseAdapter<TopicEntity> {
         switch (viewType){
             case TOPIC_LIST_TYPE_BANNER:
                 view = LayoutInflater.from(mContext).inflate(R.layout.list_item_banner, parent, false);
+                loadToutiao();
                 return new TopicBannerViewHolder(view);
             default:
                 view = LayoutInflater.from(mContext).inflate(R.layout.list_item_topic, parent, false);
@@ -55,13 +61,21 @@ public class TopicsListAdapter extends BaseAdapter<TopicEntity> {
         return mItems.get(position).getType();
     }
 
+    private TopicBannerAdapter mBannerAdapter;
+    private TextView mTopicBannerTitle;
+
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
 
         switch (getItemViewType(position)) {
             case TOPIC_LIST_TYPE_BANNER:
                 TopicBannerViewHolder bannerViewHolder = (TopicBannerViewHolder)viewHolder;
-                bannerViewHolder.mTopicBanner.setAdapter(new TopicBannerAdapter());
+                if (mBannerAdapter == null){
+                    mBannerAdapter = new TopicBannerAdapter();
+                }
+                bannerViewHolder.mTopicBanner.setAdapter(mBannerAdapter);
+
+                mTopicBannerTitle = bannerViewHolder.mTopicBannerTitle;
                 break;
             default:
                 TopicItemViewHolder holder = (TopicItemViewHolder) viewHolder;
@@ -143,9 +157,47 @@ public class TopicsListAdapter extends BaseAdapter<TopicEntity> {
         @Bind(R.id.vp_topic_banner)
         ViewPager mTopicBanner;
 
+        @Bind(R.id.tv_banner_title)
+        TextView mTopicBannerTitle;
+
         public TopicBannerViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+
+            mTopicBanner.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+                @Override
+                public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+                }
+
+                @Override
+                public void onPageSelected(int position) {
+                    mTopicBannerTitle.setText(mBannerAdapter.getItems().get(position).getTopic_title());
+                }
+
+                @Override
+                public void onPageScrollStateChanged(int state) {
+
+                }
+            });
         }
     }
+
+
+    // region
+    private void loadToutiao(){
+        TesterHomeApi.getInstance().getTopicsService().getToutiao(new Callback<ToutiaoResponse>() {
+            @Override
+            public void success(ToutiaoResponse toutiaoResponse, Response response) {
+                mBannerAdapter.setItems(toutiaoResponse.getAds());
+                mTopicBannerTitle.setText(toutiaoResponse.getAds().get(0).getTopic_title());
+            }
+
+            @Override
+            public void failure(RetrofitError error) {
+
+            }
+        });
+    }
+    // endregion
 }
