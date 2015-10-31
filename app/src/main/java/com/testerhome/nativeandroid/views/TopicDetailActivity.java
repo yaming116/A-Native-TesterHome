@@ -289,8 +289,10 @@ public class TopicDetailActivity extends BackBaseActivity {
                                         DeviceUtil.hideSoftInput(TopicDetailActivity.this);
                                         mAddCommentPanel.setVisibility(View.GONE);
                                         mTopicReplyFragment.refreshReply();
-                                        // TODO: refresh reply count
-                                        // updateReplyCount();
+                                        // refresh reply count
+                                        if (createReplyResponse.getMeta() != null && createReplyResponse.getMeta().getCurrent_reply_count() > 0){
+                                            updateReplyCount(createReplyResponse.getMeta().getCurrent_reply_count() + 1);
+                                        }
                                     } else {
                                         Snackbar.make(mFabAddComment,
                                                 createReplyResponse.getError().toString(),

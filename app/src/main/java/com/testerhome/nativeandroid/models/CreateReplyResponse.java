@@ -26,4 +26,25 @@ public class CreateReplyResponse {
         return error;
     }
 
+    private MetaEntity meta;
+
+    public MetaEntity getMeta() {
+        return meta;
+    }
+
+    public void setMeta(MetaEntity meta) {
+        this.meta = meta;
+    }
+
+    public class MetaEntity{
+        private int current_reply_count;
+
+        public int getCurrent_reply_count() {
+            return current_reply_count;
+        }
+
+        public void setCurrent_reply_count(int current_reply_count) {
+            this.current_reply_count = current_reply_count;
+        }
+    }
 }
