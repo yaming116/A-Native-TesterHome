@@ -32,10 +32,11 @@ public class TopicReplyFragment extends BaseFragment {
     private TopicReplyAdapter mAdatper;
     private String mTopicId;
 
-    public static TopicReplyFragment newInstance(String id) {
+    public static TopicReplyFragment newInstance(String id, ReplyUpdateListener listener) {
         Bundle args = new Bundle();
         args.putString("id", id);
         TopicReplyFragment fragment = new TopicReplyFragment();
+        fragment.setReplyUpdateListener(listener);
         fragment.setArguments(args);
         return fragment;
     }
@@ -56,12 +57,17 @@ public class TopicReplyFragment extends BaseFragment {
     protected void setupView() {
 
         mAdatper = new TopicReplyAdapter(getActivity());
-        mAdatper.setListener(new TopicReplyAdapter.EndlessListener() {
+        mAdatper.setListener(new TopicReplyAdapter.TopicReplyListener() {
             @Override
             public void onListEnded() {
                 if (mNextCursor > 0) {
                     loadTopicReplies(false);
                 }
+            }
+
+            @Override
+            public void onReplyClick(String replyInfo) {
+                mReplyUpdateListener.updateReplyTo(replyInfo);
             }
         });
         swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_light,
@@ -139,4 +145,13 @@ public class TopicReplyFragment extends BaseFragment {
         recyclerViewTopicList.scrollToPosition(mAdatper.getItemCount());
     }
 
+    public interface ReplyUpdateListener{
+        void updateReplyTo(String replyInfo);
+    }
+
+    private ReplyUpdateListener mReplyUpdateListener;
+
+    public void setReplyUpdateListener(ReplyUpdateListener mReplyUpdateListener) {
+        this.mReplyUpdateListener = mReplyUpdateListener;
+    }
 }

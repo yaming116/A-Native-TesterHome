@@ -45,7 +45,7 @@ import retrofit.client.Response;
 /**
  * Created by vclub on 15/9/17.
  */
-public class TopicDetailActivity extends BackBaseActivity {
+public class TopicDetailActivity extends BackBaseActivity implements TopicReplyFragment.ReplyUpdateListener{
 
     private String mTopicId;
 
@@ -65,7 +65,6 @@ public class TopicDetailActivity extends BackBaseActivity {
             finish();
         }
     }
-
 
     @Override
     public boolean enableTheme() {
@@ -131,8 +130,9 @@ public class TopicDetailActivity extends BackBaseActivity {
                 }
                 return mMarkdownFragment;
             } else {
-                if (mTopicReplyFragment == null)
-                    mTopicReplyFragment = TopicReplyFragment.newInstance(mTopicId);
+                if (mTopicReplyFragment == null){
+                    mTopicReplyFragment = TopicReplyFragment.newInstance(mTopicId, TopicDetailActivity.this);
+                }
                 return mTopicReplyFragment;
             }
         }
@@ -311,4 +311,24 @@ public class TopicDetailActivity extends BackBaseActivity {
                             });
         }
     }
+
+    @Override
+    public void updateReplyTo(String replyInfo) {
+        if (mEtComment != null){
+            mAddCommentPanel.setVisibility(View.VISIBLE);
+            mFabAddComment.setVisibility(View.GONE);
+            mEtComment.setText(replyInfo);
+            mEtComment.setSelection(mEtComment.getText().toString().length());
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mAddCommentPanel.getVisibility() == View.VISIBLE){
+            mAddCommentPanel.setVisibility(View.GONE);
+        }else {
+            super.onBackPressed();
+        }
+    }
+
 }

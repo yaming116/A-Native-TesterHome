@@ -39,7 +39,7 @@ public class TopicReplyAdapter extends BaseAdapter<TopicReplyEntity> {
 
     @Override
     public int getItemViewType(int position) {
-        return mItems.get(position).isDeleted() ? VIEW_DELETE_ITEM : VIEW_ITEM ;
+        return mItems.get(position).isDeleted() ? VIEW_DELETE_ITEM : VIEW_ITEM;
     }
 
     @Override
@@ -69,11 +69,20 @@ public class TopicReplyAdapter extends BaseAdapter<TopicReplyEntity> {
             holder.topicTime.setText(StringUtils.formatPublishDateTime(topicReplyEntity.getCreated_at()));
             holder.topicItemAuthor.setText(TextUtils.isEmpty(topicReplyEntity.getUser().getName()) ? topicReplyEntity.getUser().getLogin() : topicReplyEntity.getUser().getName());
             String html = topicReplyEntity.getBody_html();
-//            html = html.replaceAll("src=\"/photo", "src=\"" + Config.BASEURL + "/photo");
+//            html = html.replaceAll("src=\"/photo", "src=\"" + Config.BASE_URL + "/photo");
             holder.topicItemBody.setText(Html.fromHtml(html, imgGetter, null));
             holder.topicItemBody.getPaint().setFlags(0);
             holder.userAvatar.setImageURI(Uri.parse(Config.getImageUrl(topicReplyEntity.getUser().getAvatar_url())));
 
+            holder.mToReply.setTag(String.format("#%s楼 @%s ", position, topicReplyEntity.getUser().getLogin()));
+            holder.mToReply.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mListener != null) {
+                        mListener.onReplyClick((String) v.getTag());
+                    }
+                }
+            });
         } else {
             DeleteFloorHolder holder = (DeleteFloorHolder) viewHolder;
             holder.topicItemBody.setText("该楼层已被删除");
@@ -96,21 +105,23 @@ public class TopicReplyAdapter extends BaseAdapter<TopicReplyEntity> {
                 // Important
                 drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable
                         .getIntrinsicHeight());
-            }catch (Exception ex){
+            } catch (Exception ex) {
                 Log.e("error", ex.getMessage() + ", source+" + source);
             }
             return drawable;
         }
     };
 
-    private EndlessListener mListener;
+    private TopicReplyListener mListener;
 
-    public void setListener(EndlessListener mListener) {
+    public void setListener(TopicReplyListener mListener) {
         this.mListener = mListener;
     }
 
-    public interface EndlessListener {
+    public interface TopicReplyListener {
         void onListEnded();
+
+        void onReplyClick(String replyInfo);
     }
 
     public static class ReplyViewHolder extends RecyclerView.ViewHolder {
@@ -129,6 +140,9 @@ public class TopicReplyAdapter extends BaseAdapter<TopicReplyEntity> {
         @Bind(R.id.id_user_avatar)
         SimpleDraweeView userAvatar;
 
+        @Bind(R.id.tv_reply_to_reply)
+        TextView mToReply;
+
         public ReplyViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
@@ -136,7 +150,7 @@ public class TopicReplyAdapter extends BaseAdapter<TopicReplyEntity> {
 
     }
 
-    public static class DeleteFloorHolder extends RecyclerView.ViewHolder{
+    public static class DeleteFloorHolder extends RecyclerView.ViewHolder {
 
 
         @Bind(R.id.id_topic_item_content)
