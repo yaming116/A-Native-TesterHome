@@ -74,7 +74,7 @@ public class TopicReplyAdapter extends BaseAdapter<TopicReplyEntity> {
             holder.topicItemBody.getPaint().setFlags(0);
             holder.userAvatar.setImageURI(Uri.parse(Config.getImageUrl(topicReplyEntity.getUser().getAvatar_url())));
 
-            holder.mToReply.setTag(String.format("#%s楼 @%s ", position, topicReplyEntity.getUser().getLogin()));
+            holder.mToReply.setTag(String.format("#%s楼 @%s ", position + 1, topicReplyEntity.getUser().getLogin()));
             holder.mToReply.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

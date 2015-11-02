@@ -87,6 +87,26 @@
             android:label="@string/main_drawer_settings"
             android:theme="@style/AppTheme.ActionBar" />
 
+        <activity android:name=".wxapi.WXEntryActivity"
+            android:label="@string/app_name"
+            android:exported="true"/>
+
+        <activity android:name=".views.SendToWXActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:label="分享到朋友圈"
+            android:icon="@drawable/icon_res_download_moments"
+            android:theme="@style/DirectShareDialogTheme"
+            >
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+            <meta-data
+                android:name="android.service.chooser.chooser_target_service"
+                android:value=".TesterChooserTargetService" />
+        </activity>
+
         <service
             android:name="com.umeng.update.net.DownloadingService"
             android:process=":DownloadingService"/>

@@ -43,3 +43,7 @@
 -dontwarn com.umeng.**
 -keep class com.umeng.update.** {*;}
 -keep class com.umeng.analytics.** {*;}
+
+-keep class com.tencent.mm.sdk.** {
+   *;
+}

@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="@style/Theme.AppCompat.Light.NoActionBar">
@@ -54,5 +54,11 @@
         <item name="main_text_color">@color/text_color_main_dark</item>
         <item name="second_bg">@color/bg_second_dark</item>
         <item name="second_text_color">@color/text_color_second_dark</item>
+    </style>
+
+    <style name="DirectShareDialogTheme" parent="@style/Theme.AppCompat.Light.Dialog">
+        <item name="android:colorPrimary">@color/colorPrimary</item>
+        <item name="android:colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="android:colorAccent">@color/colorAccent</item>
     </style>
 </resources>
