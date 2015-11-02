@@ -142,7 +142,7 @@ public class TesterHomeAccountService {
         user.setCompany(mAccountManager.getUserData(account, KEY_USER_DATA_COMPANY));
         user.setTagline(mAccountManager.getUserData(account, KEY_USER_DATA_TAGLINE));
 
-        if (mAccountManager.getUserData(account,KEY_USER_DATA_REFRESH_TOKEN) != null){
+        if (mAccountManager.getUserData(account,KEY_USER_DATA_REFRESH_TOKEN) != null) {
             user.setExpireDate(Long.valueOf(mAccountManager.getUserData(account, KEY_USER_DATA_EXPIRE_DATE)));
             user.setRefresh_token(mAccountManager.getUserData(account, KEY_USER_DATA_REFRESH_TOKEN));
             user.setCreate_at(Long.valueOf(mAccountManager.getUserData(account, KEY_USER_DATA_CREATE_AT)));
