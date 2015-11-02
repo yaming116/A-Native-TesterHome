@@ -61,13 +61,13 @@ public class WebViewActivity extends BackBaseActivity {
                         //Generate URL for requesting Access Token
                         // String accessTokenUrl = AuthenticationService.getAccessTokenUrl(auth_code = code);
                         //We make the request in a AsyncTask
+                        mWebView.setVisibility(View.INVISIBLE);
                         new PostRequestAsyncTask().execute(AuthenticationService.ACCESS_TOKEN_URL);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 } else if (url.equals(AuthenticationService.HTTPS_BASEURL)) {
                     url = AuthenticationService.getAuthorizationUrl();
-                    mWebView.setVisibility(View.INVISIBLE);
                 }
 //                return super.shouldOverrideUrlLoading(view, url);
                 view.loadUrl(url);

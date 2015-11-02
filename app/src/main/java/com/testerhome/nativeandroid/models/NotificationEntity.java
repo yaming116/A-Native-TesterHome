@@ -10,11 +10,19 @@ public class NotificationEntity {
     private Boolean read;
     private TesterUser actor;
     private String mention_type;
-
+    private MentionEntity mention;
     private TopicReplyEntity reply;
     private String created_at;
     private String updated_at;
 
+
+    public MentionEntity getMention() {
+        return mention;
+    }
+
+    public void setMention(MentionEntity mention) {
+        this.mention = mention;
+    }
 
     public int getId() {
         return id;
@@ -55,14 +63,6 @@ public class NotificationEntity {
     public void setMention_type(String mention_type) {
         this.mention_type = mention_type;
     }
-
-//    public String getMention() {
-//        return mention;
-//    }
-//
-//    public void setMention(String mention) {
-//        this.mention = mention;
-//    }
 
     public TopicReplyEntity getReply() {
         return reply;

@@ -3,6 +3,7 @@ package com.testerhome.nativeandroid.views.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Handler;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -179,12 +180,10 @@ public class TopicsListAdapter extends BaseAdapter<TopicEntity> {
                 public void onPageSelected(int position) {
 
                     initPoint();
-
                     if (mTopicBannerTitle != null) {
                         mTopicBannerTitle.setText(mBannerAdapter.getPageTitle(position));
                         imageViews[position].setBackgroundResource(R.color.colorAccent);
                     }
-
 
                 }
 
@@ -194,6 +193,7 @@ public class TopicsListAdapter extends BaseAdapter<TopicEntity> {
                 }
             });
         }
+
     }
 
     private void initPoint() {
@@ -226,12 +226,13 @@ public class TopicsListAdapter extends BaseAdapter<TopicEntity> {
                 }
 
                 if (toutiaoResponse.getAds().size() > 0) {
-                mBannerAdapter.setItems(toutiaoResponse.getAds());
-                if (mBannerAdapter != null)
-                    mTopicBannerTitle.setText(mBannerAdapter.getPageTitle(0));
+                    mBannerAdapter.setItems(toutiaoResponse.getAds());
+                    if (mBannerAdapter != null)
+                        mTopicBannerTitle.setText(mBannerAdapter.getPageTitle(0));
                 } else {
                     // no info
                 }
+
             }
 
             @Override

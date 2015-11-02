@@ -1,10 +1,12 @@
 package com.testerhome.nativeandroid.views.adapters;
 
 import android.content.Context;
+import android.graphics.Paint;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -28,6 +30,9 @@ import retrofit.client.Response;
 public class NotificationAdapter extends BaseAdapter<NotificationEntity> {
 
 
+    private final int VIEW_SINGLE_ITEM = 1;
+    private final int VIEW_DELETE_ITEM = 0;
+    private final int VIEW_ITME = 2;
     public static String TAG = "NotificationAdapter";
     public NotificationAdapter(Context context) {
         super(context);
@@ -35,63 +40,84 @@ public class NotificationAdapter extends BaseAdapter<NotificationEntity> {
     }
 
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public int getItemViewType(int position) {
+        if (mItems.get(position).getActor() == null){
+            return VIEW_DELETE_ITEM;
+        }
+        switch (mItems.get(position).getType()){
+            case Config.FOLLOW:
+            case Config.TOPIC:
+                return VIEW_SINGLE_ITEM;
+            case Config.TOPIC_REPLY:
+            case Config.MENTION:
+                return VIEW_ITME;
+            default:
+                return VIEW_DELETE_ITEM;
+        }
+    }
 
-        View view = View.inflate(parent.getContext(), R.layout.list_item_notification,null);
-        return new NotificationHolder(view);
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view;
+        switch (viewType){
+            case VIEW_ITME:
+                view = View.inflate(parent.getContext(), R.layout.list_item_notification,null);
+                return new NotificationHolder(view);
+            case VIEW_SINGLE_ITEM:
+                view = View.inflate(parent.getContext(), R.layout.list_single_item_notification, null);
+                return new NotificationSingleHolder(view);
+            default:
+                view = LayoutInflater.from(parent.getContext()).inflate(
+                        R.layout.list_item_delete_reply, parent, false);
+                return new DeleteFloorHolder(view);
+        }
+
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
 
-        final NotificationHolder holder = (NotificationHolder)viewHolder;
-        holder.notification = mItems.get(position);
-        String userName  ;
-        try {
-            holder.userAvatar.setVisibility(View.VISIBLE);
-            holder.notificationTitle.setVisibility(View.VISIBLE);
-            userName = holder.notification.getActor().getLogin();
-
-            holder.userAvatar.setImageURI(Uri.parse(Config.getImageUrl(holder.notification.getActor().getAvatar_url())));
-
-            switch (holder.notification.getType()) {
-                case Config.TOPIC:
-                    holder.notificationTitle.setText(userName + "创建了一个新的帖子");
-                    holder.notificationBody.setText("");
-                    break;
-                case Config.FOLLOW:
-                    holder.notificationTitle.setText(userName);
-                    holder.notificationBody.setText(mContext.getResources().getString(R.string.follow));
-                    break;
-                default:
+        String userName;
+        switch (getItemViewType(position)){
+            case VIEW_ITME:
+                NotificationHolder holder = (NotificationHolder)viewHolder;
+                holder.notification = mItems.get(position);
+                holder.userAvatar.setImageURI(Uri.parse(Config.getImageUrl(holder.notification.getActor().getAvatar_url())));
+                userName = holder.notification.getActor().getLogin();
+                if (holder.notification.getType().equals(Config.MENTION)) {
+                    holder.notificationTitle.setText(ToDBC(userName + " 在帖子 *** 提及你:"));
+                    holder.notificationBody.setText(Html.fromHtml(holder.notification.getMention().getBody_html()));
+                }else {
                     holder.notificationTitle.setText(ToDBC(userName + " 在帖子 *** 回复了:"));
                     holder.notificationBody.setText(Html.fromHtml(holder.notification.getReply().getBody_html()));
-//                    getTopicDetailInfo(holder, userName, String.valueOf(holder.notification.getReply().getTopic_id()));
-                    break;
-            }
-        }catch (NullPointerException e){
-            holder.userAvatar.setVisibility(View.INVISIBLE);
-            holder.notificationTitle.setVisibility(View.INVISIBLE);
-            holder.notificationBody.setText("此楼相关信息已删除");
+                }
+
+                break;
+            case VIEW_SINGLE_ITEM:
+                NotificationSingleHolder singleHolder = (NotificationSingleHolder)viewHolder;
+                singleHolder.notification = mItems.get(position);
+                userName = singleHolder.notification.getActor().getLogin();
+                singleHolder.notification = mItems.get(position);
+                singleHolder.userAvatar.setImageURI(Uri.parse(Config.getImageUrl(singleHolder.notification.getActor().getAvatar_url())));
+                if (singleHolder.notification.getType().equals(Config.FOLLOW)) {
+                    singleHolder.notificationTitle.setText(ToDBC(userName + mContext.getResources().getString(R.string.follow)));
+                }else{
+                    singleHolder.notificationTitle.setText(ToDBC(userName + "创建了一个新的帖子"));
+                }
+                break;
+            case VIEW_DELETE_ITEM:
+                DeleteFloorHolder deleteFloorHolder = (DeleteFloorHolder) viewHolder;
+                deleteFloorHolder.topicItemBody.setText("该楼层已被删除");
+                deleteFloorHolder.topicItemBody.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+
         }
 
-
+        if (position == mItems.size() - 1 && mListener != null) {
+            mListener.onListEnded();
+        }
 
     }
 
-    private void getTopicDetailInfo(final NotificationHolder holder, final String userName,String id) {
-        TesterHomeApi.getInstance().getTopicsService().getTopicById(id, new Callback<TopicDetailResponse>() {
-            @Override
-            public void success(TopicDetailResponse topicDetailResponse, Response response) {
-                Log.d(TAG, "database not have");
-
-            }
-            @Override
-            public void failure(RetrofitError error) {
-
-            }
-        });
-    }
 
     private EndlessListener mListener;
 
@@ -124,6 +150,38 @@ public class NotificationAdapter extends BaseAdapter<NotificationEntity> {
             ButterKnife.bind(this, itemView);
         }
     }
+
+
+    public static class DeleteFloorHolder extends RecyclerView.ViewHolder {
+
+
+        @Bind(R.id.id_topic_item_content)
+        TextView topicItemBody;
+
+        public DeleteFloorHolder(View itemView) {
+            super(itemView);
+            ButterKnife.bind(this, itemView);
+        }
+    }
+
+
+    class NotificationSingleHolder extends RecyclerView.ViewHolder{
+
+        @Bind(R.id.id_user_avatar)
+        SimpleDraweeView userAvatar;
+
+        @Bind(R.id.id_notification_title)
+        TextView notificationTitle;
+
+        NotificationEntity notification;
+
+        public NotificationSingleHolder(View itemView) {
+            super(itemView);
+            ButterKnife.bind(this, itemView);
+        }
+    }
+
+
 
 
     public static String ToDBC(String input) {
