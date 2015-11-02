@@ -10,6 +10,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -35,10 +37,11 @@ public class TopicsListAdapter extends BaseAdapter<TopicEntity> {
 
     public static final int TOPIC_LIST_TYPE_BANNER = 0;
     public static final int TOPIC_LIST_TYPE_TOPIC = 1;
-
-
+    private Context context;
+    private View[] imageViews;
     public TopicsListAdapter(Context context) {
         super(context);
+        this.context = context;
     }
 
     @Override
@@ -48,7 +51,8 @@ public class TopicsListAdapter extends BaseAdapter<TopicEntity> {
         switch (viewType) {
             case TOPIC_LIST_TYPE_BANNER:
                 view = LayoutInflater.from(mContext).inflate(R.layout.list_item_banner, parent, false);
-                loadToutiao();
+                ViewGroup viewGroup = (ViewGroup)view.findViewById(R.id.view_group);
+                loadToutiao(viewGroup);
                 return new TopicBannerViewHolder(view);
             default:
                 view = LayoutInflater.from(mContext).inflate(R.layout.list_item_topic, parent, false);
@@ -160,6 +164,7 @@ public class TopicsListAdapter extends BaseAdapter<TopicEntity> {
         @Bind(R.id.tv_banner_title)
         TextView mTopicBannerTitle;
 
+
         public TopicBannerViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
@@ -172,8 +177,15 @@ public class TopicsListAdapter extends BaseAdapter<TopicEntity> {
 
                 @Override
                 public void onPageSelected(int position) {
-                    if (mTopicBannerTitle != null)
+
+                    initPoint();
+
+                    if (mTopicBannerTitle != null) {
                         mTopicBannerTitle.setText(mBannerAdapter.getPageTitle(position));
+                        imageViews[position].setBackgroundResource(R.color.colorAccent);
+                    }
+
+
                 }
 
                 @Override
@@ -184,17 +196,39 @@ public class TopicsListAdapter extends BaseAdapter<TopicEntity> {
         }
     }
 
+    private void initPoint() {
+        for (int i = 0; i < imageViews.length; i++) {
+            imageViews[i].setBackgroundResource(R.color.tab_item_tint_default);
+        }
+    }
+
 
     // region
-    private void loadToutiao() {
+    private void loadToutiao(final ViewGroup viewGroup) {
         TesterHomeApi.getInstance().getTopicsService().getToutiao(new Callback<ToutiaoResponse>() {
             @Override
             public void success(ToutiaoResponse toutiaoResponse, Response response) {
 
+                imageViews = new View[toutiaoResponse.getAds().size()];
+                for (int i = 0; i < imageViews.length; i++) {
+                    LinearLayout.LayoutParams margin = new LinearLayout.LayoutParams(
+                            30,
+                            3);
+                    margin.setMargins(10, 0, 0, 0);
+                    View imageView = new View(context);
+                    imageViews[i] = imageView;
+                    if (i == 0) {
+                        imageViews[i].setBackgroundResource(R.color.colorAccent);
+                    }else{
+                        imageViews[i].setBackgroundResource(R.color.tab_item_tint_default);
+                    }
+                    viewGroup.addView(imageViews[i], margin);
+                }
+
                 if (toutiaoResponse.getAds().size() > 0) {
-                    mBannerAdapter.setItems(toutiaoResponse.getAds());
-                    if (mBannerAdapter != null)
-                        mTopicBannerTitle.setText(mBannerAdapter.getPageTitle(0));
+                mBannerAdapter.setItems(toutiaoResponse.getAds());
+                if (mBannerAdapter != null)
+                    mTopicBannerTitle.setText(mBannerAdapter.getPageTitle(0));
                 } else {
                     // no info
                 }
