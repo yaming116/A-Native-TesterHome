@@ -12,6 +12,7 @@ import com.testerhome.nativeandroid.models.UserDetailResponse;
 import com.testerhome.nativeandroid.models.UserResponse;
 
 import retrofit.Callback;
+import retrofit.http.DELETE;
 import retrofit.http.GET;
 import retrofit.http.POST;
 import retrofit.http.Path;
@@ -86,8 +87,19 @@ public interface TopicsService {
                       @Query("access_token") String accessToken,
                       Callback<CollectTopicResonse> callback);
 
+    @POST("/topics/{id}/unfavorite.json")
+    void uncollectTopic(@Path("id") String id,
+                      @Query("access_token") String accessToken,
+                      Callback<CollectTopicResonse> callback);
+
     @POST("/likes.json")
     void praiseTopic(@Query("obj_type") String objType,
+                     @Query("obj_id") String objId,
+                     @Query("access_token") String accessToken,
+                     Callback<PraiseEntity> callback);
+
+    @DELETE("/likes.json")
+    void unLikeTopic(@Query("obj_type") String objType,
                      @Query("obj_id") String objId,
                      @Query("access_token") String accessToken,
                      Callback<PraiseEntity> callback);

@@ -1,11 +1,6 @@
-package com.testerhome.nativeandroid.db;
+package com.testerhome.nativeandroid.dao;
 
 import android.content.Context;
-
-import com.testerhome.nativeandroid.dao.DaoMaster;
-import com.testerhome.nativeandroid.dao.DaoSession;
-import com.testerhome.nativeandroid.dao.TopicDBDao;
-import com.testerhome.nativeandroid.dao.UserDBDao;
 
 /**
  * Created by cvtpc on 2015/4/6.
@@ -28,11 +23,11 @@ public class DBManager {
         daoSession = daoMaster.newSession();
     }
 
-    public TopicDBDao getTopicDao(){
-        return daoSession.getTopicDBDao();
+    public FavoriteDao getFavoriteDao(){
+        return daoSession.getFavoriteDao();
     }
 
-    public UserDBDao getUserDao(){
-        return daoSession.getUserDBDao();
+    public UserPraiseHistoryDao getUserPraiseHistory(){
+        return daoSession.getUserPraiseHistoryDao();
     }
 }
