@@ -82,6 +82,7 @@ public class TopicDetailActivity extends BackBaseActivity implements TopicReplyF
         if (item.getItemId() == R.id.action_share) {
             final Intent target = new Intent(Intent.ACTION_SEND);
             target.setType("text/plain");
+            target.putExtra(Intent.EXTRA_TITLE, tvDetailTitle.getText().toString());
             target.putExtra(Intent.EXTRA_TEXT, String.format("https://testerhome.com/topics/%s", mTopicId));
             startActivity(Intent.createChooser(target, "分享到"));
         }
