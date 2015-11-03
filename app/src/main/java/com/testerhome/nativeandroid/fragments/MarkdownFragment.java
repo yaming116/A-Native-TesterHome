@@ -1,8 +1,12 @@
 package com.testerhome.nativeandroid.fragments;
 
 import android.content.res.AssetManager;
+import android.net.Uri;
 import android.preference.PreferenceManager;
+import android.support.customtabs.CustomTabsIntent;
 import android.util.Log;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 import com.testerhome.nativeandroid.R;
 
@@ -20,6 +24,23 @@ public class MarkdownFragment extends BaseFragment {
     @Bind(R.id.markdown_topic_body)
     MarkdownView mTopicBody;
 
+    @Override
+    protected void setupView() {
+        mTopicBody.setWebViewClient(new WebViewClient(){
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+
+                CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+                builder.setToolbarColor(getResources().getColor(R.color.colorPrimary));
+
+                CustomTabsIntent customTabsIntent = builder.build();
+
+                customTabsIntent.launchUrl(getActivity(), Uri.parse(url));
+//                return super.shouldOverrideUrlLoading(view, url);
+                return true;
+            }
+        });
+    }
 
     @Override
     protected int getLayoutRes() {
