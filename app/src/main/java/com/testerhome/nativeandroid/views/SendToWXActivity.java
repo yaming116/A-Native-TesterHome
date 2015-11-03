@@ -67,7 +67,7 @@ public class SendToWXActivity extends BackBaseActivity {
         msg.mediaObject = webpageObject;
         msg.title = mTitle;
 
-        Bitmap thumb = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
+        Bitmap thumb = BitmapFactory.decodeResource(getResources(), R.drawable.logo);
         msg.setThumbImage(thumb);
 
         SendMessageToWX.Req req = new SendMessageToWX.Req();
