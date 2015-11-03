@@ -5,6 +5,8 @@ package com.testerhome.nativeandroid;
  */
 public class Config {
 
+    public static final String APP_ID = "wxfa200479f6cbbc58";
+
     public static final String TOPICS_TYPE_RECENT = "recent";       // 最新
     public static final String TOPICS_TYPE_POPULAR = "popular";     // 热门的话题
     public static final String TOPICS_TYPE_NO_REPLY = "no_reply";   // 还没有任何回帖的

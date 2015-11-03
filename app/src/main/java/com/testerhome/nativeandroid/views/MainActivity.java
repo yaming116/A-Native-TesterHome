@@ -18,6 +18,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.tencent.mm.sdk.openapi.IWXAPI;
+import com.tencent.mm.sdk.openapi.WXAPIFactory;
 import com.testerhome.nativeandroid.Config;
 import com.testerhome.nativeandroid.R;
 import com.testerhome.nativeandroid.auth.TesterHomeAccountService;
@@ -46,6 +48,13 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         setupView();
 
         UmengUpdateAgent.update(this);
+
+        setupWX();
+    }
+
+    private void setupWX(){
+        IWXAPI api = WXAPIFactory.createWXAPI(this, Config.APP_ID, true);
+        api.registerApp(Config.APP_ID);
     }
 
     @Override

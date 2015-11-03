@@ -13,12 +13,10 @@ import com.tencent.mm.sdk.modelmsg.WXMediaMessage;
 import com.tencent.mm.sdk.modelmsg.WXWebpageObject;
 import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
+import com.testerhome.nativeandroid.Config;
 import com.testerhome.nativeandroid.R;
 import com.testerhome.nativeandroid.views.base.BackBaseActivity;
 
-/**
- * Created by vclub on 15/11/2.
- */
 public class SendToWXActivity extends BackBaseActivity {
 
     private String mTitle;
@@ -36,8 +34,8 @@ public class SendToWXActivity extends BackBaseActivity {
             return;
         }
 
-        api = WXAPIFactory.createWXAPI(this, "wxfa200479f6cbbc58", true);
-        api.registerApp("wxfa200479f6cbbc58");
+        api = WXAPIFactory.createWXAPI(this, Config.APP_ID, true);
+        api.registerApp(Config.APP_ID);
 
         prepareUI();
 
