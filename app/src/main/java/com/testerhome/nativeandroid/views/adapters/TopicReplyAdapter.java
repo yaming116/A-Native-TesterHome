@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.TextUtils;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -71,6 +72,7 @@ public class TopicReplyAdapter extends BaseAdapter<TopicReplyEntity> {
             String html = topicReplyEntity.getBody_html();
 //            html = html.replaceAll("src=\"/photo", "src=\"" + Config.BASE_URL + "/photo");
             holder.topicItemBody.setText(Html.fromHtml(html, imgGetter, null));
+            holder.topicItemBody.setMovementMethod(LinkMovementMethod.getInstance());
             holder.topicItemBody.getPaint().setFlags(0);
             holder.userAvatar.setImageURI(Uri.parse(Config.getImageUrl(topicReplyEntity.getUser().getAvatar_url())));
 
