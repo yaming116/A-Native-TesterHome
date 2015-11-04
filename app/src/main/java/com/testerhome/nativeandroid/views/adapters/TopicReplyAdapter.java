@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
+import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
@@ -20,6 +21,7 @@ import com.testerhome.nativeandroid.Config;
 import com.testerhome.nativeandroid.R;
 import com.testerhome.nativeandroid.models.TopicReplyEntity;
 import com.testerhome.nativeandroid.utils.StringUtils;
+import com.testerhome.nativeandroid.utils.URLImageParser;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -70,8 +72,10 @@ public class TopicReplyAdapter extends BaseAdapter<TopicReplyEntity> {
             holder.topicTime.setText(StringUtils.formatPublishDateTime(topicReplyEntity.getCreated_at()));
             holder.topicItemAuthor.setText(TextUtils.isEmpty(topicReplyEntity.getUser().getName()) ? topicReplyEntity.getUser().getLogin() : topicReplyEntity.getUser().getName());
             String html = topicReplyEntity.getBody_html();
-//            html = html.replaceAll("src=\"/photo", "src=\"" + Config.BASE_URL + "/photo");
-            holder.topicItemBody.setText(Html.fromHtml(html, imgGetter, null));
+            html = html.replaceAll("src=\"/photo", "src=\"https://testerhome.com/photo");
+            URLImageParser p = new URLImageParser(holder.topicItemBody, mContext);
+            Spanned htmlSpan = Html.fromHtml(html, p, null);
+            holder.topicItemBody.setText(htmlSpan);
             holder.topicItemBody.setMovementMethod(LinkMovementMethod.getInstance());
             holder.topicItemBody.getPaint().setFlags(0);
             holder.userAvatar.setImageURI(Uri.parse(Config.getImageUrl(topicReplyEntity.getUser().getAvatar_url())));
