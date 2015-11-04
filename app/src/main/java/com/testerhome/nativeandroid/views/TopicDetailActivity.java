@@ -12,6 +12,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -186,11 +187,11 @@ public class TopicDetailActivity extends BackBaseActivity implements TopicReplyF
 
                         if (PraiseUtil.hasPraised(TopicDetailActivity.this, mTopicId)) {
                             tvDetailPraise.setCompoundDrawablesWithIntrinsicBounds(R.drawable.btn_heart_off, 0, 0, 0);
-                        }else {
+                        } else {
                             tvDetailPraise.setCompoundDrawablesWithIntrinsicBounds(R.drawable.btn_heart, 0, 0, 0);
                         }
 
-                        if (FavoriteUtil.hasFavorite(TopicDetailActivity.this, mTopicId)){
+                        if (FavoriteUtil.hasFavorite(TopicDetailActivity.this, mTopicId)) {
                             tvDetailCollect.setCompoundDrawablesWithIntrinsicBounds(R.drawable.btn_bookmark_off, 0, 0, 0);
                         } else {
                             tvDetailCollect.setCompoundDrawablesWithIntrinsicBounds(R.drawable.btn_bookmark, 0, 0, 0);
@@ -203,7 +204,10 @@ public class TopicDetailActivity extends BackBaseActivity implements TopicReplyF
 
                     @Override
                     public void failure(RetrofitError error) {
-                        Snackbar.make(mFabAddComment, "Error:" + error.getMessage(), Snackbar.LENGTH_SHORT).show();
+                        if (mFabAddComment != null) {
+                            Snackbar.make(mFabAddComment, "Error:" + error.getMessage(), Snackbar.LENGTH_SHORT).show();
+                            Log.e("TopicDetailActivity", "Error:" + error.getMessage());
+                        }
                     }
                 });
     }
@@ -218,14 +222,14 @@ public class TopicDetailActivity extends BackBaseActivity implements TopicReplyF
     void onDetailCollectClick() {
         if (mCurrentUser == null) {
             mCurrentUser = TesterHomeAccountService.getInstance(this).getActiveAccountInfo();
-            if (TextUtils.isEmpty(mCurrentUser.getLogin())){
+            if (TextUtils.isEmpty(mCurrentUser.getLogin())) {
                 Snackbar.make(mFabAddComment, "请先登录客户端", Snackbar.LENGTH_SHORT).show();
                 return;
             }
         }
 
         // TODO: check login and token not expire
-        if (FavoriteUtil.hasFavorite(TopicDetailActivity.this, mTopicId)){
+        if (FavoriteUtil.hasFavorite(TopicDetailActivity.this, mTopicId)) {
             // 取消收藏
             TesterHomeApi.getInstance().getTopicsService().uncollectTopic(mTopicId, mCurrentUser.getAccess_token(), new Callback<CollectTopicResonse>() {
                 @Override
@@ -267,7 +271,7 @@ public class TopicDetailActivity extends BackBaseActivity implements TopicReplyF
     void onDetailPraiseClick() {
         if (mCurrentUser == null) {
             mCurrentUser = TesterHomeAccountService.getInstance(this).getActiveAccountInfo();
-            if (TextUtils.isEmpty(mCurrentUser.getLogin())){
+            if (TextUtils.isEmpty(mCurrentUser.getLogin())) {
                 Snackbar.make(mFabAddComment, "请先登录客户端", Snackbar.LENGTH_SHORT).show();
                 return;
             }

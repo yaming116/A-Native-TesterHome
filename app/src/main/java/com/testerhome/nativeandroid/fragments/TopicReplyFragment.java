@@ -108,7 +108,7 @@ public class TopicReplyFragment extends BaseFragment {
                     @Override
                     public void success(TopicReplyResponse topicReplyResponse, Response response) {
                         hideLoadingView();
-                        if (swipeRefreshLayout.isRefreshing()) {
+                        if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
                             swipeRefreshLayout.setRefreshing(false);
                         }
                         if (topicReplyResponse.getTopicReply().size() > 0) {
