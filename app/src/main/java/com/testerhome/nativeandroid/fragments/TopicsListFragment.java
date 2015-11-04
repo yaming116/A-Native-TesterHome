@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 
+import com.testerhome.nativeandroid.BuildConfig;
 import com.testerhome.nativeandroid.Config;
 import com.testerhome.nativeandroid.R;
 import com.testerhome.nativeandroid.models.BannerEntity;
@@ -164,6 +165,7 @@ public class TopicsListFragment extends BaseFragment implements Callback<TopicsR
         if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
             swipeRefreshLayout.setRefreshing(false);
         }
-        Log.e("cache", "failure() called with: " + "error = [" + error + "]" + error.getResponse().getHeaders().toString());
+        if (BuildConfig.DEBUG)
+            Log.e("cache", "failure() called with: " + "error = [" + error + "]" + error.getResponse().getHeaders().toString());
     }
 }
