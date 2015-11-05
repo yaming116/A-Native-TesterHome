@@ -1,10 +1,9 @@
 package com.testerhome.nativeandroid.networks;
 
-import com.testerhome.nativeandroid.BuildConfig;
 import com.testerhome.nativeandroid.Config;
 
-import retrofit.RestAdapter;
-import retrofit.client.OkClient;
+import retrofit.GsonConverterFactory;
+import retrofit.Retrofit;
 
 /**
  * Created by Bin Li on 2015/9/16.
@@ -22,15 +21,14 @@ public class TesterHomeApi {
     }
 
     private TesterHomeApi(){
-        RestAdapter restAdapter = buildRestAdapter();
-        this.topicsService = restAdapter.create(TopicsService.class);
+        Retrofit retrofit = buildRestAdapter();
+        this.topicsService = retrofit.create(TopicsService.class);
     }
 
-    private RestAdapter buildRestAdapter() {
-        return new RestAdapter.Builder()
-                .setLogLevel(BuildConfig.DEBUG? RestAdapter.LogLevel.FULL: RestAdapter.LogLevel.NONE)
-                .setEndpoint(Config.BASE_URL)
-                .setClient(new OkClient())
+    private Retrofit buildRestAdapter() {
+        return new Retrofit.Builder()
+                .baseUrl(Config.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
                 .build();
     }
 

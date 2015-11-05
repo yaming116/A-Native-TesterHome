@@ -13,9 +13,10 @@ import com.testerhome.nativeandroid.views.adapters.TopicReplyAdapter;
 import com.testerhome.nativeandroid.views.widgets.DividerItemDecoration;
 
 import butterknife.Bind;
+import retrofit.Call;
 import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Response;
+import retrofit.Retrofit;
 
 /**
  * Created by cvtpc on 2015/10/16.
@@ -102,43 +103,46 @@ public class TopicReplyFragment extends BaseFragment {
         if (showloading)
             showLoadingView();
 
+        Call<TopicReplyResponse> call=
         TesterHomeApi.getInstance().getTopicsService().getTopicsReplies(mTopicId,
-                mNextCursor * 20,
-                new Callback<TopicReplyResponse>() {
-                    @Override
-                    public void success(TopicReplyResponse topicReplyResponse, Response response) {
-                        hideLoadingView();
-                        if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
-                            swipeRefreshLayout.setRefreshing(false);
-                        }
-                        if (topicReplyResponse.getTopicReply().size() > 0) {
+                mNextCursor * 20);
 
-                            if (mNextCursor == 0) {
-                                mAdatper.setItems(topicReplyResponse.getTopicReply());
-                            } else {
-                                mAdatper.addItems(topicReplyResponse.getTopicReply());
-                            }
+        call.enqueue(new Callback<TopicReplyResponse>() {
+            @Override
+            public void onResponse(Response<TopicReplyResponse> response, Retrofit retrofit) {
+                hideLoadingView();
+                if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
+                    swipeRefreshLayout.setRefreshing(false);
+                }
+                if (response.body()!=null && response.body().getTopicReply().size() > 0) {
 
-                            if (topicReplyResponse.getTopicReply().size() == 20) {
-                                mNextCursor += 1;
-                            } else {
-                                mNextCursor = 0;
-                            }
-                        } else {
-                            mNextCursor = 0;
-                        }
+                    if (mNextCursor == 0) {
+                        mAdatper.setItems(response.body().getTopicReply());
+                    } else {
+                        mAdatper.addItems(response.body().getTopicReply());
                     }
 
-                    @Override
-                    public void failure(RetrofitError error) {
-                        hideLoadingView();
-                        if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
-                            swipeRefreshLayout.setRefreshing(false);
-                        }
-                        Log.e("demo", "failure() called with: " + "error = [" + error + "]"
-                                + error.getUrl());
+                    if (response.body().getTopicReply().size() == 20) {
+                        mNextCursor += 1;
+                    } else {
+                        mNextCursor = 0;
                     }
-                });
+                } else {
+                    mNextCursor = 0;
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                hideLoadingView();
+                if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
+                    swipeRefreshLayout.setRefreshing(false);
+                }
+                Log.e("demo", "failure() called with: " + "error = [" + t.getMessage() + "]"
+                        , t);
+            }
+        });
+
     }
 
     public void scrollToEnd() {

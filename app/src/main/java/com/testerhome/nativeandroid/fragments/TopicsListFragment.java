@@ -21,9 +21,10 @@ import com.testerhome.nativeandroid.views.widgets.DividerItemDecoration;
 import java.util.ArrayList;
 
 import butterknife.Bind;
+import retrofit.Call;
 import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Response;
+import retrofit.Retrofit;
 
 /**
  * Created by Bin Li on 2015/9/16.
@@ -118,37 +119,35 @@ public class TopicsListFragment extends BaseFragment implements Callback<TopicsR
         if (showloading)
             showLoadingView();
 
+        Call<TopicsResponse> call;
         if (type != null) {
-            RestAdapterUtils.getRestAPI(Config.BASE_URL, TopicsService.class, getActivity()).getTopicsByType(type,
-                    mNextCursor * 20, this);
+            call = RestAdapterUtils.getRestAPI(Config.BASE_URL, TopicsService.class, getActivity()).getTopicsByType(type,
+                    mNextCursor * 20);
         } else {
-            RestAdapterUtils.getRestAPI(Config.BASE_URL, TopicsService.class, getActivity()).getTopicsByNodeId(nodeId,
-                    mNextCursor * 20, this);
+            call = RestAdapterUtils.getRestAPI(Config.BASE_URL, TopicsService.class, getActivity()).getTopicsByNodeId(nodeId,
+                    mNextCursor * 20);
         }
-
+        call.enqueue(this);
     }
 
-
     @Override
-    public void success(TopicsResponse topicsResponse, Response response) {
-
-        Log.e("cache", response.getHeaders().toString());
-
+    public void onResponse(Response<TopicsResponse> response, Retrofit retrofit) {
         hideLoadingView();
         if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
             swipeRefreshLayout.setRefreshing(false);
         }
 
-        if (topicsResponse.getTopics().size() > 0) {
+        Log.e("retrofit", response.raw().request().urlString());
+        if (response.body() != null && response.body().getTopics().size() > 0) {
             if (mNextCursor == 0) {
                 if (!TextUtils.isEmpty(type) && type.equals(Config.TOPICS_TYPE_RECENT)) {
-                    topicsResponse.getTopics().add(0, new TopicEntity(TopicsListAdapter.TOPIC_LIST_TYPE_BANNER, new ArrayList<BannerEntity>()));
+                    response.body().getTopics().add(0, new TopicEntity(TopicsListAdapter.TOPIC_LIST_TYPE_BANNER, new ArrayList<BannerEntity>()));
                 }
-                mAdatper.setItems(topicsResponse.getTopics());
+                mAdatper.setItems(response.body().getTopics());
             } else {
-                mAdatper.addItems(topicsResponse.getTopics());
+                mAdatper.addItems(response.body().getTopics());
             }
-            if (topicsResponse.getTopics().size() >= 20) {
+            if (response.body().getTopics().size() >= 20) {
                 mNextCursor += 1;
             } else {
                 mNextCursor = 0;
@@ -160,12 +159,12 @@ public class TopicsListFragment extends BaseFragment implements Callback<TopicsR
     }
 
     @Override
-    public void failure(RetrofitError error) {
+    public void onFailure(Throwable t) {
         hideLoadingView();
         if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
             swipeRefreshLayout.setRefreshing(false);
         }
         if (BuildConfig.DEBUG)
-            Log.e("cache", "failure() called with: " + "error = [" + error + "]" + error.getResponse().getHeaders().toString());
+            Log.e("cache", "failure() called with: " + "error = [" + t.getMessage() + "]", t);
     }
 }

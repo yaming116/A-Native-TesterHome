@@ -15,9 +15,10 @@ import com.testerhome.nativeandroid.views.adapters.TopicsListAdapter;
 import com.testerhome.nativeandroid.views.widgets.DividerItemDecoration;
 
 import butterknife.Bind;
+import retrofit.Call;
 import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Response;
+import retrofit.Retrofit;
 
 /**
  * Created by vclub on 15/10/14.
@@ -49,7 +50,7 @@ public class AccountFavoriteFragment extends BaseFragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        if (mTesterHomeAccount == null){
+        if (mTesterHomeAccount == null) {
             getUserInfo();
         }
 
@@ -85,7 +86,7 @@ public class AccountFavoriteFragment extends BaseFragment {
 
     private TesterUser mTesterHomeAccount;
 
-    private void getUserInfo(){
+    private void getUserInfo() {
         mTesterHomeAccount = TesterHomeAccountService.getInstance(getContext()).getActiveAccountInfo();
     }
 
@@ -94,43 +95,45 @@ public class AccountFavoriteFragment extends BaseFragment {
         if (showloading)
             showLoadingView();
 
-        TesterHomeApi.getInstance().getTopicsService().getUserFavorite(mTesterHomeAccount.getLogin(),
+        Call<TopicsResponse> call = TesterHomeApi.getInstance().getTopicsService().getUserFavorite(mTesterHomeAccount.getLogin(),
                 mTesterHomeAccount.getAccess_token(),
-                mNextCursor*20,
-                new Callback<TopicsResponse>() {
-                    @Override
-                    public void success(TopicsResponse topicsResponse, Response response) {
-                        hideLoadingView();
-                        if (swipeRefreshLayout.isRefreshing()) {
-                            swipeRefreshLayout.setRefreshing(false);
-                        }
-                        if (topicsResponse.getTopics().size() > 0) {
+                mNextCursor * 20);
 
-                            if (mNextCursor == 0) {
-                                mAdatper.setItems(topicsResponse.getTopics());
-                            } else {
-                                mAdatper.addItems(topicsResponse.getTopics());
-                            }
+        call.enqueue(new Callback<TopicsResponse>() {
+            @Override
+            public void onResponse(Response<TopicsResponse> response, Retrofit retrofit) {
+                hideLoadingView();
+                if (swipeRefreshLayout.isRefreshing()) {
+                    swipeRefreshLayout.setRefreshing(false);
+                }
+                if (response.body() != null && response.body().getTopics().size() > 0) {
 
-                            if (topicsResponse.getTopics().size() == 20) {
-                                mNextCursor += 1;
-                            } else {
-                                mNextCursor = 0;
-                            }
-                        } else {
-                            mNextCursor = 0;
-                        }
+                    if (mNextCursor == 0) {
+                        mAdatper.setItems(response.body().getTopics());
+                    } else {
+                        mAdatper.addItems(response.body().getTopics());
                     }
 
-                    @Override
-                    public void failure(RetrofitError error) {
-                        hideLoadingView();
-                        if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
-                            swipeRefreshLayout.setRefreshing(false);
-                        }
-                        Log.e("demo", "failure() called with: " + "error = [" + error + "]"
-                                + error.getUrl());
+                    if (response.body().getTopics().size() == 20) {
+                        mNextCursor += 1;
+                    } else {
+                        mNextCursor = 0;
                     }
-                });
+                } else {
+                    mNextCursor = 0;
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                hideLoadingView();
+                if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
+                    swipeRefreshLayout.setRefreshing(false);
+                }
+                Log.e("demo", "failure() called with: " + "error = [" + t.getMessage() + "]"
+                        , t);
+            }
+        });
+
     }
 }

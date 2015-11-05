@@ -11,7 +11,7 @@ import com.testerhome.nativeandroid.models.ToutiaoResponse;
 import com.testerhome.nativeandroid.models.UserDetailResponse;
 import com.testerhome.nativeandroid.models.UserResponse;
 
-import retrofit.Callback;
+import retrofit.Call;
 import retrofit.http.DELETE;
 import retrofit.http.GET;
 import retrofit.http.POST;
@@ -23,84 +23,83 @@ import retrofit.http.Query;
  */
 public interface TopicsService {
 
-    @GET("/ads/toutiao.json")
-    void getToutiao(Callback<ToutiaoResponse> callback);
+    @GET("ads/toutiao.json")
+    Call<ToutiaoResponse> getToutiao();
 
 
-    @GET("/topics.json")
-    void getTopicsByType(@Query("type") String type,
-                         @Query("offset") int offset,
-                         Callback<TopicsResponse> callback);
+    @GET("topics.json")
+    Call<TopicsResponse> getTopicsByType(@Query("type") String type,
+                                         @Query("offset") int offset);
 
 
-    @GET("/topics.json")
-    void getTopicsByNodeId(@Query("node_id") int nodeId,
-                         @Query("offset") int offset,
-                         Callback<TopicsResponse> callback);
+    @GET("topics.json")
+    Call<TopicsResponse> getTopicsByNodeId(@Query("node_id") int nodeId,
+                                           @Query("offset") int offset
+    );
 
 
-    @GET("/topics/{id}.json")
-    void getTopicById(@Path("id") String id,
-                      Callback<TopicDetailResponse> callback);
+    @GET("topics/{id}.json")
+    Call<TopicDetailResponse> getTopicById(@Path("id") String id
+    );
 
 
-    @GET("/users/{username}/topics.json")
-    void getUserTopics(@Path("username") String username,
-                       @Query("access_token") String accessToken,
-                       @Query("offset") int offset,
-                       Callback<TopicsResponse> callback);
+    @GET("users/{username}/topics.json")
+    Call<TopicsResponse> getUserTopics(@Path("username") String username,
+                                       @Query("access_token") String accessToken,
+                                       @Query("offset") int offset
+    );
 
-    @GET("/users/{username}/favorites.json")
-    void getUserFavorite(@Path("username") String username,
-                       @Query("access_token") String accessToken,
-                       @Query("offset") int offset,
-                       Callback<TopicsResponse> callback);
+    @GET("users/{username}/favorites.json")
+    Call<TopicsResponse> getUserFavorite(@Path("username") String username,
+                                         @Query("access_token") String accessToken,
+                                         @Query("offset") int offset
+    );
 
-    @GET("/users/{username}.json")
-    void getUserInfo(@Path("username") String username,
-                     @Query("access_token") String accessToken,
-                     Callback<UserResponse> callback);
+    @GET("users/{username}.json")
+    Call<UserResponse> getUserInfo(@Path("username") String username,
+                                   @Query("access_token") String accessToken
+    );
 
 
-    @GET("/greet.json")
-    void getCurrentUserInfo(
-                     @Query("access_token") String accessToken,
-                     Callback<UserDetailResponse> callback);
+    @GET("greet.json")
+    Call<UserDetailResponse> getCurrentUserInfo(
+            @Query("access_token") String accessToken
+    );
 
-    @GET("/topics/{id}/replies.json")
-    void getTopicsReplies(@Path("id") String id,
-                          @Query("offset") int offset,
-                          Callback<TopicReplyResponse> callback);
-    @GET("/notifications.json")
-    void getNotifications(@Query("access_token") String access_token,
-                          @Query("offset") int offset,
-                          Callback<NotificationResponse> callback);
+    @GET("topics/{id}/replies.json")
+    Call<TopicReplyResponse> getTopicsReplies(@Path("id") String id,
+                                              @Query("offset") int offset
+    );
 
-    @POST("/topics/{id}/replies.json")
-    void createReply(@Path("id") String id,
-                     @Query("body") String body,
-                     @Query("access_token") String accessToken,
-                     Callback<CreateReplyResponse> callback);
+    @GET("notifications.json")
+    Call<NotificationResponse> getNotifications(@Query("access_token") String access_token,
+                                                @Query("offset") int offset
+    );
 
-    @POST("/topics/{id}/favorite.json")
-    void collectTopic(@Path("id") String id,
-                      @Query("access_token") String accessToken,
-                      Callback<CollectTopicResonse> callback);
+    @POST("topics/{id}/replies.json")
+    Call<CreateReplyResponse> createReply(@Path("id") String id,
+                                          @Query("body") String body,
+                                          @Query("access_token") String accessToken
+    );
 
-    @POST("/topics/{id}/unfavorite.json")
-    void uncollectTopic(@Path("id") String id,
-                      @Query("access_token") String accessToken,
-                      Callback<CollectTopicResonse> callback);
+    @POST("topics/{id}/favorite.json")
+    Call<CollectTopicResonse> collectTopic(@Path("id") String id,
+                                           @Query("access_token") String accessToken
+    );
 
-    @POST("/likes.json")
-    void praiseTopic(@Query("obj_type") String objType,
-                     @Query("obj_id") String objId,
-                     @Query("access_token") String accessToken,
-                     Callback<PraiseEntity> callback);
+    @POST("topics/{id}/unfavorite.json")
+    Call<CollectTopicResonse> uncollectTopic(@Path("id") String id,
+                                             @Query("access_token") String accessToken
+    );
 
-    @DELETE("/likes.json")
-    void unLikeTopic(@Query("obj_type") String objType,
-                     @Query("obj_id") String objId,
-                     @Query("access_token") String accessToken,
-                     Callback<PraiseEntity> callback);
+    @POST("likes.json")
+    Call<PraiseEntity> praiseTopic(@Query("obj_type") String objType,
+                                   @Query("obj_id") String objId,
+                                   @Query("access_token") String accessToken
+    );
+
+    @DELETE("likes.json")
+    Call<PraiseEntity> unLikeTopic(@Query("obj_type") String objType,
+                                   @Query("obj_id") String objId,
+                                   @Query("access_token") String accessToken);
 }
