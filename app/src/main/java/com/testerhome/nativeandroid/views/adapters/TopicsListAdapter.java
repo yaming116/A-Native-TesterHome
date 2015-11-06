@@ -3,6 +3,8 @@ package com.testerhome.nativeandroid.views.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -19,9 +21,12 @@ import com.testerhome.nativeandroid.Config;
 import com.testerhome.nativeandroid.R;
 import com.testerhome.nativeandroid.models.TopicEntity;
 import com.testerhome.nativeandroid.models.ToutiaoResponse;
-import com.testerhome.nativeandroid.networks.TesterHomeApi;
+import com.testerhome.nativeandroid.networks.RestAdapterUtils;
 import com.testerhome.nativeandroid.utils.StringUtils;
 import com.testerhome.nativeandroid.views.TopicDetailActivity;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -79,7 +84,7 @@ public class TopicsListAdapter extends BaseAdapter<TopicEntity> {
                     mBannerAdapter = new TopicBannerAdapter();
                 }
                 bannerViewHolder.mTopicBanner.setAdapter(mBannerAdapter);
-
+                startPlay(bannerViewHolder.mTopicBanner);
                 mTopicBannerTitle = bannerViewHolder.mTopicBannerTitle;
                 break;
             default:
@@ -112,6 +117,32 @@ public class TopicsListAdapter extends BaseAdapter<TopicEntity> {
         if (position == mItems.size() - 1 && mListener != null) {
             mListener.onListEnded();
         }
+    }
+
+    private Timer timer;
+
+    private void startPlay(final ViewPager banner){
+        if (timer != null){
+            timer.cancel();
+        }
+
+        long delay = 3000;
+        timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        int cur = banner.getCurrentItem() + 1;
+                        if ( cur >= banner.getAdapter().getCount()){
+                            cur = 0;
+                        }
+                        banner.setCurrentItem(cur);
+                    }
+                });
+            }
+        }, delay, delay);
     }
 
     private EndlessListener mListener;
@@ -205,21 +236,20 @@ public class TopicsListAdapter extends BaseAdapter<TopicEntity> {
 
     // region
     private void loadToutiao(final ViewGroup viewGroup) {
-        Call<ToutiaoResponse> call =
-                TesterHomeApi.getInstance().getTopicsService().getToutiao();
+        Call<ToutiaoResponse> call = RestAdapterUtils.getRestAPI(mContext).getToutiao();
 
         call.enqueue(new Callback<ToutiaoResponse>() {
             @Override
             public void onResponse(Response<ToutiaoResponse> response, Retrofit retrofit) {
                 if (response.body() != null) {
 
-
                     imageViews = new View[response.body().getAds().size()];
                     for (int i = 0; i < imageViews.length; i++) {
-                        LinearLayout.LayoutParams margin = new LinearLayout.LayoutParams(
-                                30,
-                                3);
-                        margin.setMargins(10, 0, 0, 0);
+                        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                                ViewGroup.LayoutParams.MATCH_PARENT,
+                                ViewGroup.LayoutParams.MATCH_PARENT);
+                        layoutParams.weight = 1;
+
                         View imageView = new View(context);
                         imageViews[i] = imageView;
                         if (i == 0) {
@@ -227,7 +257,7 @@ public class TopicsListAdapter extends BaseAdapter<TopicEntity> {
                         } else {
                             imageViews[i].setBackgroundResource(R.color.tab_item_tint_default);
                         }
-                        viewGroup.addView(imageViews[i], margin);
+                        viewGroup.addView(imageViews[i], layoutParams);
                     }
 
                     if (response.body().getAds().size() > 0) {

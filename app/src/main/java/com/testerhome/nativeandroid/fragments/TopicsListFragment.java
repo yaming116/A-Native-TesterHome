@@ -14,7 +14,6 @@ import com.testerhome.nativeandroid.models.BannerEntity;
 import com.testerhome.nativeandroid.models.TopicEntity;
 import com.testerhome.nativeandroid.models.TopicsResponse;
 import com.testerhome.nativeandroid.networks.RestAdapterUtils;
-import com.testerhome.nativeandroid.networks.TopicsService;
 import com.testerhome.nativeandroid.views.adapters.TopicsListAdapter;
 import com.testerhome.nativeandroid.views.widgets.DividerItemDecoration;
 
@@ -121,10 +120,10 @@ public class TopicsListFragment extends BaseFragment implements Callback<TopicsR
 
         Call<TopicsResponse> call;
         if (type != null) {
-            call = RestAdapterUtils.getRestAPI(Config.BASE_URL, TopicsService.class, getActivity()).getTopicsByType(type,
+            call = RestAdapterUtils.getRestAPI(getActivity()).getTopicsByType(type,
                     mNextCursor * 20);
         } else {
-            call = RestAdapterUtils.getRestAPI(Config.BASE_URL, TopicsService.class, getActivity()).getTopicsByNodeId(nodeId,
+            call = RestAdapterUtils.getRestAPI(getActivity()).getTopicsByNodeId(nodeId,
                     mNextCursor * 20);
         }
         call.enqueue(this);

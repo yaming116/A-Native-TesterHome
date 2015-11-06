@@ -32,6 +32,7 @@ import com.testerhome.nativeandroid.models.PraiseEntity;
 import com.testerhome.nativeandroid.models.TesterUser;
 import com.testerhome.nativeandroid.models.TopicDetailEntity;
 import com.testerhome.nativeandroid.models.TopicDetailResponse;
+import com.testerhome.nativeandroid.networks.RestAdapterUtils;
 import com.testerhome.nativeandroid.networks.TesterHomeApi;
 import com.testerhome.nativeandroid.utils.DeviceUtil;
 import com.testerhome.nativeandroid.utils.FavoriteUtil;
@@ -169,8 +170,7 @@ public class TopicDetailActivity extends BackBaseActivity implements TopicReplyF
     TopicDetailEntity mTopicEntity;
 
     private void loadInfo() {
-        Call<TopicDetailResponse> call =
-        TesterHomeApi.getInstance().getTopicsService().getTopicById(mTopicId);
+        Call<TopicDetailResponse> call = RestAdapterUtils.getRestAPI(this).getTopicById(mTopicId);
 
         call.enqueue(new Callback<TopicDetailResponse>() {
             @Override
