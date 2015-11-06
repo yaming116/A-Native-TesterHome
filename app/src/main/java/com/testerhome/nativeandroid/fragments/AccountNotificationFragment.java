@@ -15,9 +15,10 @@ import com.testerhome.nativeandroid.views.adapters.NotificationAdapter;
 import com.testerhome.nativeandroid.views.widgets.DividerItemDecoration;
 
 import butterknife.Bind;
+import retrofit.Call;
 import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Response;
+import retrofit.Retrofit;
 
 /**
  * Created by cvtpc on 2015/10/18.
@@ -94,42 +95,47 @@ public class AccountNotificationFragment extends BaseFragment {
     private void loadNotification(boolean showloading) {
         if (showloading)
             showLoadingView();
-        TesterHomeApi.getInstance().getTopicsService().getNotifications(mTesterHomeAccount.getAccess_token(),
-                mNextCursor * 20,
-                new Callback<NotificationResponse>() {
-                    @Override
-                    public void success(NotificationResponse notificationResponse, Response response) {
-                        hideLoadingView();
-                        if (swipeRefreshLayout.isRefreshing()) {
-                            swipeRefreshLayout.setRefreshing(false);
-                        }
-                        if (notificationResponse.getNotifications().size() > 0) {
-                            if (mNextCursor == 0) {
-                                mAdatper.setItems(notificationResponse.getNotifications());
-                            } else {
-                                mAdatper.addItems(notificationResponse.getNotifications());
-                            }
-                            if (notificationResponse.getNotifications().size() == 20) {
-                                mNextCursor += 1;
-                            } else {
-                                mNextCursor = 0;
-                            }
 
+        Call<NotificationResponse> call =
+                TesterHomeApi.getInstance().getTopicsService().getNotifications(mTesterHomeAccount.getAccess_token(),
+                        mNextCursor * 20);
+
+        call.enqueue(new Callback<NotificationResponse>() {
+            @Override
+            public void onResponse(Response<NotificationResponse> response, Retrofit retrofit) {
+                if (response.body() != null) {
+                    hideLoadingView();
+                    if (swipeRefreshLayout.isRefreshing()) {
+                        swipeRefreshLayout.setRefreshing(false);
+                    }
+                    if (response.body().getNotifications().size() > 0) {
+                        if (mNextCursor == 0) {
+                            mAdatper.setItems(response.body().getNotifications());
+                        } else {
+                            mAdatper.addItems(response.body().getNotifications());
+                        }
+                        if (response.body().getNotifications().size() == 20) {
+                            mNextCursor += 1;
                         } else {
                             mNextCursor = 0;
                         }
-                    }
 
-                    @Override
-                    public void failure(RetrofitError error) {
-                        hideLoadingView();
-                        if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
-                            swipeRefreshLayout.setRefreshing(false);
-                        }
-                        Log.e("demo", "failure() called with: " + "error = [" + error + "]"
-                                + error.getUrl());
+                    } else {
+                        mNextCursor = 0;
                     }
-                });
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                hideLoadingView();
+                if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
+                    swipeRefreshLayout.setRefreshing(false);
+                }
+                Log.e("demo", "failure() called with: " + "error = [" + t.getMessage() + "]", t);
+            }
+        });
+
     }
 
 

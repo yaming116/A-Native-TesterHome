@@ -20,9 +20,6 @@ import com.testerhome.nativeandroid.networks.TesterHomeApi;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
 
 /**
  * Created by cvtpc on 2015/10/12.

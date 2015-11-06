@@ -28,7 +28,9 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.Calendar;
 
-import retrofit.RetrofitError;
+import retrofit.Call;
+import retrofit.Callback;
+import retrofit.Retrofit;
 
 /**
  * Created by vclub on 15/9/18.
@@ -122,7 +124,7 @@ public class WebViewActivity extends BackBaseActivity {
                         String accessToken = resultJson.has("access_token") ? resultJson.getString("access_token") : null;
                         String refreshToken = resultJson.has("refresh_token") ? resultJson.getString("refresh_token") : null;
                         long createdAt = resultJson.has("created_at") ? resultJson.getLong("created_at") : 0;
-                        Log.d("refreshToken",refreshToken);
+                        Log.d("refreshToken", refreshToken);
                         Log.e("Tokenm", "access token:" + accessToken);
                         if (expiresIn > 0 && accessToken != null) {
                             Log.e("Authorize", "This is the access Token: " + accessToken + ". It will expires in " + expiresIn + " secs");
@@ -162,12 +164,15 @@ public class WebViewActivity extends BackBaseActivity {
 
 
     private void getUserInfo(final String token, final OAuth oAuth) {
-        TesterHomeApi.getInstance().getTopicsService().getCurrentUserInfo(token, new retrofit.Callback<UserDetailResponse>() {
+        Call<UserDetailResponse> call =
+                TesterHomeApi.getInstance().getTopicsService().getCurrentUserInfo(token);
+
+        call.enqueue(new Callback<UserDetailResponse>() {
             @Override
-            public void success(UserDetailResponse userDetailResponse, retrofit.client.Response response) {
-                if (userDetailResponse.getUser() != null) {
+            public void onResponse(retrofit.Response<UserDetailResponse> response, Retrofit retrofit) {
+                if (response.body() != null && response.body().getUser() != null) {
                     TesterHomeAccountService.getInstance(WebViewActivity.this)
-                            .signIn(userDetailResponse.getUser().getLogin(), token, userDetailResponse.getUser(),oAuth);
+                            .signIn(response.body().getUser().getLogin(), token, response.body().getUser(), oAuth);
                     WebViewActivity.this.finish();
 
                     NativeApp.getInstance().startTimer();
@@ -175,7 +180,7 @@ public class WebViewActivity extends BackBaseActivity {
             }
 
             @Override
-            public void failure(RetrofitError error) {
+            public void onFailure(Throwable t) {
 
             }
         });

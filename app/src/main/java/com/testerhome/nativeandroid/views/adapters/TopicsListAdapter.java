@@ -3,7 +3,6 @@ package com.testerhome.nativeandroid.views.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Handler;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -11,7 +10,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -27,9 +25,10 @@ import com.testerhome.nativeandroid.views.TopicDetailActivity;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import retrofit.Call;
 import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Response;
+import retrofit.Retrofit;
 
 /**
  * Created by Bin Li on 2015/9/16.
@@ -40,6 +39,7 @@ public class TopicsListAdapter extends BaseAdapter<TopicEntity> {
     public static final int TOPIC_LIST_TYPE_TOPIC = 1;
     private Context context;
     private View[] imageViews;
+
     public TopicsListAdapter(Context context) {
         super(context);
         this.context = context;
@@ -52,7 +52,7 @@ public class TopicsListAdapter extends BaseAdapter<TopicEntity> {
         switch (viewType) {
             case TOPIC_LIST_TYPE_BANNER:
                 view = LayoutInflater.from(mContext).inflate(R.layout.list_item_banner, parent, false);
-                ViewGroup viewGroup = (ViewGroup)view.findViewById(R.id.view_group);
+                ViewGroup viewGroup = (ViewGroup) view.findViewById(R.id.view_group);
                 loadToutiao(viewGroup);
                 return new TopicBannerViewHolder(view);
             default:
@@ -205,41 +205,47 @@ public class TopicsListAdapter extends BaseAdapter<TopicEntity> {
 
     // region
     private void loadToutiao(final ViewGroup viewGroup) {
-        TesterHomeApi.getInstance().getTopicsService().getToutiao(new Callback<ToutiaoResponse>() {
+        Call<ToutiaoResponse> call =
+                TesterHomeApi.getInstance().getTopicsService().getToutiao();
+
+        call.enqueue(new Callback<ToutiaoResponse>() {
             @Override
-            public void success(ToutiaoResponse toutiaoResponse, Response response) {
+            public void onResponse(Response<ToutiaoResponse> response, Retrofit retrofit) {
+                if (response.body() != null) {
 
-                imageViews = new View[toutiaoResponse.getAds().size()];
-                for (int i = 0; i < imageViews.length; i++) {
-                    LinearLayout.LayoutParams margin = new LinearLayout.LayoutParams(
-                            30,
-                            3);
-                    margin.setMargins(10, 0, 0, 0);
-                    View imageView = new View(context);
-                    imageViews[i] = imageView;
-                    if (i == 0) {
-                        imageViews[i].setBackgroundResource(R.color.colorAccent);
-                    }else{
-                        imageViews[i].setBackgroundResource(R.color.tab_item_tint_default);
+
+                    imageViews = new View[response.body().getAds().size()];
+                    for (int i = 0; i < imageViews.length; i++) {
+                        LinearLayout.LayoutParams margin = new LinearLayout.LayoutParams(
+                                30,
+                                3);
+                        margin.setMargins(10, 0, 0, 0);
+                        View imageView = new View(context);
+                        imageViews[i] = imageView;
+                        if (i == 0) {
+                            imageViews[i].setBackgroundResource(R.color.colorAccent);
+                        } else {
+                            imageViews[i].setBackgroundResource(R.color.tab_item_tint_default);
+                        }
+                        viewGroup.addView(imageViews[i], margin);
                     }
-                    viewGroup.addView(imageViews[i], margin);
-                }
 
-                if (toutiaoResponse.getAds().size() > 0) {
-                    mBannerAdapter.setItems(toutiaoResponse.getAds());
-                    if (mBannerAdapter != null)
-                        mTopicBannerTitle.setText(mBannerAdapter.getPageTitle(0));
-                } else {
-                    // no info
+                    if (response.body().getAds().size() > 0) {
+                        mBannerAdapter.setItems(response.body().getAds());
+                        if (mBannerAdapter != null)
+                            mTopicBannerTitle.setText(mBannerAdapter.getPageTitle(0));
+                    } else {
+                        // no info
+                    }
                 }
-
             }
 
             @Override
-            public void failure(RetrofitError error) {
-                Log.e("TopicsListAdapter", error.getMessage());
+            public void onFailure(Throwable t) {
+                Log.e("TopicsListAdapter", t.getMessage());
             }
         });
+
     }
     // endregion
 }

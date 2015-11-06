@@ -16,7 +16,7 @@ public class Config {
 
     public static final int TOPIC_JOB_NODE_ID = 19;
 
-    public static final String BASE_URL = "https://testerhome.com/api/v3";
+    public static final String BASE_URL = "https://testerhome.com/api/v3/";
 
     public static final String FOLLOW = "Follow";
     public static final String TOPIC = "Topic";

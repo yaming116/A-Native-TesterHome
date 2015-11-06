@@ -41,9 +41,10 @@ import com.testerhome.nativeandroid.views.base.BackBaseActivity;
 
 import butterknife.Bind;
 import butterknife.OnClick;
+import retrofit.Call;
 import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
+import retrofit.Response;
+import retrofit.Retrofit;
 
 /**
  * Created by vclub on 15/9/17.
@@ -168,48 +169,53 @@ public class TopicDetailActivity extends BackBaseActivity implements TopicReplyF
     TopicDetailEntity mTopicEntity;
 
     private void loadInfo() {
-        TesterHomeApi.getInstance().getTopicsService().getTopicById(mTopicId,
-                new Callback<TopicDetailResponse>() {
-                    @Override
-                    public void success(TopicDetailResponse topicDetailResponse, Response response) {
-                        mTopicEntity = topicDetailResponse.getTopic();
-                        tvDetailTitle.setText(mTopicEntity.getTitle());
-                        tvDetailName.setText(mTopicEntity.getNode_name().concat("."));
-                        tvDetailUsername.setText(TextUtils.isEmpty(mTopicEntity.getUser().getLogin()) ?
-                                "匿名用户" : mTopicEntity.getUser().getName());
-                        tvDetailPublishDate.setText(StringUtils.formatPublishDateTime(
-                                mTopicEntity.getCreated_at()).concat(".")
-                                .concat(mTopicEntity.getHits()).concat("次阅读"));
-                        sdvDetailUserAvatar.setImageURI(Uri.parse(Config.getImageUrl(mTopicEntity.getUser().getAvatar_url())));
+        Call<TopicDetailResponse> call =
+        TesterHomeApi.getInstance().getTopicsService().getTopicById(mTopicId);
 
-                        // 用户回复数
-                        tvDetailRepliesCount.setText(getString(R.string.reply_count_info, mTopicEntity.getReplies_count()));
+        call.enqueue(new Callback<TopicDetailResponse>() {
+            @Override
+            public void onResponse(Response<TopicDetailResponse> response, Retrofit retrofit) {
+                if (response.body() != null) {
+                    mTopicEntity = response.body().getTopic();
+                    tvDetailTitle.setText(mTopicEntity.getTitle());
+                    tvDetailName.setText(mTopicEntity.getNode_name().concat("."));
+                    tvDetailUsername.setText(TextUtils.isEmpty(mTopicEntity.getUser().getLogin()) ?
+                            "匿名用户" : mTopicEntity.getUser().getName());
+                    tvDetailPublishDate.setText(StringUtils.formatPublishDateTime(
+                            mTopicEntity.getCreated_at()).concat(".")
+                            .concat(mTopicEntity.getHits()).concat("次阅读"));
+                    sdvDetailUserAvatar.setImageURI(Uri.parse(Config.getImageUrl(mTopicEntity.getUser().getAvatar_url())));
 
-                        if (PraiseUtil.hasPraised(TopicDetailActivity.this, mTopicId)) {
-                            tvDetailPraise.setCompoundDrawablesWithIntrinsicBounds(R.drawable.btn_heart_off, 0, 0, 0);
-                        } else {
-                            tvDetailPraise.setCompoundDrawablesWithIntrinsicBounds(R.drawable.btn_heart, 0, 0, 0);
-                        }
+                    // 用户回复数
+                    tvDetailRepliesCount.setText(getString(R.string.reply_count_info, mTopicEntity.getReplies_count()));
 
-                        if (FavoriteUtil.hasFavorite(TopicDetailActivity.this, mTopicId)) {
-                            tvDetailCollect.setCompoundDrawablesWithIntrinsicBounds(R.drawable.btn_bookmark_off, 0, 0, 0);
-                        } else {
-                            tvDetailCollect.setCompoundDrawablesWithIntrinsicBounds(R.drawable.btn_bookmark, 0, 0, 0);
-                        }
-
-                        if (mMarkdownFragment != null) {
-                            mMarkdownFragment.showWebContent(topicDetailResponse.getTopic().getBody_html());
-                        }
+                    if (PraiseUtil.hasPraised(TopicDetailActivity.this, mTopicId)) {
+                        tvDetailPraise.setCompoundDrawablesWithIntrinsicBounds(R.drawable.btn_heart_off, 0, 0, 0);
+                    } else {
+                        tvDetailPraise.setCompoundDrawablesWithIntrinsicBounds(R.drawable.btn_heart, 0, 0, 0);
                     }
 
-                    @Override
-                    public void failure(RetrofitError error) {
-                        if (mFabAddComment != null) {
-                            Snackbar.make(mFabAddComment, "Error:" + error.getMessage(), Snackbar.LENGTH_SHORT).show();
-                            Log.e("TopicDetailActivity", "Error:" + error.getMessage());
-                        }
+                    if (FavoriteUtil.hasFavorite(TopicDetailActivity.this, mTopicId)) {
+                        tvDetailCollect.setCompoundDrawablesWithIntrinsicBounds(R.drawable.btn_bookmark_off, 0, 0, 0);
+                    } else {
+                        tvDetailCollect.setCompoundDrawablesWithIntrinsicBounds(R.drawable.btn_bookmark, 0, 0, 0);
                     }
-                });
+
+                    if (mMarkdownFragment != null) {
+                        mMarkdownFragment.showWebContent(response.body().getTopic().getBody_html());
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                if (mFabAddComment != null) {
+                    Snackbar.make(mFabAddComment, "Error:" + t.getMessage(), Snackbar.LENGTH_SHORT).show();
+                    Log.e("TopicDetailActivity", "Error:" + t.getMessage());
+                }
+            }
+        });
+
     }
 
     private TesterUser mCurrentUser;
@@ -217,6 +223,8 @@ public class TopicDetailActivity extends BackBaseActivity implements TopicReplyF
     TextView tvDetailCollect;
     @Bind(R.id.tv_detail_praise)
     TextView tvDetailPraise;
+
+    boolean isFavorite = false;
 
     @OnClick(R.id.tv_detail_collect)
     void onDetailCollectClick() {
@@ -229,44 +237,44 @@ public class TopicDetailActivity extends BackBaseActivity implements TopicReplyF
         }
 
         // TODO: check login and token not expire
+        Call<CollectTopicResonse> call;
         if (FavoriteUtil.hasFavorite(TopicDetailActivity.this, mTopicId)) {
             // 取消收藏
-            TesterHomeApi.getInstance().getTopicsService().uncollectTopic(mTopicId, mCurrentUser.getAccess_token(), new Callback<CollectTopicResonse>() {
-                @Override
-                public void success(CollectTopicResonse collectTopicResonse, Response response) {
-                    if (collectTopicResonse.getOk() == 1) {
-                        Snackbar.make(mFabAddComment, "取消收藏成功", Snackbar.LENGTH_SHORT).show();
-                        FavoriteUtil.delFavorite(TopicDetailActivity.this, mTopicId);
-                        tvDetailCollect.setCompoundDrawablesWithIntrinsicBounds(R.drawable.btn_bookmark, 0, 0, 0);
-                    }
-                }
-
-                @Override
-                public void failure(RetrofitError error) {
-                    Snackbar.make(mFabAddComment, "Error:" + error.getMessage(), Snackbar.LENGTH_SHORT).show();
-                }
-            });
+            call = TesterHomeApi.getInstance().getTopicsService().uncollectTopic(mTopicId, mCurrentUser.getAccess_token());
+            isFavorite = true;
         } else {
-            TesterHomeApi.getInstance().getTopicsService().collectTopic(mTopicId, mCurrentUser.getAccess_token(), new Callback<CollectTopicResonse>() {
-                @Override
-                public void success(CollectTopicResonse collectTopicResonse, Response response) {
-                    if (collectTopicResonse.getOk() == 1) {
-                        Snackbar.make(mFabAddComment, "收藏成功", Snackbar.LENGTH_SHORT).show();
-                        FavoriteUtil.addTopicToFavorite(TopicDetailActivity.this, mTopicEntity);
-                        tvDetailCollect.setCompoundDrawablesWithIntrinsicBounds(R.drawable.btn_bookmark_off, 0, 0, 0);
-                    }
-                }
-
-                @Override
-                public void failure(RetrofitError error) {
-                    Snackbar.make(mFabAddComment, "Error:" + error.getMessage(), Snackbar.LENGTH_SHORT).show();
-                }
-            });
+            call = TesterHomeApi.getInstance().getTopicsService().collectTopic(mTopicId, mCurrentUser.getAccess_token());
+            isFavorite = false;
         }
 
+        call.enqueue(new Callback<CollectTopicResonse>() {
+            @Override
+            public void onResponse(Response<CollectTopicResonse> response, Retrofit retrofit) {
+                if (response.body() != null){
+                    if (isFavorite){
+                        if (response.body().getOk() == 1) {
+                            Snackbar.make(mFabAddComment, "取消收藏成功", Snackbar.LENGTH_SHORT).show();
+                            FavoriteUtil.delFavorite(TopicDetailActivity.this, mTopicId);
+                            tvDetailCollect.setCompoundDrawablesWithIntrinsicBounds(R.drawable.btn_bookmark, 0, 0, 0);
+                        }
+                    } else {
+                        if (response.body().getOk() == 1) {
+                            Snackbar.make(mFabAddComment, "收藏成功", Snackbar.LENGTH_SHORT).show();
+                            FavoriteUtil.addTopicToFavorite(TopicDetailActivity.this, mTopicEntity);
+                            tvDetailCollect.setCompoundDrawablesWithIntrinsicBounds(R.drawable.btn_bookmark_off, 0, 0, 0);
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Snackbar.make(mFabAddComment, "Error:" + t.getMessage(), Snackbar.LENGTH_SHORT).show();
+            }
+        });
     }
 
-
+    boolean isPraised = false;
     @OnClick(R.id.tv_detail_praise)
     void onDetailPraiseClick() {
         if (mCurrentUser == null) {
@@ -277,35 +285,37 @@ public class TopicDetailActivity extends BackBaseActivity implements TopicReplyF
             }
         }
         // TODO: check login and token not expire
+
+        Call<PraiseEntity> call;
         if (PraiseUtil.hasPraised(TopicDetailActivity.this, mTopicId)) {
-            TesterHomeApi.getInstance().getTopicsService().unLikeTopic(Config.PRAISE_TOPIC, mTopicId, mCurrentUser.getAccess_token(), new Callback<PraiseEntity>() {
-                @Override
-                public void success(PraiseEntity praiseEntity, Response response) {
-                    Snackbar.make(mFabAddComment, "取消点赞成功", Snackbar.LENGTH_SHORT).show();
-                    PraiseUtil.delPraise(TopicDetailActivity.this, mTopicId);
-                    tvDetailPraise.setCompoundDrawablesWithIntrinsicBounds(R.drawable.btn_heart, 0, 0, 0);
-                }
-
-                @Override
-                public void failure(RetrofitError error) {
-                    Snackbar.make(mFabAddComment, "Error:" + error.getMessage(), Snackbar.LENGTH_SHORT).show();
-                }
-            });
+            call = TesterHomeApi.getInstance().getTopicsService().unLikeTopic(Config.PRAISE_TOPIC, mTopicId, mCurrentUser.getAccess_token());
+            isPraised = true;
         } else {
-            TesterHomeApi.getInstance().getTopicsService().praiseTopic(Config.PRAISE_TOPIC, mTopicId, mCurrentUser.getAccess_token(), new Callback<PraiseEntity>() {
-                @Override
-                public void success(PraiseEntity praiseEntity, Response response) {
-                    Snackbar.make(mFabAddComment, "点赞成功", Snackbar.LENGTH_SHORT).show();
-                    PraiseUtil.addPraise(TopicDetailActivity.this, mTopicEntity);
-                    tvDetailPraise.setCompoundDrawablesWithIntrinsicBounds(R.drawable.btn_heart_off, 0, 0, 0);
-                }
-
-                @Override
-                public void failure(RetrofitError error) {
-                    Snackbar.make(mFabAddComment, "Error:" + error.getMessage(), Snackbar.LENGTH_SHORT).show();
-                }
-            });
+            call = TesterHomeApi.getInstance().getTopicsService().praiseTopic(Config.PRAISE_TOPIC, mTopicId, mCurrentUser.getAccess_token());
+            isPraised = false;
         }
+
+        call.enqueue(new Callback<PraiseEntity>() {
+            @Override
+            public void onResponse(Response<PraiseEntity> response, Retrofit retrofit) {
+                if (response.body() != null){
+                    if (isPraised){
+                        Snackbar.make(mFabAddComment, "取消点赞成功", Snackbar.LENGTH_SHORT).show();
+                        PraiseUtil.delPraise(TopicDetailActivity.this, mTopicId);
+                        tvDetailPraise.setCompoundDrawablesWithIntrinsicBounds(R.drawable.btn_heart, 0, 0, 0);
+                    } else {
+                        Snackbar.make(mFabAddComment, "点赞成功", Snackbar.LENGTH_SHORT).show();
+                        PraiseUtil.addPraise(TopicDetailActivity.this, mTopicEntity);
+                        tvDetailPraise.setCompoundDrawablesWithIntrinsicBounds(R.drawable.btn_heart_off, 0, 0, 0);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Snackbar.make(mFabAddComment, "Error:" + t.getMessage(), Snackbar.LENGTH_SHORT).show();
+            }
+        });
 
     }
 
@@ -343,39 +353,42 @@ public class TopicDetailActivity extends BackBaseActivity implements TopicReplyF
             if (mCurrentUser == null) {
                 mCurrentUser = TesterHomeAccountService.getInstance(this).getActiveAccountInfo();
             }
+            Call<CreateReplyResponse> call =
             TesterHomeApi.getInstance().getTopicsService()
                     .createReply(mTopicId,
                             replyBody,
-                            mCurrentUser.getAccess_token(),
-                            new Callback<CreateReplyResponse>() {
-                                @Override
-                                public void success(CreateReplyResponse createReplyResponse, Response response) {
-                                    if (createReplyResponse.getError() == null) {
-                                        // 发送成功
-                                        mEtComment.setText("");
-                                        DeviceUtil.hideSoftInput(TopicDetailActivity.this);
-                                        mAddCommentPanel.setVisibility(View.GONE);
-                                        mTopicReplyFragment.refreshReply();
-                                        // refresh reply count
-                                        if (createReplyResponse.getMeta() != null && createReplyResponse.getMeta().getCurrent_reply_count() > 0) {
-                                            updateReplyCount(createReplyResponse.getMeta().getCurrent_reply_count() + 1);
-                                        }
-                                    } else {
-                                        Snackbar.make(mFabAddComment,
-                                                createReplyResponse.getError().toString(),
-                                                Snackbar.LENGTH_SHORT)
-                                                .show();
-                                    }
-                                }
+                            mCurrentUser.getAccess_token());
 
-                                @Override
-                                public void failure(RetrofitError error) {
-                                    Snackbar.make(mFabAddComment,
-                                            error.getMessage(),
-                                            Snackbar.LENGTH_SHORT)
-                                            .show();
-                                }
-                            });
+            call.enqueue(new Callback<CreateReplyResponse>() {
+                @Override
+                public void onResponse(Response<CreateReplyResponse> response, Retrofit retrofit) {
+                    if (response.body() != null) {
+                        // 发送成功
+                        mEtComment.setText("");
+                        DeviceUtil.hideSoftInput(TopicDetailActivity.this);
+                        mAddCommentPanel.setVisibility(View.GONE);
+                        mTopicReplyFragment.refreshReply();
+                        // refresh reply count
+                        if (response.body().getMeta() != null && response.body().getMeta().getCurrent_reply_count() > 0) {
+                            updateReplyCount(response.body().getMeta().getCurrent_reply_count() + 1);
+                        }
+                    } else {
+                        Snackbar.make(mFabAddComment,
+                                response.body().getError().toString(),
+                                Snackbar.LENGTH_SHORT)
+                                .show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Throwable t) {
+                    Snackbar.make(mFabAddComment,
+                            t.getMessage(),
+                            Snackbar.LENGTH_SHORT)
+                            .show();
+                }
+            });
+
         }
     }
 
