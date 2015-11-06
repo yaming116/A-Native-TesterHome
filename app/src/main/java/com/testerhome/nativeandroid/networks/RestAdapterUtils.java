@@ -4,9 +4,13 @@ import android.content.Context;
 import android.util.Log;
 
 import com.squareup.okhttp.Cache;
+import com.squareup.okhttp.Interceptor;
 import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Response;
 import com.testerhome.nativeandroid.BuildConfig;
 import com.testerhome.nativeandroid.utils.NetworkUtils;
+
+import java.io.IOException;
 
 import retrofit.RequestInterceptor;
 import retrofit.RestAdapter;
@@ -35,6 +39,16 @@ public class RestAdapterUtils {
         }catch (Exception ex){
             Log.e("cache error", "can not create cache!");
         }
+
+        okHttpClient.networkInterceptors().add(new Interceptor() {
+            @Override
+            public Response intercept(Chain chain) throws IOException {
+                Response originalResponse = chain.proceed(chain.request());
+                return originalResponse.newBuilder()
+                        .header("Cache-Control", "public, max-age=60")
+                        .build();
+            }
+        });
 
         RestAdapter restAdapter = new RestAdapter.Builder()
                 .setLogLevel(BuildConfig.DEBUG? RestAdapter.LogLevel.FULL: RestAdapter.LogLevel.NONE)
