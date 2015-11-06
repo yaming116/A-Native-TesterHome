@@ -7,6 +7,7 @@ import com.squareup.okhttp.Cache;
 import com.squareup.okhttp.Interceptor;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Response;
+import com.testerhome.nativeandroid.utils.NetworkUtils;
 
 import java.io.IOException;
 
@@ -20,6 +21,7 @@ public class RestAdapterUtils {
 
     /**
      * support offline cache
+     *
      * @param endpoint
      * @param service
      * @param ctx
@@ -29,38 +31,34 @@ public class RestAdapterUtils {
     public static <T> T getRestAPI(String endpoint, Class<T> service, final Context ctx) {
 
         OkHttpClient okHttpClient = new OkHttpClient();
-        okHttpClient.interceptors().add(new Interceptor() {
+        okHttpClient.networkInterceptors().add(new Interceptor() {
             @Override
             public Response intercept(Chain chain) throws IOException {
-
-//                if (NetworkUtils.isNetworkAvailable(ctx)) {
-//                    Log.e("cache", "cache for 10");
-//                    int maxAge = 600; // read from cache for 10 minute
-//                    chain.request().addHeader("Cache-Control", "public, max-age=" + maxAge);
-//                } else {
-//                    Log.e("cache", "cache for 4 weeks");
-//                    int maxStale = 60 * 60 * 24 * 28; // tolerate 4-weeks stale
-//                    chain.request().addHeader("Cache-Control",
-//                            "public, only-if-cached, max-stale=" + maxStale);
-//                }
+                String cacheStr;
+                if (NetworkUtils.isNetworkAvailable(ctx)) {
+                    int maxAge = 60; // read from cache for 1 minute
+                    cacheStr = "public, max-age=" + maxAge;
+                } else {
+                    int maxStale = 60 * 60 * 24 * 28; // tolerate 4-weeks stale
+                    cacheStr = "public, only-if-cached, max-stale=" + maxStale;
+                }
                 Response response = chain.proceed(chain.request());
-
-                // Do anything with response here
-
-                return response;
+                return response.newBuilder()
+                        .header("Cache-Control", cacheStr)
+                        .build();
             }
         });
-        try{
+        try {
             int cacheSize = 10 * 1024 * 1024;
             Cache cache = new Cache(ctx.getCacheDir(), cacheSize);
             okHttpClient.setCache(cache);
-        }catch (Exception ex){
+        } catch (Exception ex) {
             Log.e("cache error", "can not create cache!");
         }
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(endpoint)
-//                .client(okHttpClient)
+                .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 

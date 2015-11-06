@@ -132,6 +132,10 @@ public class TopicsListFragment extends BaseFragment implements Callback<TopicsR
 
     @Override
     public void onResponse(Response<TopicsResponse> response, Retrofit retrofit) {
+
+        if (BuildConfig.DEBUG)
+            Log.e("cache", "cache header = [" + response.headers().toString() + "]");
+
         hideLoadingView();
         if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
             swipeRefreshLayout.setRefreshing(false);
