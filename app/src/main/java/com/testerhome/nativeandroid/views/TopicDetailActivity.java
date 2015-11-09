@@ -20,6 +20,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.jude.swipbackhelper.SwipeBackHelper;
 import com.testerhome.nativeandroid.Config;
 import com.testerhome.nativeandroid.R;
 import com.testerhome.nativeandroid.auth.TesterHomeAccountService;
@@ -58,6 +59,15 @@ public class TopicDetailActivity extends BackBaseActivity implements TopicReplyF
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_topic_detail);
+        SwipeBackHelper.onCreate(this);
+        SwipeBackHelper.getCurrentPage(this)
+                .setSwipeBackEnable(true)
+                .setSwipeEdge(200)
+                .setSwipeEdgePercent(0.2f)//可滑动的范围。百分比。0.2表示为左边20%的屏幕
+                .setSwipeSensitivity(0.5f)//对横向滑动手势的敏感程度。0为迟钝 1为敏感
+                .setClosePercent(0.8f)//触发关闭Activity百分比
+                .setSwipeRelateEnable(false)//是否与下一级activity联动(微信效果)。默认关
+                .setSwipeRelateOffset(500);//activity联动时的偏移量。默认500px。
 
         setCustomTitle("帖子详情");
 
@@ -69,6 +79,18 @@ public class TopicDetailActivity extends BackBaseActivity implements TopicReplyF
         } else {
             finish();
         }
+    }
+
+    @Override
+    public void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        SwipeBackHelper.onPostCreate(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        SwipeBackHelper.onDestroy(this);
     }
 
     @Override
