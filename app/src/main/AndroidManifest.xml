@@ -103,13 +103,6 @@
                 android:value=".TesterChooserTargetService" />
         </activity>
 
-        <service
-            android:name="com.umeng.update.net.DownloadingService"
-            android:process=":DownloadingService"/>
-        <activity
-            android:name="com.umeng.update.UpdateDialogActivity"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
-
         <meta-data
             android:name="UMENG_APPKEY"
             android:value="56302f3ee0f55a674e002bfa" />
