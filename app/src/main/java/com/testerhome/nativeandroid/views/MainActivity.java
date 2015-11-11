@@ -8,9 +8,12 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.SearchView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,7 +33,7 @@ import com.testerhome.nativeandroid.views.base.BaseActivity;
 
 import butterknife.Bind;
 
-public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener, SearchView.OnQueryTextListener {
 
     private Fragment homeFragment;
     private Fragment jobFragment;
@@ -85,11 +88,19 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         mAccountUsername = (TextView) headerLayout.findViewById(R.id.tv_account_username);
         mAccountEmail = (TextView) headerLayout.findViewById(R.id.tv_account_email);
     }
-
+    SearchView searchView;
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+
+        searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        if (searchView != null){
+            searchView.setOnQueryTextListener(this);
+        }
+
         return true;
     }
 
@@ -102,6 +113,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_search) {
+            Log.e("search","search clicked");
+            searchView.onActionViewExpanded();
             return true;
         }
 
@@ -185,7 +198,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         if (mTesterHomeAccount != null && !TextUtils.isEmpty(mTesterHomeAccount.getLogin())) {
             startActivity(new Intent(this, UserProfileActivity.class));
         } else {
-            startActivity(new Intent(this, WebViewActivity.class));
+            startActivity(new Intent(this, AuthActivity.class));
         }
     }
 
@@ -199,8 +212,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             mAccountEmail.setText(mTesterHomeAccount.getEmail());
         } else {
             mAccountAvatar.setImageResource(R.mipmap.ic_launcher);
-            mAccountUsername.setText("Android Studio");
-            mAccountEmail.setText("android.studio@android.com");
+            mAccountUsername.setText("未登录");
+            mAccountEmail.setText("点击头像登录TesterHome");
         }
     }
 
@@ -218,5 +231,17 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             }
             back_pressed = System.currentTimeMillis();
         }
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        Log.e("search", "search:" + query);
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        // do nothing
+        return false;
     }
 }

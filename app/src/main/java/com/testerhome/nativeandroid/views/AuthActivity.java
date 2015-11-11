@@ -25,7 +25,6 @@ import com.testerhome.nativeandroid.views.base.BackBaseActivity;
 
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.util.Calendar;
 
 import retrofit.Call;
@@ -35,10 +34,11 @@ import retrofit.Retrofit;
 /**
  * Created by vclub on 15/9/18.
  */
-public class WebViewActivity extends BackBaseActivity {
+public class AuthActivity extends BackBaseActivity {
 
     private ProgressDialog pd;
     private String auth_code = "";
+    private WebView mWebView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +48,7 @@ public class WebViewActivity extends BackBaseActivity {
 
         FrameLayout layout = (FrameLayout) findViewById(R.id.container);
 
-        final WebView mWebView = new WebView(this);
+        mWebView = new WebView(this);
 
         layout.addView(mWebView);
 
@@ -86,7 +86,7 @@ public class WebViewActivity extends BackBaseActivity {
 
         @Override
         protected void onPreExecute() {
-            pd = ProgressDialog.show(WebViewActivity.this, "", "Loading...", true);
+            pd = ProgressDialog.show(AuthActivity.this, "", "Loading...", true);
         }
 
         @Override
@@ -144,10 +144,16 @@ public class WebViewActivity extends BackBaseActivity {
                     } else {
                         Log.e("Tokenm", "error:" + response.message());
                     }
-                } catch (IOException e) {
-                    e.printStackTrace();
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Log.e("Tokenm", "error:" + response.message());
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mWebView.setVisibility(View.VISIBLE);
+                            mWebView.loadUrl(AuthenticationService.getAuthorizationUrl());
+                        }
+                    });
                 }
             }
             return false;
@@ -171,9 +177,9 @@ public class WebViewActivity extends BackBaseActivity {
             @Override
             public void onResponse(retrofit.Response<UserDetailResponse> response, Retrofit retrofit) {
                 if (response.body() != null && response.body().getUser() != null) {
-                    TesterHomeAccountService.getInstance(WebViewActivity.this)
+                    TesterHomeAccountService.getInstance(AuthActivity.this)
                             .signIn(response.body().getUser().getLogin(), token, response.body().getUser(), oAuth);
-                    WebViewActivity.this.finish();
+                    AuthActivity.this.finish();
 
                     NativeApp.getInstance().startTimer();
                 }

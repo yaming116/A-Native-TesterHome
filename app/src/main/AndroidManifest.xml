@@ -47,7 +47,7 @@
                 android:value=".TesterChooserTargetService" />
         </activity>
         <activity
-            android:name=".views.WebViewActivity"
+            android:name=".views.AuthActivity"
             android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity
             android:name=".views.UserProfileActivity"
