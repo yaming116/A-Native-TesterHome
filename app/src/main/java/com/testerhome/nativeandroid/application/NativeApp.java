@@ -8,12 +8,15 @@ import android.webkit.WebView;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.imagepipeline.backends.okhttp.OkHttpImagePipelineConfigFactory;
 import com.facebook.imagepipeline.core.ImagePipelineConfig;
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.Tracker;
 import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.Response;
 import com.testerhome.nativeandroid.BuildConfig;
+import com.testerhome.nativeandroid.R;
 import com.testerhome.nativeandroid.auth.TesterHomeAccountService;
 import com.testerhome.nativeandroid.models.OAuth;
 import com.testerhome.nativeandroid.models.TesterUser;
@@ -42,8 +45,6 @@ public class NativeApp extends Application {
         }
         return instance;
     }
-
-
 
     public void startTimer(){
         TesterUser testerUser = TesterHomeAccountService.getInstance(this).getActiveAccountInfo();
@@ -148,4 +149,18 @@ public class NativeApp extends Application {
         startTimer();
     }
 
+
+    private Tracker mTracker;
+    /**
+     * Gets the default {@link Tracker} for this {@link Application}.
+     * @return tracker
+     */
+    synchronized public Tracker getDefaultTracker() {
+        if (mTracker == null) {
+            GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
+            // To enable debug logging use: adb shell setprop log.tag.GAv4 DEBUG
+            mTracker = analytics.newTracker(R.xml.global_tracker);
+        }
+        return mTracker;
+    }
 }

@@ -82,4 +82,7 @@ public static int e(...);
 -dontwarn org.apache.http.**
 -dontwarn android.net.http.AndroidHttpClient
 
--keep class android.support.v7.widget.LinearLayoutManager { *; }
+-dontwarn com.google.android.**
+-keep class com.google.android.** {*;}
+
+-keep class android.support.v7.** {*;}
