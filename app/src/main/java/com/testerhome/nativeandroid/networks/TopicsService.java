@@ -4,6 +4,7 @@ import com.testerhome.nativeandroid.models.CollectTopicResonse;
 import com.testerhome.nativeandroid.models.CreateReplyResponse;
 import com.testerhome.nativeandroid.models.NotificationResponse;
 import com.testerhome.nativeandroid.models.PraiseEntity;
+import com.testerhome.nativeandroid.models.SearchResponse;
 import com.testerhome.nativeandroid.models.TopicDetailResponse;
 import com.testerhome.nativeandroid.models.TopicReplyResponse;
 import com.testerhome.nativeandroid.models.TopicsResponse;
@@ -30,6 +31,10 @@ public interface TopicsService {
     @GET("topics.json")
     Call<TopicsResponse> getTopicsByType(@Query("type") String type,
                                          @Query("offset") int offset);
+
+    @GET("search.json")
+    Call<SearchResponse> searchTopicsByKeyword(@Query("q") String keyword,
+                                         @Query("page") int page);
 
 
     @GET("topics.json")

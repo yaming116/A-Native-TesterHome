@@ -36,6 +36,9 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".views.SearchActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize" />
+        <activity
             android:name=".views.TopicDetailActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:windowSoftInputMode="adjustPan">
@@ -87,12 +90,12 @@
             android:label="@string/main_drawer_settings"
             android:theme="@style/AppTheme.ActionBar" />
 
-        <activity android:name=".views.SendToWXActivity"
+        <activity
+            android:name=".views.SendToWXActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:label="分享到朋友圈"
             android:icon="@drawable/icon_res_download_moments"
-            android:theme="@style/DirectShareDialogTheme"
-            >
+            android:label="分享到朋友圈"
+            android:theme="@style/DirectShareDialogTheme">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
                 <category android:name="android.intent.category.DEFAULT" />

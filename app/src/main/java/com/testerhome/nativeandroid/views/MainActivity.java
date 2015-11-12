@@ -236,6 +236,10 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     @Override
     public boolean onQueryTextSubmit(String query) {
         Log.e("search", "search:" + query);
+
+        if (!TextUtils.isEmpty(query)){
+            startActivity(new Intent(this, SearchActivity.class).putExtra("keyword", query));
+        }
         return false;
     }
 
