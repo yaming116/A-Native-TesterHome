@@ -146,6 +146,11 @@ public class NativeApp extends Application {
             WebView.setWebContentsDebuggingEnabled(true);
         }
         Log.d("NativeApp", "NativeApp   oncreate");
+
+        mTracker = getDefaultTracker();
+        mTracker.enableExceptionReporting(true);
+        mTracker.enableAutoActivityTracking(true);
+
         startTimer();
     }
 
