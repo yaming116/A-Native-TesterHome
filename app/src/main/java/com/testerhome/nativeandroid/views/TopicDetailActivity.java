@@ -361,6 +361,18 @@ public class TopicDetailActivity extends BackBaseActivity implements TopicReplyF
     void onSendCommentClick() {
         mEtComment.setError(null);
 
+        if (mCurrentUser == null) {
+            mCurrentUser = TesterHomeAccountService.getInstance(this).getActiveAccountInfo();
+        }
+
+        if (TextUtils.isEmpty(mCurrentUser.getAccess_token())){
+            Snackbar.make(mFabAddComment,
+                    "请先登录",
+                    Snackbar.LENGTH_SHORT)
+                    .show();
+            return;
+        }
+
         if (TextUtils.isEmpty(mEtComment.getText().toString())) {
             mEtComment.setError("请输入回复内容");
         } else {
@@ -372,9 +384,7 @@ public class TopicDetailActivity extends BackBaseActivity implements TopicReplyF
                         .concat("—— 来自TesterHome官方 [安卓客户端](http://fir.im/p9vs)");
             }
 
-            if (mCurrentUser == null) {
-                mCurrentUser = TesterHomeAccountService.getInstance(this).getActiveAccountInfo();
-            }
+
             Call<CreateReplyResponse> call =
             TesterHomeApi.getInstance().getTopicsService()
                     .createReply(mTopicId,
