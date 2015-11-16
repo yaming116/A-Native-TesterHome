@@ -101,7 +101,7 @@ public class TopicReplyFragment extends BaseFragment {
         }
 
         if (showloading)
-            showLoadingView();
+            showEmptyView();
 
         Call<TopicReplyResponse> call=
         TesterHomeApi.getInstance().getTopicsService().getTopicsReplies(mTopicId,
@@ -110,7 +110,7 @@ public class TopicReplyFragment extends BaseFragment {
         call.enqueue(new Callback<TopicReplyResponse>() {
             @Override
             public void onResponse(Response<TopicReplyResponse> response, Retrofit retrofit) {
-                hideLoadingView();
+                hideEmptyView();
                 if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
                     swipeRefreshLayout.setRefreshing(false);
                 }
@@ -134,7 +134,7 @@ public class TopicReplyFragment extends BaseFragment {
 
             @Override
             public void onFailure(Throwable t) {
-                hideLoadingView();
+                hideEmptyView();
                 if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
                     swipeRefreshLayout.setRefreshing(false);
                 }

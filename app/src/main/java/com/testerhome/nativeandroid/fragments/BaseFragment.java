@@ -6,6 +6,9 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+
+import com.testerhome.nativeandroid.R;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -40,15 +43,43 @@ public abstract class BaseFragment extends Fragment {
     @Bind(android.R.id.empty)
     View mEmptyView;
 
-    protected void showLoadingView(){
+    protected void showEmptyView(){
         if (mEmptyView != null){
             mEmptyView.setVisibility(View.VISIBLE);
         }
     }
 
-    protected void hideLoadingView(){
+    protected void hideEmptyView(){
         if (mEmptyView != null){
             mEmptyView.setVisibility(View.GONE);
+        }
+    }
+
+    @Nullable
+    @Bind(R.id.empty_load)
+    View mEmptyLoad;
+    protected void hideLoading(){
+        if (mEmptyLoad != null){
+            mEmptyLoad.setVisibility(View.GONE);
+        }
+    }
+
+    @Nullable
+    @Bind(R.id.error_panel)
+    View mErrorView;
+
+    @Nullable
+    @Bind(R.id.error_subtitle)
+    TextView mErrorText;
+
+    protected void showErrorView(String errorMessage){
+        showEmptyView();
+        if (mErrorView != null){
+            if (mErrorText != null){
+                mErrorText.setText(errorMessage);
+            }
+            mErrorView.setVisibility(View.VISIBLE);
+            hideLoading();
         }
     }
 }

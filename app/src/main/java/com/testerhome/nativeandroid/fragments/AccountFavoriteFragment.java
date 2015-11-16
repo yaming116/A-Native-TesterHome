@@ -93,7 +93,7 @@ public class AccountFavoriteFragment extends BaseFragment {
     private void loadTopics(boolean showloading) {
 
         if (showloading)
-            showLoadingView();
+            showEmptyView();
 
         Call<TopicsResponse> call = TesterHomeApi.getInstance().getTopicsService().getUserFavorite(mTesterHomeAccount.getLogin(),
                 mTesterHomeAccount.getAccess_token(),
@@ -102,7 +102,7 @@ public class AccountFavoriteFragment extends BaseFragment {
         call.enqueue(new Callback<TopicsResponse>() {
             @Override
             public void onResponse(Response<TopicsResponse> response, Retrofit retrofit) {
-                hideLoadingView();
+                hideEmptyView();
                 if (swipeRefreshLayout.isRefreshing()) {
                     swipeRefreshLayout.setRefreshing(false);
                 }
@@ -126,7 +126,7 @@ public class AccountFavoriteFragment extends BaseFragment {
 
             @Override
             public void onFailure(Throwable t) {
-                hideLoadingView();
+                hideEmptyView();
                 if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
                     swipeRefreshLayout.setRefreshing(false);
                 }

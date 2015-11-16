@@ -96,7 +96,7 @@ public class SearchResultFragment extends BaseFragment implements Callback<Searc
         }
 
         if (showloading)
-            showLoadingView();
+            showEmptyView();
 
 
         if (keyword != null) {
@@ -112,7 +112,7 @@ public class SearchResultFragment extends BaseFragment implements Callback<Searc
         if (BuildConfig.DEBUG)
             Log.e("cache", "cache header = [" + response.headers().toString() + "]");
 
-        hideLoadingView();
+        hideEmptyView();
         if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
             swipeRefreshLayout.setRefreshing(false);
         }
@@ -137,7 +137,7 @@ public class SearchResultFragment extends BaseFragment implements Callback<Searc
 
     @Override
     public void onFailure(Throwable t) {
-        hideLoadingView();
+        hideEmptyView();
         if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
             swipeRefreshLayout.setRefreshing(false);
         }

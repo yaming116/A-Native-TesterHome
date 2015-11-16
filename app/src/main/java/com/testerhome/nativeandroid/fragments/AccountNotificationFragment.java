@@ -94,7 +94,7 @@ public class AccountNotificationFragment extends BaseFragment {
 
     private void loadNotification(boolean showloading) {
         if (showloading)
-            showLoadingView();
+            showEmptyView();
 
         Call<NotificationResponse> call =
                 TesterHomeApi.getInstance().getTopicsService().getNotifications(mTesterHomeAccount.getAccess_token(),
@@ -104,7 +104,7 @@ public class AccountNotificationFragment extends BaseFragment {
             @Override
             public void onResponse(Response<NotificationResponse> response, Retrofit retrofit) {
                 if (response.body() != null) {
-                    hideLoadingView();
+                    hideEmptyView();
                     if (swipeRefreshLayout.isRefreshing()) {
                         swipeRefreshLayout.setRefreshing(false);
                     }
@@ -128,7 +128,7 @@ public class AccountNotificationFragment extends BaseFragment {
 
             @Override
             public void onFailure(Throwable t) {
-                hideLoadingView();
+                hideEmptyView();
                 if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
                     swipeRefreshLayout.setRefreshing(false);
                 }

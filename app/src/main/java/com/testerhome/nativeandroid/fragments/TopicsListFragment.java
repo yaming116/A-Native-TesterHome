@@ -116,7 +116,7 @@ public class TopicsListFragment extends BaseFragment implements Callback<TopicsR
         }
 
         if (showloading)
-            showLoadingView();
+            showEmptyView();
 
         Call<TopicsResponse> call;
         if (type != null) {
@@ -135,7 +135,7 @@ public class TopicsListFragment extends BaseFragment implements Callback<TopicsR
         if (BuildConfig.DEBUG)
             Log.e("cache", "cache header = [" + response.headers().toString() + "]");
 
-        hideLoadingView();
+        hideEmptyView();
         if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
             swipeRefreshLayout.setRefreshing(false);
         }
@@ -157,17 +157,23 @@ public class TopicsListFragment extends BaseFragment implements Callback<TopicsR
             }
 
         } else {
+            if (mNextCursor == 0){
+                showErrorView("无法加载数据,请检查网络");
+            }
             mNextCursor = 0;
         }
     }
 
     @Override
     public void onFailure(Throwable t) {
-        hideLoadingView();
+        hideEmptyView();
         if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
             swipeRefreshLayout.setRefreshing(false);
         }
         if (BuildConfig.DEBUG)
             Log.e("cache", "failure() called with: " + "error = [" + t.getMessage() + "]", t);
+        if (mNextCursor == 0){
+            showErrorView("无法加载数据,请检查网络");
+        }
     }
 }
