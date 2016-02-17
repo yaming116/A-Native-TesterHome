@@ -65,6 +65,10 @@ public interface TopicsService {
                                    @Query("access_token") String accessToken
     );
 
+    @GET("users/{username}.json")
+    Call<UserResponse> getUserInfo(
+            @Path("username") String username
+    );
 
     @GET("greet.json")
     Call<UserDetailResponse> getCurrentUserInfo(

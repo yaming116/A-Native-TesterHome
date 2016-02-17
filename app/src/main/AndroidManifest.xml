@@ -67,7 +67,8 @@
         <activity
             android:name=".views.AboutActivity"
             android:configChanges="keyboardHidden|orientation|screenSize" />
-
+        <activity android:name=".views.UserInfoActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize" />
         <service
             android:name=".auth.UserAccountService"
             tools:ignore="ExportedService">

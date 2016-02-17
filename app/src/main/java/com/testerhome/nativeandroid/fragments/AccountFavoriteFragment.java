@@ -34,10 +34,13 @@ public class AccountFavoriteFragment extends BaseFragment {
     private int mNextCursor = 0;
 
     private TopicsListAdapter mAdatper;
+    private String loginName;
 
-
-    public static AccountFavoriteFragment newInstance() {
+    public static AccountFavoriteFragment newInstance(String loginName) {
+        Bundle bundle = new Bundle();
+        bundle.putString("loginName",loginName);
         AccountFavoriteFragment fragment = new AccountFavoriteFragment();
+        fragment.setArguments(bundle);
         return fragment;
     }
 
@@ -54,6 +57,7 @@ public class AccountFavoriteFragment extends BaseFragment {
             getUserInfo();
         }
 
+        loginName = getArguments().getString("loginName");
         loadTopics(true);
     }
 

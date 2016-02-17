@@ -34,10 +34,13 @@ public class AccountTopicsFragment extends BaseFragment {
     private int mNextCursor = 0;
 
     private TopicsListAdapter mAdatper;
+    private String loginName;
 
-
-    public static AccountTopicsFragment newInstance() {
+    public static AccountTopicsFragment newInstance(String loginName) {
+        Bundle bundle = new Bundle();
+        bundle.putString("loginName",loginName);
         AccountTopicsFragment fragment = new AccountTopicsFragment();
+        fragment.setArguments(bundle);
         return fragment;
     }
 
@@ -53,6 +56,9 @@ public class AccountTopicsFragment extends BaseFragment {
         if (mTesterHomeAccount == null) {
             getUserInfo();
         }
+
+
+        loginName = getArguments().getString("loginName");
         loadTopics(true);
     }
 

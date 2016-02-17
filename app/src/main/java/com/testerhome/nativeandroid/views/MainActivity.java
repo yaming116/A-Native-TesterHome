@@ -196,7 +196,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     void onAvatarClick() {
         if (mTesterHomeAccount != null && !TextUtils.isEmpty(mTesterHomeAccount.getLogin())) {
-            startActivity(new Intent(this, UserProfileActivity.class));
+            startActivity(new Intent(this, UserInfoActivity.class).putExtra("loginName",mTesterHomeAccount.getLogin()));
         } else {
             startActivity(new Intent(this, AuthActivity.class));
         }
