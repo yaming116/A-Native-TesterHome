@@ -45,6 +45,7 @@ public class TopicsListFragment extends BaseFragment implements Callback<TopicsR
 
 
     public static TopicsListFragment newInstance(String type) {
+        Log.d("TopicListFragment","newInstance");
         Bundle args = new Bundle();
         args.putString("type", type);
         TopicsListFragment fragment = new TopicsListFragment();

@@ -3,7 +3,7 @@
     xmlns:fresco="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/rl_topic_item"
-    android:background="@drawable/item_selector"
+    android:background="?attr/selectableItemBackgroundGeneral"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:paddingBottom="8dp"
@@ -34,6 +34,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/tv_topic_title"
         android:layout_toRightOf="@+id/sdv_topic_user_avatar"
+        android:textColor="?android:attr/textColorSecondary"
         tools:text="username" />
 
     <TextView
@@ -42,6 +43,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_below="@+id/tv_topic_title"
+        android:textColor="?android:attr/textColorSecondary"
         tools:text="datetime" />
 
     <TextView
@@ -50,6 +52,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/tv_topic_username"
         android:layout_toRightOf="@+id/sdv_topic_user_avatar"
+        android:textColor="?android:attr/textColorSecondary"
         tools:text="node name" />
 
     <TextView

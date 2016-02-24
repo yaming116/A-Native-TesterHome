@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.util.Log;
 
 import com.testerhome.nativeandroid.Config;
 import com.testerhome.nativeandroid.R;
@@ -32,8 +33,8 @@ public class HomeFragment extends BaseFragment {
 
     @Override
     protected void setupView() {
-
-        mAdapter = new TopicViewPagerAdapter(getActivity().getSupportFragmentManager());
+        Log.d("homefragment","setupView");
+        mAdapter = new TopicViewPagerAdapter(getChildFragmentManager());
         viewPagerTopics.setAdapter(mAdapter);
         viewPagerTopics.setOffscreenPageLimit(4);
 
@@ -52,10 +53,12 @@ public class HomeFragment extends BaseFragment {
 
         public TopicViewPagerAdapter(FragmentManager fm) {
             super(fm);
+            Log.d("homefragment","contruct");
         }
 
         @Override
         public Fragment getItem(int position) {
+            Log.d("homefragment","getItem");
             return TopicsListFragment.newInstance(typeValue[position]);
         }
 
@@ -68,5 +71,11 @@ public class HomeFragment extends BaseFragment {
         public int getCount() {
             return typeName.length;
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d("homefragment","destroy");
     }
 }

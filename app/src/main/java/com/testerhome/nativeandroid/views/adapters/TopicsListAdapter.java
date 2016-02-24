@@ -84,7 +84,7 @@ public class TopicsListAdapter extends BaseAdapter<TopicEntity> {
                     mBannerAdapter = new TopicBannerAdapter();
                 }
                 bannerViewHolder.mTopicBanner.setAdapter(mBannerAdapter);
-                startPlay(bannerViewHolder.mTopicBanner);
+//                startPlay(bannerViewHolder.mTopicBanner);
                 mTopicBannerTitle = bannerViewHolder.mTopicBannerTitle;
                 break;
             default:

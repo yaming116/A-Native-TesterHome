@@ -1,8 +1,10 @@
 package com.testerhome.nativeandroid.views;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -17,6 +19,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,9 +30,11 @@ import com.testerhome.nativeandroid.Config;
 import com.testerhome.nativeandroid.R;
 import com.testerhome.nativeandroid.auth.TesterHomeAccountService;
 import com.testerhome.nativeandroid.fragments.HomeFragment;
+import com.testerhome.nativeandroid.fragments.SettingsFragment;
 import com.testerhome.nativeandroid.fragments.TopicsListFragment;
 import com.testerhome.nativeandroid.models.TesterUser;
 import com.testerhome.nativeandroid.views.base.BaseActivity;
+import com.testerhome.nativeandroid.views.widgets.ThemeUtils;
 
 import butterknife.Bind;
 
@@ -42,8 +47,15 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     @Bind(R.id.drawer_layout)
     DrawerLayout drawer;
 
+    private ImageView navBackGround;
+    // 是否启用夜间模式
+    private String appTheme;
+    private ImageView darkImage;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        appTheme = PreferenceManager.getDefaultSharedPreferences(this).getString(SettingsFragment.KEY_PREF_THEME, "0");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -51,6 +63,12 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
         setupWX();
     }
+
+    @Override
+    public boolean enableTheme() {
+        return true;
+    }
+
 
     private void setupWX(){
         IWXAPI api = WXAPIFactory.createWXAPI(this, Config.APP_ID, true);
@@ -61,6 +79,17 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     protected void onResume() {
         super.onResume();
         updateUserInfo();
+        if (!PreferenceManager.getDefaultSharedPreferences(this).getString(SettingsFragment.KEY_PREF_THEME, "0").equals(appTheme)) {
+            ThemeUtils.recreateActivity(this);
+        }
+
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d("MainActivity","i destroy");
     }
 
     private void setupView() {
@@ -70,14 +99,17 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
+        homeFragment = new HomeFragment();
+        getSupportFragmentManager().beginTransaction().replace(R.id.realtabcontent, homeFragment).commit();
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.setCheckedItem(R.id.nav_home);
-        homeFragment = new HomeFragment();
-        getSupportFragmentManager().beginTransaction().replace(R.id.realtabcontent, homeFragment).commit();
+
+
 
         View headerLayout = navigationView.inflateHeaderView(R.layout.nav_header_main);
-
+        darkImage = (ImageView)headerLayout.findViewById(R.id.main_nav_btn_theme_dark);
+        navBackGround = (ImageView)headerLayout.findViewById(R.id.main_nav_img_top_background);
         mAccountAvatar = (SimpleDraweeView) headerLayout.findViewById(R.id.sdv_account_avatar);
         mAccountAvatar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,9 +117,22 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 onAvatarClick();
             }
         });
+
+        darkImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+//                onDarkClick();
+            }
+        });
+
         mAccountUsername = (TextView) headerLayout.findViewById(R.id.tv_account_username);
         mAccountEmail = (TextView) headerLayout.findViewById(R.id.tv_account_email);
+        navBackGround.setVisibility(appTheme.equals("1") ? View.INVISIBLE:View.VISIBLE);
+        darkImage.setImageResource(appTheme.equals("1") ? R.drawable.ic_wb_sunny_white_24dp : R.drawable.ic_brightness_3_white_24dp);
+
     }
+
+
     SearchView searchView;
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -193,6 +238,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     TextView mAccountUsername;
 
     TextView mAccountEmail;
+
+
 
     void onAvatarClick() {
         if (mTesterHomeAccount != null && !TextUtils.isEmpty(mTesterHomeAccount.getLogin())) {

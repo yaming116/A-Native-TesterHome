@@ -41,6 +41,8 @@ import com.testerhome.nativeandroid.utils.PraiseUtil;
 import com.testerhome.nativeandroid.utils.StringUtils;
 import com.testerhome.nativeandroid.views.base.BackBaseActivity;
 
+import java.io.IOException;
+
 import butterknife.Bind;
 import butterknife.OnClick;
 import retrofit.Call;
@@ -199,6 +201,9 @@ public class TopicDetailActivity extends BackBaseActivity implements TopicReplyF
             public void onResponse(Response<TopicDetailResponse> response, Retrofit retrofit) {
                 if (response.body() != null) {
                     mTopicEntity = response.body().getTopic();
+                    if (tvDetailTitle == null) {
+                        return ;
+                    }
                     tvDetailTitle.setText(mTopicEntity.getTitle());
                     tvDetailName.setText(mTopicEntity.getNode_name().concat("."));
                     tvDetailUsername.setText(TextUtils.isEmpty(mTopicEntity.getUser().getLogin()) ?
@@ -394,6 +399,7 @@ public class TopicDetailActivity extends BackBaseActivity implements TopicReplyF
             call.enqueue(new Callback<CreateReplyResponse>() {
                 @Override
                 public void onResponse(Response<CreateReplyResponse> response, Retrofit retrofit) {
+
                     if (response.body() != null) {
                         // 发送成功
                         mEtComment.setText("");
@@ -404,11 +410,6 @@ public class TopicDetailActivity extends BackBaseActivity implements TopicReplyF
                         if (response.body().getMeta() != null && response.body().getMeta().getCurrent_reply_count() > 0) {
                             updateReplyCount(response.body().getMeta().getCurrent_reply_count() + 1);
                         }
-                    } else {
-                        Snackbar.make(mFabAddComment,
-                                response.body().getError().toString(),
-                                Snackbar.LENGTH_SHORT)
-                                .show();
                     }
                 }
 
