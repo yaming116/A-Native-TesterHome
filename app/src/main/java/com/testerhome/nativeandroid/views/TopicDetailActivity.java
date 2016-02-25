@@ -212,7 +212,13 @@ public class TopicDetailActivity extends BackBaseActivity implements TopicReplyF
                             mTopicEntity.getCreated_at()).concat(".")
                             .concat(mTopicEntity.getHits()).concat("次阅读"));
                     sdvDetailUserAvatar.setImageURI(Uri.parse(Config.getImageUrl(mTopicEntity.getUser().getAvatar_url())));
-
+                    sdvDetailUserAvatar.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            startActivity(new Intent(TopicDetailActivity.this,UserInfoActivity.class).putExtra("loginName",mTopicEntity.getUser()
+                            .getLogin()));
+                        }
+                    });
                     // 用户回复数
                     tvDetailRepliesCount.setText(getString(R.string.reply_count_info, mTopicEntity.getReplies_count()));
 

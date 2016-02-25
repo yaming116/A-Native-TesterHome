@@ -99,7 +99,7 @@ public class AccountFavoriteFragment extends BaseFragment {
         if (showloading)
             showEmptyView();
 
-        Call<TopicsResponse> call = TesterHomeApi.getInstance().getTopicsService().getUserFavorite(mTesterHomeAccount.getLogin(),
+        Call<TopicsResponse> call = TesterHomeApi.getInstance().getTopicsService().getUserFavorite(loginName,
                 mTesterHomeAccount.getAccess_token(),
                 mNextCursor * 20);
 

@@ -22,7 +22,7 @@
     <string name="introduce">简介:</string>
     <string name="follow">开始关注你了。</string>
     <string name="action_topic_detail_share">分享</string>
-    <string name="logout">退出登录</string>
+    <string name="logout">注销</string>
     <string name="string_loading">Loading&#8230;</string>
     <string name="user_info_name">unKnow</string>
     <string name="reply_count_info">%s条回复</string>

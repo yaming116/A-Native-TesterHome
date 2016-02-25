@@ -76,6 +76,11 @@ public class UserInfoActivity extends BackBaseActivity {
 
     }
 
+
+    public boolean enableTheme() {
+        return true;
+    }
+
     private void initData() {
 
         if (!isLoginer) {
@@ -130,14 +135,7 @@ public class UserInfoActivity extends BackBaseActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.action_exit) {
-            CookieSyncManager.createInstance(this);
-            CookieSyncManager.getInstance().startSync();
-            CookieManager.getInstance().removeSessionCookie();
-            TesterHomeAccountService.getInstance(this).logout();
-            NativeApp.getInstance().cancelTimerTask();
-            this.finish();
-        }
+
         return super.onOptionsItemSelected(item);
     }
 

@@ -41,7 +41,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     public boolean enableTheme(){
-        return false;
+        return true;
     }
 
     private void loadTheme(){

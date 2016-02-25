@@ -45,7 +45,7 @@
             android:layout_height="match_parent"
             app:tabSelectedTextColor="@android:color/white"
             app:tabTextColor="@android:color/darker_gray"
-            app:layout_scrollFlags="scroll|snap|enterAlways" />
+            />
     </android.support.design.widget.AppBarLayout>
 
 

@@ -108,7 +108,7 @@ public class AccountTopicsFragment extends BaseFragment {
             showEmptyView();
 
         Call<TopicsResponse> call =
-                TesterHomeApi.getInstance().getTopicsService().getUserTopics(mTesterHomeAccount.getLogin(),
+                TesterHomeApi.getInstance().getTopicsService().getUserTopics(loginName,
                         mTesterHomeAccount.getAccess_token(),
                         mNextCursor * 20);
 

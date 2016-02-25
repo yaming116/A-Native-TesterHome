@@ -30,6 +30,11 @@ public class AboutActivity extends BackBaseActivity {
                 .concat(getAppInfo()));
     }
 
+
+    public boolean enableTheme() {
+        return true;
+    }
+
     private String getAppInfo() {
 
         PackageInfo info = null;

@@ -5,8 +5,12 @@ import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import com.testerhome.nativeandroid.R;
+import com.testerhome.nativeandroid.views.widgets.ThemeUtils;
 
 /**
  * Created by vclub on 15/10/23.
@@ -16,6 +20,22 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
 
     public static final String KEY_PREF_THEME = "pref_theme_key";
     public static final String KEY_PREF_COMMENT_WITH_SNACK = "pref_comment_with_snack_key";
+
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = super.onCreateView(inflater, container, savedInstanceState);
+        if (PreferenceManager.getDefaultSharedPreferences(getActivity()).getString(SettingsFragment.KEY_PREF_THEME, "0").equals("0")) {
+            view.setBackgroundColor(getResources().getColor(R.color.white));
+        } else {
+
+            view.setBackgroundColor(getResources().getColor(R.color.bg_main_dark));
+        }
+
+
+        return view;
+    }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -51,6 +71,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
             } else {
                 getActivity().setTheme(R.style.theme_dark);
             }
+            ThemeUtils.recreateActivity(getActivity());
         }
     }
 

@@ -14,6 +14,6 @@
         android:defaultValue="true"
         android:key="pref_comment_with_snack_key"
         android:summary="回复的时候 最后一行添加来自xxx客户端"
-        android:title="Comment with App name" />
+        android:title="小尾巴" />
 
 </PreferenceScreen>

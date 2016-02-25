@@ -19,6 +19,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,6 +30,7 @@ import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
 import com.testerhome.nativeandroid.Config;
 import com.testerhome.nativeandroid.R;
+import com.testerhome.nativeandroid.application.NativeApp;
 import com.testerhome.nativeandroid.auth.TesterHomeAccountService;
 import com.testerhome.nativeandroid.fragments.HomeFragment;
 import com.testerhome.nativeandroid.fragments.SettingsFragment;
@@ -51,6 +54,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     // 是否启用夜间模式
     private String appTheme;
     private ImageView darkImage;
+    private TextView logout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,13 +107,13 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         darkImage = (ImageView)headerLayout.findViewById(R.id.main_nav_btn_theme_dark);
         navBackGround = (ImageView)headerLayout.findViewById(R.id.main_nav_img_top_background);
         mAccountAvatar = (SimpleDraweeView) headerLayout.findViewById(R.id.sdv_account_avatar);
+        logout = (TextView) headerLayout.findViewById(R.id.main_nav_btn_logout);
         mAccountAvatar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onAvatarClick();
             }
         });
-
         darkImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -117,6 +121,17 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             }
         });
 
+        logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                CookieSyncManager.createInstance(MainActivity.this);
+                CookieSyncManager.getInstance().startSync();
+                CookieManager.getInstance().removeSessionCookie();
+                TesterHomeAccountService.getInstance(MainActivity.this).logout();
+                NativeApp.getInstance().cancelTimerTask();
+                updateUserInfo();
+            }
+        });
         mAccountUsername = (TextView) headerLayout.findViewById(R.id.tv_account_username);
         mAccountEmail = (TextView) headerLayout.findViewById(R.id.tv_account_email);
         navBackGround.setVisibility(appTheme.equals("1") ? View.INVISIBLE:View.VISIBLE);
@@ -256,10 +271,12 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             mAccountAvatar.setImageURI(Uri.parse(Config.getImageUrl(mTesterHomeAccount.getAvatar_url())));
             mAccountUsername.setText(mTesterHomeAccount.getName());
             mAccountEmail.setText(mTesterHomeAccount.getEmail());
+            logout.setVisibility(View.VISIBLE);
         } else {
             mAccountAvatar.setImageResource(R.mipmap.ic_launcher);
             mAccountUsername.setText("未登录");
             mAccountEmail.setText("点击头像登录TesterHome");
+            logout.setVisibility(View.GONE);
         }
     }
 
