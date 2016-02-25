@@ -25,7 +25,8 @@
         android:layout_toRightOf="@+id/sdv_topic_user_avatar"
         android:maxLines="2"
         android:minLines="2"
-        style="@style/Base.TextAppearance.AppCompat.Title"
+        android:textSize="20sp"
+        android:textColor="?attr/widgetBackgroundTitle"
         tools:text="Here is the title" />
 
     <TextView

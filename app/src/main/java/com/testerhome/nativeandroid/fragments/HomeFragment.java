@@ -33,7 +33,6 @@ public class HomeFragment extends BaseFragment {
 
     @Override
     protected void setupView() {
-        Log.d("homefragment","setupView");
         mAdapter = new TopicViewPagerAdapter(getChildFragmentManager());
         viewPagerTopics.setAdapter(mAdapter);
         viewPagerTopics.setOffscreenPageLimit(4);
@@ -53,12 +52,10 @@ public class HomeFragment extends BaseFragment {
 
         public TopicViewPagerAdapter(FragmentManager fm) {
             super(fm);
-            Log.d("homefragment","contruct");
         }
 
         @Override
         public Fragment getItem(int position) {
-            Log.d("homefragment","getItem");
             return TopicsListFragment.newInstance(typeValue[position]);
         }
 

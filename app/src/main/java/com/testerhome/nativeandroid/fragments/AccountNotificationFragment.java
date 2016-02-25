@@ -105,7 +105,7 @@ public class AccountNotificationFragment extends BaseFragment {
             public void onResponse(Response<NotificationResponse> response, Retrofit retrofit) {
                 if (response.body() != null) {
                     hideEmptyView();
-                    if (swipeRefreshLayout.isRefreshing()) {
+                    if (swipeRefreshLayout !=null && swipeRefreshLayout.isRefreshing()) {
                         swipeRefreshLayout.setRefreshing(false);
                     }
                     if (response.body().getNotifications().size() > 0) {

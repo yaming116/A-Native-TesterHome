@@ -54,6 +54,7 @@
         android:src="@drawable/ic_brightness_3_white_24dp"
         android:scaleType="center"
         android:adjustViewBounds="true"
-        android:background="@drawable/button_transparent_image" />
+        android:background="@drawable/button_transparent_image"
+        android:visibility="gone"/>
 
 </RelativeLayout>

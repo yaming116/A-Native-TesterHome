@@ -116,7 +116,7 @@ public class AccountTopicsFragment extends BaseFragment {
             @Override
             public void onResponse(Response<TopicsResponse> response, Retrofit retrofit) {
                 hideEmptyView();
-                if (swipeRefreshLayout.isRefreshing()) {
+                if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
                     swipeRefreshLayout.setRefreshing(false);
                 }
                 if (response.body() != null && response.body().getTopics().size() > 0) {

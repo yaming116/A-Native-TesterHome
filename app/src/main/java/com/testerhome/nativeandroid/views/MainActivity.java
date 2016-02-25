@@ -86,11 +86,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Log.d("MainActivity","i destroy");
-    }
 
     private void setupView() {
 
@@ -104,9 +99,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.setCheckedItem(R.id.nav_home);
-
-
-
         View headerLayout = navigationView.inflateHeaderView(R.layout.nav_header_main);
         darkImage = (ImageView)headerLayout.findViewById(R.id.main_nav_btn_theme_dark);
         navBackGround = (ImageView)headerLayout.findViewById(R.id.main_nav_img_top_background);
@@ -121,7 +113,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         darkImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                onDarkClick();
+                onDarkClick();
             }
         });
 
@@ -130,6 +122,13 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         navBackGround.setVisibility(appTheme.equals("1") ? View.INVISIBLE:View.VISIBLE);
         darkImage.setImageResource(appTheme.equals("1") ? R.drawable.ic_wb_sunny_white_24dp : R.drawable.ic_brightness_3_white_24dp);
 
+    }
+
+    private void onDarkClick() {
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
+        editor.putString("pref_theme_key","0".equals(appTheme)? "1":"0") ;
+        editor.commit();
+        ThemeUtils.recreateActivity(this);
     }
 
 

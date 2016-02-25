@@ -43,8 +43,8 @@ public final class ThemeUtils {
             Intent intent = activity.getIntent();
             intent.setClass(activity, activity.getClass());
             activity.startActivity(intent);
-            activity.finish();
             activity.overridePendingTransition(0, 0);
+            activity.finish();
         }
     }
 
