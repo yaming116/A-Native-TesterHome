@@ -72,7 +72,7 @@ public interface TopicsService {
     );
 
     @GET("greet.json")
-    Call<UserDetailResponse> getCurrentUserInfo(
+    Observable<UserDetailResponse> getCurrentUserInfo(
             @Query("access_token") String accessToken
     );
 

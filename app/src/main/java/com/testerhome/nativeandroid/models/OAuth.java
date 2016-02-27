@@ -8,7 +8,7 @@ public class OAuth {
     private String token_type;
     private long expires_in;
     private String refresh_token;
-    private long craete_at;
+    private long create_at;
 
     public String getAccess_token() {
         return access_token;
@@ -43,11 +43,11 @@ public class OAuth {
     }
 
     public long getCraete_at() {
-        return craete_at;
+        return create_at;
     }
 
     public void setCraete_at(long craete_at) {
-        this.craete_at = craete_at;
+        this.create_at = craete_at;
     }
 
     @Override
@@ -57,7 +57,7 @@ public class OAuth {
                 ", token_type='" + token_type + '\'' +
                 ", expires_in='" + expires_in + '\'' +
                 ", refresh_token='" + refresh_token + '\'' +
-                ", craete_at='" + craete_at + '\'' +
+                ", craete_at='" + create_at + '\'' +
                 '}';
     }
 }

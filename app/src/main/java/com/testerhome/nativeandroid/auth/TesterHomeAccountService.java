@@ -111,15 +111,15 @@ public class TesterHomeAccountService {
         return mAccountManager.getPassword(account);
     }
 
-    public boolean signIn(String username, String password, TesterUser user, OAuth oAuth) {
+    public boolean signIn(String username, TesterUser user, OAuth oAuth) {
 
         if (user == null) {
             return false;
         }
-        Account account = setActiveAccount(username, password);
+        Account account = setActiveAccount(username, oAuth.getAccess_token());
         setDefaultAccount(account);
 
-        user.setAccess_token(password);
+        user.setAccess_token(oAuth.getAccess_token());
         user.setRefresh_token(oAuth.getRefresh_token());
         user.setExpireDate(oAuth.getExpires_in());
         user.setCreate_at(oAuth.getCraete_at());

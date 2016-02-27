@@ -9,6 +9,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 
+import com.google.gson.Gson;
 import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -19,17 +20,11 @@ import com.testerhome.nativeandroid.application.NativeApp;
 import com.testerhome.nativeandroid.auth.TesterHomeAccountService;
 import com.testerhome.nativeandroid.models.OAuth;
 import com.testerhome.nativeandroid.models.UserDetailResponse;
-import com.testerhome.nativeandroid.networks.TesterHomeApi;
+import com.testerhome.nativeandroid.networks.RestAdapterUtils;
 import com.testerhome.nativeandroid.oauth2.AuthenticationService;
 import com.testerhome.nativeandroid.views.base.BackBaseActivity;
+import rx.functions.Action1;
 
-import org.json.JSONObject;
-
-import java.util.Calendar;
-
-import retrofit.Call;
-import retrofit.Callback;
-import retrofit.Retrofit;
 
 /**
  * Created by vclub on 15/9/18.
@@ -116,29 +111,10 @@ public class AuthActivity extends BackBaseActivity {
                         //Convert the string result to a JSON Object
                         String responseStr = response.body().string();
 
-                        Log.e("Tokenm", "response body:" + responseStr);
-                        JSONObject resultJson = new JSONObject(responseStr);
-                        //Extract data from JSON Response
-                        int expiresIn = resultJson.has("expires_in") ? resultJson.getInt("expires_in") : 0;
-
-                        String accessToken = resultJson.has("access_token") ? resultJson.getString("access_token") : null;
-                        String refreshToken = resultJson.has("refresh_token") ? resultJson.getString("refresh_token") : null;
-                        long createdAt = resultJson.has("created_at") ? resultJson.getLong("created_at") : 0;
-                        Log.d("refreshToken", refreshToken);
-                        Log.e("Tokenm", "access token:" + accessToken);
-                        if (expiresIn > 0 && accessToken != null) {
-                            Log.e("Authorize", "This is the access Token: " + accessToken + ". It will expires in " + expiresIn + " secs");
-
-                            Calendar calendar = Calendar.getInstance();
-                            calendar.add(Calendar.SECOND, expiresIn);
-                            long expireDate = calendar.getTimeInMillis();
-                            OAuth oAuth = new OAuth();
-                            oAuth.setRefresh_token(refreshToken);
-                            oAuth.setAccess_token(accessToken);
-                            oAuth.setExpires_in(expiresIn);
-                            oAuth.setCraete_at(createdAt);
-                            getUserInfo(accessToken, oAuth);
-
+                        Gson gson = new Gson();
+                        OAuth oAuth = gson.fromJson(responseStr,OAuth.class);
+                        if (oAuth.getExpires_in() > 0 && oAuth.getAccess_token() != null) {
+                            getUserInfo(oAuth);
                             return true;
                         }
                     } else {
@@ -174,28 +150,25 @@ public class AuthActivity extends BackBaseActivity {
     }
 
 
-    private void getUserInfo(final String token, final OAuth oAuth) {
-        Call<UserDetailResponse> call =
-                TesterHomeApi.getInstance().getTopicsService().getCurrentUserInfo(token);
+    private void getUserInfo(final OAuth oAuth) {
 
-        call.enqueue(new Callback<UserDetailResponse>() {
-            @Override
-            public void onResponse(retrofit.Response<UserDetailResponse> response, Retrofit retrofit) {
-                if (response.body() != null && response.body().getUser() != null) {
-                    TesterHomeAccountService.getInstance(AuthActivity.this)
-                            .signIn(response.body().getUser().getLogin(), token, response.body().getUser(), oAuth);
-                    AuthActivity.this.finish();
+        RestAdapterUtils.getRestAPI(this).getCurrentUserInfo(oAuth.getAccess_token())
+                .subscribe(new Action1<UserDetailResponse>() {
+                    @Override
+                    public void call(UserDetailResponse userDetailResponse) {
+                        if (userDetailResponse != null) {
 
-                    NativeApp.getInstance().startTimer();
-                }
-            }
+                            TesterHomeAccountService.getInstance(AuthActivity.this)
+                                    .signIn(userDetailResponse.getUser().getLogin(), userDetailResponse.getUser(), oAuth);
+                            AuthActivity.this.finish();
 
-            @Override
-            public void onFailure(Throwable t) {
-
-            }
-        });
+                            NativeApp.getInstance().startTimer();
+                        }
+                    }
+            });
     }
+
+
 
 
 }

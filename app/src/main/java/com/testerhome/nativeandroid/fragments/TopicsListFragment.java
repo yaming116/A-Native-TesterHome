@@ -130,6 +130,7 @@ public class TopicsListFragment extends BaseFragment implements Callback<TopicsR
 //                    mNextCursor * 20);
 
             RestAdapterUtils.getRestAPI(getActivity()).getTopicsByType(type,mNextCursor * 20)
+
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Observer<TopicsResponse>() {
