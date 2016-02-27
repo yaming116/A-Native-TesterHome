@@ -6,6 +6,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.testerhome.nativeandroid.BuildConfig;
 import com.testerhome.nativeandroid.Config;
@@ -24,6 +25,10 @@ import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
+import rx.Observable;
+import rx.Observer;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Bin Li on 2015/9/16.
@@ -121,13 +126,70 @@ public class TopicsListFragment extends BaseFragment implements Callback<TopicsR
 
         Call<TopicsResponse> call;
         if (type != null) {
-            call = RestAdapterUtils.getRestAPI(getActivity()).getTopicsByType(type,
-                    mNextCursor * 20);
+//            call = RestAdapterUtils.getRestAPI(getActivity()).getTopicsByType(type,
+//                    mNextCursor * 20);
+
+            RestAdapterUtils.getRestAPI(getActivity()).getTopicsByType(type,mNextCursor * 20)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<TopicsResponse>() {
+                        @Override
+                        public void onCompleted() {
+
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+                            hideEmptyView();
+                            if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
+                                swipeRefreshLayout.setRefreshing(false);
+                            }
+                            if (BuildConfig.DEBUG)
+                                Log.e("cache", "failure() called with: " + "error = [" + e.getMessage() + "]", e);
+                            if (mNextCursor == 0){
+                                showErrorView("无法加载数据,请检查网络");
+                            }
+                        }
+
+                        @Override
+                        public void onNext(TopicsResponse response) {
+                            hideEmptyView();
+                            if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
+                                swipeRefreshLayout.setRefreshing(false);
+                            }
+
+//                            Log.e("retrofit", response.raw().request().urlString());
+                            if (response != null && response.getTopics().size() > 0) {
+                                if (mNextCursor == 0) {
+                                    if (!TextUtils.isEmpty(type) && type.equals(Config.TOPICS_TYPE_RECENT)) {
+                                        response.getTopics().add(0, new TopicEntity(TopicsListAdapter.TOPIC_LIST_TYPE_BANNER, new ArrayList<BannerEntity>()));
+                                    }
+                                    mAdatper.setItems(response.getTopics());
+                                } else {
+                                    mAdatper.addItems(response.getTopics());
+                                }
+                                if (response.getTopics().size() >= 20) {
+                                    mNextCursor += 1;
+                                } else {
+                                    mNextCursor = 0;
+                                }
+
+                            } else {
+                                if (mNextCursor == 0){
+                                    showErrorView("无法加载数据,请检查网络");
+                                }
+                                mNextCursor = 0;
+                            }
+                        }
+                    });
+            
+            
         } else {
             call = RestAdapterUtils.getRestAPI(getActivity()).getTopicsByNodeId(nodeId,
                     mNextCursor * 20);
+            call.enqueue(this);
         }
-        call.enqueue(this);
+
     }
 
     @Override

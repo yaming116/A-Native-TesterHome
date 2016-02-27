@@ -62,7 +62,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         appTheme = PreferenceManager.getDefaultSharedPreferences(this).getString(SettingsFragment.KEY_PREF_THEME, "0");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        getWindow().setBackgroundDrawable(null);
         setupView();
 
         setupWX();

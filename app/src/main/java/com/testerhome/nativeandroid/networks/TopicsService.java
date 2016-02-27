@@ -18,6 +18,7 @@ import retrofit.http.GET;
 import retrofit.http.POST;
 import retrofit.http.Path;
 import retrofit.http.Query;
+import rx.Observable;
 
 /**
  * Created by Bin Li on 2015/9/15.
@@ -29,8 +30,8 @@ public interface TopicsService {
 
 
     @GET("topics.json")
-    Call<TopicsResponse> getTopicsByType(@Query("type") String type,
-                                         @Query("offset") int offset);
+    Observable<TopicsResponse> getTopicsByType(@Query("type") String type,
+                                               @Query("offset") int offset);
 
     @GET("search.json")
     Call<SearchResponse> searchTopicsByKeyword(@Query("q") String keyword,

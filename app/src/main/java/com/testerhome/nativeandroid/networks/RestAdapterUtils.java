@@ -14,6 +14,7 @@ import java.io.IOException;
 
 import retrofit.GsonConverterFactory;
 import retrofit.Retrofit;
+import retrofit.RxJavaCallAdapterFactory;
 
 /**
  * Created by vclub on 15/10/24.
@@ -66,6 +67,7 @@ public class RestAdapterUtils {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(Config.BASE_URL)
                 .client(okHttpClient)
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
