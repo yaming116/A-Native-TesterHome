@@ -126,8 +126,6 @@ public class TopicsListFragment extends BaseFragment implements Callback<TopicsR
 
         Call<TopicsResponse> call;
         if (type != null) {
-//            call = RestAdapterUtils.getRestAPI(getActivity()).getTopicsByType(type,
-//                    mNextCursor * 20);
 
             RestAdapterUtils.getRestAPI(getActivity()).getTopicsByType(type,mNextCursor * 20)
 

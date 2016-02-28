@@ -10,6 +10,7 @@ import com.facebook.imagepipeline.backends.okhttp.OkHttpImagePipelineConfigFacto
 import com.facebook.imagepipeline.core.ImagePipelineConfig;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
+import com.google.gson.Gson;
 import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -63,11 +64,7 @@ public class NativeApp extends Application {
                 TesterUser testerUser = TesterHomeAccountService.getInstance(instance).getActiveAccountInfo();
                 if (testerUser.getRefresh_token() != null) {
                     String url = AuthenticationService.ACCESS_TOKEN_URL;
-                    try {
-                        Thread.sleep(10000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+
                     OkHttpClient okHttpClient = new OkHttpClient();
 
                     RequestBody formBody = new FormEncodingBuilder()
@@ -89,21 +86,9 @@ public class NativeApp extends Application {
                         if (response.isSuccessful()) {
                             String responseStr = response.body().string();
                             Log.d(TAG,responseStr);
-                            JSONObject resultJson = new JSONObject(responseStr);
-                            int expiresIn = resultJson.has("expires_in") ? resultJson.getInt("expires_in") : 0;
-                            String accessToken = resultJson.has("access_token") ? resultJson.getString("access_token") : null;
-                            String refreshToken = resultJson.has("refresh_token") ? resultJson.getString("refresh_token") : null;
-                            long createdAt = resultJson.has("created_at") ? resultJson.getLong("created_at") : 0;
-                            if (expiresIn > 0 && accessToken != null) {
-                                OAuth oAuth = new OAuth();
-                                oAuth.setRefresh_token(refreshToken);
-                                oAuth.setAccess_token(accessToken);
-                                oAuth.setExpires_in(expiresIn);
-                                oAuth.setCraete_at(createdAt);
-                                testerUser.setCreate_at(createdAt);
-                                testerUser.setExpireDate(expiresIn);
-                                testerUser.setAccess_token(accessToken);
-                                testerUser.setRefresh_token(refreshToken);
+                            Gson gson = new Gson();
+                            OAuth oAuth = gson.fromJson(responseStr, OAuth.class);
+                            if (oAuth.getExpires_in()> 0 && oAuth.getAccess_token() != null) {
                                 TesterHomeAccountService.getInstance(instance).updateAccountToken(oAuth);
                             }
                         } else {
@@ -145,7 +130,6 @@ public class NativeApp extends Application {
         if (BuildConfig.DEBUG && Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             WebView.setWebContentsDebuggingEnabled(true);
         }
-        Log.d("NativeApp", "NativeApp   oncreate");
 
         mTracker = getDefaultTracker();
         mTracker.enableExceptionReporting(true);

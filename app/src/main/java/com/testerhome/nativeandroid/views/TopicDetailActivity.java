@@ -40,15 +40,15 @@ import com.testerhome.nativeandroid.utils.FavoriteUtil;
 import com.testerhome.nativeandroid.utils.PraiseUtil;
 import com.testerhome.nativeandroid.utils.StringUtils;
 import com.testerhome.nativeandroid.views.base.BackBaseActivity;
-
-import java.io.IOException;
-
 import butterknife.Bind;
 import butterknife.OnClick;
 import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
+import rx.Observer;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by vclub on 15/9/17.
@@ -194,60 +194,68 @@ public class TopicDetailActivity extends BackBaseActivity implements TopicReplyF
     TopicDetailEntity mTopicEntity;
 
     private void loadInfo() {
-        Call<TopicDetailResponse> call = RestAdapterUtils.getRestAPI(this).getTopicById(mTopicId);
+        RestAdapterUtils.getRestAPI(this).getTopicById(mTopicId)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<TopicDetailResponse>() {
+                    @Override
+                    public void onCompleted() {
 
-        call.enqueue(new Callback<TopicDetailResponse>() {
-            @Override
-            public void onResponse(Response<TopicDetailResponse> response, Retrofit retrofit) {
-                if (response.body() != null) {
-                    mTopicEntity = response.body().getTopic();
-                    if (tvDetailTitle == null) {
-                        return ;
                     }
-                    tvDetailTitle.setText(mTopicEntity.getTitle());
-                    tvDetailName.setText(mTopicEntity.getNode_name().concat("."));
-                    tvDetailUsername.setText(TextUtils.isEmpty(mTopicEntity.getUser().getLogin()) ?
-                            "匿名用户" : mTopicEntity.getUser().getName());
-                    tvDetailPublishDate.setText(StringUtils.formatPublishDateTime(
-                            mTopicEntity.getCreated_at()).concat(".")
-                            .concat(mTopicEntity.getHits()).concat("次阅读"));
-                    sdvDetailUserAvatar.setImageURI(Uri.parse(Config.getImageUrl(mTopicEntity.getUser().getAvatar_url())));
-                    sdvDetailUserAvatar.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-                            startActivity(new Intent(TopicDetailActivity.this,UserInfoActivity.class).putExtra("loginName",mTopicEntity.getUser()
-                            .getLogin()));
+
+                    @Override
+                    public void onError(Throwable t) {
+                        if (mFabAddComment != null) {
+                            Snackbar.make(mFabAddComment, "Error:" + t.getMessage(), Snackbar.LENGTH_SHORT).show();
+                            Log.e("TopicDetailActivity", "Error:" + t.getMessage());
                         }
-                    });
-                    // 用户回复数
-                    tvDetailRepliesCount.setText(getString(R.string.reply_count_info, mTopicEntity.getReplies_count()));
-
-                    if (PraiseUtil.hasPraised(TopicDetailActivity.this, mTopicId)) {
-                        tvDetailPraise.setCompoundDrawablesWithIntrinsicBounds(R.drawable.btn_heart_off, 0, 0, 0);
-                    } else {
-                        tvDetailPraise.setCompoundDrawablesWithIntrinsicBounds(R.drawable.btn_heart, 0, 0, 0);
                     }
 
-                    if (FavoriteUtil.hasFavorite(TopicDetailActivity.this, mTopicId)) {
-                        tvDetailCollect.setCompoundDrawablesWithIntrinsicBounds(R.drawable.btn_bookmark_off, 0, 0, 0);
-                    } else {
-                        tvDetailCollect.setCompoundDrawablesWithIntrinsicBounds(R.drawable.btn_bookmark, 0, 0, 0);
-                    }
+                    @Override
+                    public void onNext(TopicDetailResponse topicDetailResponse) {
+                        if (topicDetailResponse != null) {
+                            mTopicEntity = topicDetailResponse.getTopic();
+                            if (tvDetailTitle == null) {
+                                return ;
+                            }
+                            tvDetailTitle.setText(mTopicEntity.getTitle());
+                            tvDetailName.setText(mTopicEntity.getNode_name().concat("."));
+                            tvDetailUsername.setText(TextUtils.isEmpty(mTopicEntity.getUser().getLogin()) ?
+                                    "匿名用户" : mTopicEntity.getUser().getName());
+                            tvDetailPublishDate.setText(StringUtils.formatPublishDateTime(
+                                    mTopicEntity.getCreated_at()).concat(".")
+                                    .concat(mTopicEntity.getHits()).concat("次阅读"));
+                            sdvDetailUserAvatar.setImageURI(Uri.parse(Config.getImageUrl(mTopicEntity.getUser().getAvatar_url())));
+                            sdvDetailUserAvatar.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    startActivity(new Intent(TopicDetailActivity.this,UserInfoActivity.class).putExtra("loginName",mTopicEntity.getUser()
+                                            .getLogin()));
+                                }
+                            });
+                            // 用户回复数
+                            tvDetailRepliesCount.setText(getString(R.string.reply_count_info, mTopicEntity.getReplies_count()));
 
-                    if (mMarkdownFragment != null) {
-                        mMarkdownFragment.showWebContent(response.body().getTopic().getBody_html());
-                    }
-                }
-            }
+                            if (PraiseUtil.hasPraised(TopicDetailActivity.this, mTopicId)) {
+                                tvDetailPraise.setCompoundDrawablesWithIntrinsicBounds(R.drawable.btn_heart_off, 0, 0, 0);
+                            } else {
+                                tvDetailPraise.setCompoundDrawablesWithIntrinsicBounds(R.drawable.btn_heart, 0, 0, 0);
+                            }
 
-            @Override
-            public void onFailure(Throwable t) {
-                if (mFabAddComment != null) {
-                    Snackbar.make(mFabAddComment, "Error:" + t.getMessage(), Snackbar.LENGTH_SHORT).show();
-                    Log.e("TopicDetailActivity", "Error:" + t.getMessage());
-                }
-            }
-        });
+                            if (FavoriteUtil.hasFavorite(TopicDetailActivity.this, mTopicId)) {
+                                tvDetailCollect.setCompoundDrawablesWithIntrinsicBounds(R.drawable.btn_bookmark_off, 0, 0, 0);
+                            } else {
+                                tvDetailCollect.setCompoundDrawablesWithIntrinsicBounds(R.drawable.btn_bookmark, 0, 0, 0);
+                            }
+
+                            if (mMarkdownFragment != null) {
+                                mMarkdownFragment.showWebContent(topicDetailResponse.getTopic().getBody_html());
+                            }
+                        }
+                    }
+                });
+
+
 
     }
 

@@ -16,6 +16,7 @@ import com.testerhome.nativeandroid.Config;
 import com.testerhome.nativeandroid.R;
 import com.testerhome.nativeandroid.models.NotificationEntity;
 import com.testerhome.nativeandroid.models.TopicDetailResponse;
+import com.testerhome.nativeandroid.networks.RestAdapterUtils;
 import com.testerhome.nativeandroid.networks.TesterHomeApi;
 
 import butterknife.Bind;
@@ -75,6 +76,7 @@ public class NotificationAdapter extends BaseAdapter<NotificationEntity> {
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
 
         String userName;
+
         switch (getItemViewType(position)){
             case VIEW_ITME:
                 NotificationHolder holder = (NotificationHolder)viewHolder;
@@ -113,6 +115,43 @@ public class NotificationAdapter extends BaseAdapter<NotificationEntity> {
             mListener.onListEnded();
         }
 
+    }
+
+
+    private void loadViewHolder(RecyclerView.ViewHolder viewHolder, int position, String topicTitle) {
+        switch (getItemViewType(position)){
+            case VIEW_ITME:
+                NotificationHolder holder = (NotificationHolder)viewHolder;
+                holder.notification = mItems.get(position);
+                holder.userAvatar.setImageURI(Uri.parse(Config.getImageUrl(holder.notification.getActor().getAvatar_url())));
+                String userName = holder.notification.getActor().getLogin();
+                if (holder.notification.getType().equals(Config.MENTION)) {
+                    holder.notificationTitle.setText(ToDBC(userName + " 在帖子 *** 提及你:"));
+                    holder.notificationBody.setText(Html.fromHtml(holder.notification.getMention().getBody_html()));
+                }else {
+                    holder.notificationTitle.setText(ToDBC(userName + " 在帖子 *** 回复了:"));
+                    holder.notificationBody.setText(Html.fromHtml(holder.notification.getReply().getBody_html()));
+                }
+
+                break;
+            case VIEW_SINGLE_ITEM:
+                NotificationSingleHolder singleHolder = (NotificationSingleHolder)viewHolder;
+                singleHolder.notification = mItems.get(position);
+                userName = singleHolder.notification.getActor().getLogin();
+                singleHolder.notification = mItems.get(position);
+                singleHolder.userAvatar.setImageURI(Uri.parse(Config.getImageUrl(singleHolder.notification.getActor().getAvatar_url())));
+                if (singleHolder.notification.getType().equals(Config.FOLLOW)) {
+                    singleHolder.notificationTitle.setText(ToDBC(userName + mContext.getResources().getString(R.string.follow)));
+                }else{
+                    singleHolder.notificationTitle.setText(ToDBC(userName + "创建了一个新的帖子"));
+                }
+                break;
+            case VIEW_DELETE_ITEM:
+                DeleteFloorHolder deleteFloorHolder = (DeleteFloorHolder) viewHolder;
+                deleteFloorHolder.topicItemBody.setText("该楼层已被删除");
+                deleteFloorHolder.topicItemBody.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
+
+        }
     }
 
 

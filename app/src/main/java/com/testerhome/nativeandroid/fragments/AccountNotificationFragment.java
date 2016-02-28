@@ -10,6 +10,7 @@ import com.testerhome.nativeandroid.R;
 import com.testerhome.nativeandroid.auth.TesterHomeAccountService;
 import com.testerhome.nativeandroid.models.NotificationResponse;
 import com.testerhome.nativeandroid.models.TesterUser;
+import com.testerhome.nativeandroid.networks.RestAdapterUtils;
 import com.testerhome.nativeandroid.networks.TesterHomeApi;
 import com.testerhome.nativeandroid.views.adapters.NotificationAdapter;
 import com.testerhome.nativeandroid.views.widgets.DividerItemDecoration;
@@ -19,6 +20,9 @@ import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
+import rx.Observer;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by cvtpc on 2015/10/18.
@@ -96,45 +100,52 @@ public class AccountNotificationFragment extends BaseFragment {
         if (showloading)
             showEmptyView();
 
-        Call<NotificationResponse> call =
-                TesterHomeApi.getInstance().getTopicsService().getNotifications(mTesterHomeAccount.getAccess_token(),
-                        mNextCursor * 20);
+        RestAdapterUtils.getRestAPI(getActivity()).getNotifications(mTesterHomeAccount.getAccess_token(),
+                mNextCursor * 20)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<NotificationResponse>() {
+                    @Override
+                    public void onCompleted() {
 
-        call.enqueue(new Callback<NotificationResponse>() {
-            @Override
-            public void onResponse(Response<NotificationResponse> response, Retrofit retrofit) {
-                if (response.body() != null) {
-                    hideEmptyView();
-                    if (swipeRefreshLayout !=null && swipeRefreshLayout.isRefreshing()) {
-                        swipeRefreshLayout.setRefreshing(false);
                     }
-                    if (response.body().getNotifications().size() > 0) {
-                        if (mNextCursor == 0) {
-                            mAdatper.setItems(response.body().getNotifications());
-                        } else {
-                            mAdatper.addItems(response.body().getNotifications());
-                        }
-                        if (response.body().getNotifications().size() == 20) {
-                            mNextCursor += 1;
-                        } else {
-                            mNextCursor = 0;
-                        }
 
-                    } else {
-                        mNextCursor = 0;
+                    @Override
+                    public void onError(Throwable t) {
+                        hideEmptyView();
+                        if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
+                            swipeRefreshLayout.setRefreshing(false);
+                        }
+                        Log.e("demo", "failure() called with: " + "error = [" + t.getMessage() + "]", t);
                     }
-                }
-            }
 
-            @Override
-            public void onFailure(Throwable t) {
-                hideEmptyView();
-                if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
-                    swipeRefreshLayout.setRefreshing(false);
-                }
-                Log.e("demo", "failure() called with: " + "error = [" + t.getMessage() + "]", t);
-            }
-        });
+                    @Override
+                    public void onNext(NotificationResponse notificationResponse) {
+                        if (notificationResponse != null) {
+                            hideEmptyView();
+                            if (swipeRefreshLayout !=null && swipeRefreshLayout.isRefreshing()) {
+                                swipeRefreshLayout.setRefreshing(false);
+                            }
+                            if (notificationResponse.getNotifications().size() > 0) {
+                                if (mNextCursor == 0) {
+                                    mAdatper.setItems(notificationResponse.getNotifications());
+                                } else {
+                                    mAdatper.addItems(notificationResponse.getNotifications());
+                                }
+                                if (notificationResponse.getNotifications().size() == 20) {
+                                    mNextCursor += 1;
+                                } else {
+                                    mNextCursor = 0;
+                                }
+
+                            } else {
+                                mNextCursor = 0;
+                            }
+                        }
+                    }
+                });
+
+
 
     }
 

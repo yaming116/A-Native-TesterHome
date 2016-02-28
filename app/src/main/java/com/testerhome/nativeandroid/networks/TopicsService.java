@@ -45,7 +45,7 @@ public interface TopicsService {
 
 
     @GET("topics/{id}.json")
-    Call<TopicDetailResponse> getTopicById(@Path("id") String id
+    Observable<TopicDetailResponse> getTopicById(@Path("id") String id
     );
 
 
@@ -82,7 +82,7 @@ public interface TopicsService {
     );
 
     @GET("notifications.json")
-    Call<NotificationResponse> getNotifications(@Query("access_token") String access_token,
+    Observable<NotificationResponse> getNotifications(@Query("access_token") String access_token,
                                                 @Query("offset") int offset
     );
 
