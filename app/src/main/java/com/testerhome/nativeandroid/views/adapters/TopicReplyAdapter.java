@@ -1,9 +1,11 @@
 package com.testerhome.nativeandroid.views.adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.support.customtabs.CustomTabsIntent;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.Spanned;
@@ -23,8 +25,11 @@ import com.testerhome.nativeandroid.models.TopicReplyEntity;
 import com.testerhome.nativeandroid.utils.StringUtils;
 import com.testerhome.nativeandroid.utils.URLImageParser;
 
+import java.util.List;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import zhou.widget.RichText;
 
 /**
  * Created by cvtpc on 2015/10/16.
@@ -34,9 +39,10 @@ public class TopicReplyAdapter extends BaseAdapter<TopicReplyEntity> {
     public static String TAG = "TopicReplyAdapter";
     private final int VIEW_ITEM = 1;
     private final int VIEW_DELETE_ITEM = 0;
-
+    private  Context context;
     public TopicReplyAdapter(Context context) {
         super(context);
+        this.context = context;
     }
 
 
@@ -73,11 +79,25 @@ public class TopicReplyAdapter extends BaseAdapter<TopicReplyEntity> {
             holder.topicItemAuthor.setText(TextUtils.isEmpty(topicReplyEntity.getUser().getName()) ? topicReplyEntity.getUser().getLogin() : topicReplyEntity.getUser().getName());
             String html = topicReplyEntity.getBody_html();
             html = html.replaceAll("src=\"/photo", "src=\"https://testerhome.com/photo");
-            URLImageParser p = new URLImageParser(holder.topicItemBody, mContext);
-            Spanned htmlSpan = Html.fromHtml(html, p, null);
-            holder.topicItemBody.setText(htmlSpan);
+
+
+            holder.topicItemBody.setOnURLClickListener(new RichText.OnURLClickListener() {
+                @Override
+                public boolean urlClicked(String url) {
+                    CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+                    builder.setToolbarColor(context.getResources().getColor(R.color.colorPrimary));
+
+                    CustomTabsIntent customTabsIntent = builder.build();
+
+                    customTabsIntent.launchUrl((Activity) context, Uri.parse(url));
+                    return true;
+                }
+            });
+
+            holder.topicItemBody.setRichText(html);
             holder.topicItemBody.setMovementMethod(LinkMovementMethod.getInstance());
             holder.topicItemBody.getPaint().setFlags(0);
+
             holder.userAvatar.setImageURI(Uri.parse(Config.getImageUrl(topicReplyEntity.getUser().getAvatar_url())));
 
             holder.mToReply.setTag(String.format("#%s楼 @%s ", position + 1, topicReplyEntity.getUser().getLogin()));
@@ -102,22 +122,6 @@ public class TopicReplyAdapter extends BaseAdapter<TopicReplyEntity> {
         }
     }
 
-    static Html.ImageGetter imgGetter = new Html.ImageGetter() {
-        @Override
-        public Drawable getDrawable(String source) {
-            Drawable drawable = null;
-            try {
-                drawable = Drawable.createFromPath(source);  // Or fetch it from the URL
-                // Important
-                drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable
-                        .getIntrinsicHeight());
-            } catch (Exception ex) {
-                Log.e("error", ex.getMessage() + ", source+" + source);
-            }
-            return drawable;
-        }
-    };
-
     private TopicReplyListener mListener;
 
     public void setListener(TopicReplyListener mListener) {
@@ -139,7 +143,7 @@ public class TopicReplyAdapter extends BaseAdapter<TopicReplyEntity> {
         TextView topicItemAuthor;
 
         @Bind(R.id.id_topic_item_content)
-        TextView topicItemBody;
+        RichText topicItemBody;
         @Bind(R.id.id_topic_time)
         TextView topicTime;
 

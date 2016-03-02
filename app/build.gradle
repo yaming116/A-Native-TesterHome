@@ -70,5 +70,6 @@ dependencies {
         exclude module: 'rxjava'
     }
     compile 'com.google.code.gson:gson:2.4'
+    compile 'zhou.widget:richtext:1.0.4'
     compile project(':swipebackhelper')
 }

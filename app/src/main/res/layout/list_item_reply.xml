@@ -35,7 +35,7 @@
         android:layout_toRightOf="@+id/id_topic_item_author"
         tools:text="topic time" />
 
-    <TextView
+    <zhou.widget.RichText
         android:id="@+id/id_topic_item_content"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
