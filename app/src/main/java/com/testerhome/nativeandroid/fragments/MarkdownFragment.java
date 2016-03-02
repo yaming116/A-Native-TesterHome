@@ -54,7 +54,7 @@ public class MarkdownFragment extends BaseFragment {
         try {
             InputStream inputStream;
 
-            if (PreferenceManager.getDefaultSharedPreferences(getContext()).getString(SettingsFragment.KEY_PREF_THEME, "0").equals("1")) {
+            if (PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean(SettingsFragment.KEY_PREF_THEME, false)) {
                 Log.e("theme", "is dark theme");
                 inputStream = assetManager.open("dark_template.html");
             } else {

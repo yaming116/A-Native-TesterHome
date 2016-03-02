@@ -65,21 +65,13 @@ public class UserInfoActivity extends BackBaseActivity {
         mTesterHomeAccount = TesterHomeAccountService.getInstance(this).getActiveAccountInfo();
         loginName = getIntent().getStringExtra("loginName");
 
-        if (loginName.equals(mTesterHomeAccount.getLogin())) {
-            isLoginer = true;
-        } else {
-            isLoginer = false;
-        }
+        isLoginer = loginName.equals(mTesterHomeAccount.getLogin());
 
         setupView();
         initData();
 
     }
 
-
-    public boolean enableTheme() {
-        return true;
-    }
 
     private void initData() {
 
@@ -126,18 +118,6 @@ public class UserInfoActivity extends BackBaseActivity {
 
 
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_topic_detail, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        return super.onOptionsItemSelected(item);
-    }
 
 
     private void setupView() {

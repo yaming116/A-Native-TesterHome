@@ -100,7 +100,7 @@
             android:background="@drawable/btn_send_comment"
             android:elevation="4dp"
             android:orientation="vertical"
-            android:text="发送"
+            android:text="@string/send"
             android:textColor="@color/white"/>
 
     </LinearLayout>

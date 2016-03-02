@@ -52,14 +52,14 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     private ImageView navBackGround;
     // 是否启用夜间模式
-    private String appTheme;
+    private boolean appTheme;
     private ImageView darkImage;
     private TextView logout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        appTheme = PreferenceManager.getDefaultSharedPreferences(this).getString(SettingsFragment.KEY_PREF_THEME, "0");
+        appTheme = PreferenceManager.getDefaultSharedPreferences(this).getBoolean(SettingsFragment.KEY_PREF_THEME, false);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         getWindow().setBackgroundDrawable(null);
@@ -67,12 +67,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
         setupWX();
     }
-
-    @Override
-    public boolean enableTheme() {
-        return true;
-    }
-
 
     private void setupWX(){
         IWXAPI api = WXAPIFactory.createWXAPI(this, Config.APP_ID, true);
@@ -83,7 +77,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     protected void onResume() {
         super.onResume();
         updateUserInfo();
-        if (!PreferenceManager.getDefaultSharedPreferences(this).getString(SettingsFragment.KEY_PREF_THEME, "0").equals(appTheme)) {
+        if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(SettingsFragment.KEY_PREF_THEME, false) != appTheme ) {
             ThemeUtils.recreateActivity(this);
         }
 
@@ -114,13 +108,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
                 onAvatarClick();
             }
         });
-        darkImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onDarkClick();
-            }
-        });
-
         logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -134,17 +121,9 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         });
         mAccountUsername = (TextView) headerLayout.findViewById(R.id.tv_account_username);
         mAccountEmail = (TextView) headerLayout.findViewById(R.id.tv_account_email);
-        navBackGround.setVisibility(appTheme.equals("1") ? View.INVISIBLE:View.VISIBLE);
-        darkImage.setImageResource(appTheme.equals("1") ? R.drawable.ic_wb_sunny_white_24dp : R.drawable.ic_brightness_3_white_24dp);
-
+        navBackGround.setVisibility(appTheme ? View.INVISIBLE:View.VISIBLE);
     }
 
-    private void onDarkClick() {
-        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(this).edit();
-        editor.putString("pref_theme_key","0".equals(appTheme)? "1":"0") ;
-        editor.commit();
-        ThemeUtils.recreateActivity(this);
-    }
 
 
     SearchView searchView;

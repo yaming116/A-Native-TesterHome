@@ -41,8 +41,7 @@ public class AccountNotificationFragment extends BaseFragment {
 
 
     public static AccountNotificationFragment newInstance() {
-        AccountNotificationFragment fragment = new AccountNotificationFragment();
-        return fragment;
+        return new AccountNotificationFragment();
     }
 
     @Override

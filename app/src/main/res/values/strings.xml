@@ -12,14 +12,6 @@
     <string name="main_tab_home">社区</string>
     <string name="main_tab_topic">话题</string>
     <string name="main_tab_job">招聘</string>
-    <string name="main_tab_my">我的</string>
-    <string name="reply_topic">回帖信息</string>
-    <string name="collect_topic">我收藏的帖子</string>
-    <string name="created_topic">我发表的帖子</string>
-    <string name="notification">通知</string>
-    <string name="company">公司:</string>
-    <string name="tag_line">签名:</string>
-    <string name="introduce">简介:</string>
     <string name="follow">开始关注你了。</string>
     <string name="action_topic_detail_share">分享</string>
     <string name="logout">注销</string>
@@ -29,24 +21,13 @@
 
     <string name="main_drawer_settings">设置</string>
     <string name="main_drawer_about">关于</string>
-    <string name="title_activity_settings">Settings</string>
-
+    <string name="send">发送</string>
     <string name="error_view_oops">Oops</string>
-    <string name="error_view_retry">RETRY</string>
 
     <!-- Strings related to Settings -->
 
     <!-- Example General settings -->
 
-    <string name="pref_title_theme">主题样式</string>
-    <string-array name="pref_theme_list_titles">
-        <item>Light</item>
-        <item>Dark</item>
-    </string-array>
-    <string-array name="pref_theme_list_values">
-        <item>0</item>
-        <item>1</item>
-    </string-array>
 
     <string name="fab_scrolling_view_behavior" translatable="false">com.testerhome.nativeandroid.views.widgets.ScrollAwareFABBehavior</string>
 </resources>

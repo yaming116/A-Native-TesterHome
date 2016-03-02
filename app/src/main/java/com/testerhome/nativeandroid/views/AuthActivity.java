@@ -145,9 +145,6 @@ public class AuthActivity extends BackBaseActivity {
     }
 
 
-    public boolean enableTheme() {
-        return true;
-    }
 
 
     private void getUserInfo(final OAuth oAuth) {

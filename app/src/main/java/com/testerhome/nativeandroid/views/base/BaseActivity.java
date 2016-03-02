@@ -45,11 +45,9 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     private void loadTheme(){
-        if (PreferenceManager.getDefaultSharedPreferences(this).getString(SettingsFragment.KEY_PREF_THEME, "0").equals("1")) {
-            Log.e("theme", "is dark theme");
+        if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(SettingsFragment.KEY_PREF_THEME, false)) {
             setTheme(R.style.theme_dark);
         } else {
-            Log.e("theme", "is light theme");
             setTheme(R.style.theme_light);
         }
     }
