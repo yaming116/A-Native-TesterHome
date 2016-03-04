@@ -296,13 +296,20 @@ public class TopicDetailActivity extends BackBaseActivity implements TopicReplyF
                         if (response.body().getOk() == 1) {
                             Snackbar.make(mFabAddComment, "取消收藏成功", Snackbar.LENGTH_SHORT).show();
                             FavoriteUtil.delFavorite(TopicDetailActivity.this, mTopicId);
-                            tvDetailCollect.setCompoundDrawablesWithIntrinsicBounds(R.drawable.btn_bookmark, 0, 0, 0);
+                            if (tvDetailCollect != null) {
+                                tvDetailCollect.setCompoundDrawablesWithIntrinsicBounds(R.drawable.btn_bookmark, 0, 0, 0);
+                            }
+
                         }
                     } else {
                         if (response.body().getOk() == 1) {
                             Snackbar.make(mFabAddComment, "收藏成功", Snackbar.LENGTH_SHORT).show();
-                            FavoriteUtil.addTopicToFavorite(TopicDetailActivity.this, mTopicEntity);
-                            tvDetailCollect.setCompoundDrawablesWithIntrinsicBounds(R.drawable.btn_bookmark_off, 0, 0, 0);
+
+                            if (tvDetailCollect != null && mTopicEntity != null) {
+                                FavoriteUtil.addTopicToFavorite(TopicDetailActivity.this, mTopicEntity);
+                                tvDetailCollect.setCompoundDrawablesWithIntrinsicBounds(R.drawable.btn_bookmark_off, 0, 0, 0);
+                            }
+
                         }
                     }
                 }
@@ -343,11 +350,16 @@ public class TopicDetailActivity extends BackBaseActivity implements TopicReplyF
                     if (isPraised){
                         Snackbar.make(mFabAddComment, "取消点赞成功", Snackbar.LENGTH_SHORT).show();
                         PraiseUtil.delPraise(TopicDetailActivity.this, mTopicId);
-                        tvDetailPraise.setCompoundDrawablesWithIntrinsicBounds(R.drawable.btn_heart, 0, 0, 0);
+                        if (tvDetailPraise != null) {
+                            tvDetailPraise.setCompoundDrawablesWithIntrinsicBounds(R.drawable.btn_heart, 0, 0, 0);
+                        }
                     } else {
                         Snackbar.make(mFabAddComment, "点赞成功", Snackbar.LENGTH_SHORT).show();
-                        PraiseUtil.addPraise(TopicDetailActivity.this, mTopicEntity);
-                        tvDetailPraise.setCompoundDrawablesWithIntrinsicBounds(R.drawable.btn_heart_off, 0, 0, 0);
+                        if (tvDetailPraise != null && mTopicEntity != null) {
+                            PraiseUtil.addPraise(TopicDetailActivity.this, mTopicEntity);
+                            tvDetailPraise.setCompoundDrawablesWithIntrinsicBounds(R.drawable.btn_heart_off, 0, 0, 0);
+                        }
+
                     }
                 }
             }
