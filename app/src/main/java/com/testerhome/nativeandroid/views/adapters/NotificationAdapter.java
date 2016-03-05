@@ -21,6 +21,7 @@ import com.testerhome.nativeandroid.networks.TesterHomeApi;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import zhou.widget.RichText;
 
 /**
  * Created by cvtpc on 2015/10/12.
@@ -85,10 +86,16 @@ public class NotificationAdapter extends BaseAdapter<NotificationEntity> {
                 userName = holder.notification.getActor().getLogin();
                 if (holder.notification.getType().equals(Config.MENTION)) {
                     holder.notificationTitle.setText(ToDBC(userName + " 在帖子 *** 提及你:"));
-                    holder.notificationBody.setText(Html.fromHtml(holder.notification.getMention().getBody_html()));
+
+                    String html = holder.notification.getMention().getBody_html();
+                    html = html.replaceAll("src=\"/photo", "src=\"https://testerhome.com/photo");
+                    holder.notificationBody.setRichText(html);
                 }else {
                     holder.notificationTitle.setText(ToDBC(userName + " 在帖子 *** 回复了:"));
-                    holder.notificationBody.setText(Html.fromHtml(holder.notification.getReply().getBody_html()));
+                    String html = holder.notification.getReply().getBody_html();
+                    html = html.replaceAll("src=\"/photo", "src=\"https://testerhome.com/photo");
+                    holder.notificationBody.setRichText(html);
+
                 }
 
                 break;
@@ -177,7 +184,7 @@ public class NotificationAdapter extends BaseAdapter<NotificationEntity> {
         TextView notificationTitle;
 
         @Bind(R.id.id_notification_body)
-        TextView notificationBody;
+        RichText notificationBody;
 
         NotificationEntity notification;
 

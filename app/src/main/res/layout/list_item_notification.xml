@@ -27,7 +27,7 @@
         tools:text="chenhengjie 在帖子 TesterHome native app 登陆授权介绍 回复了："
         android:textSize="14sp"/>
 
-    <TextView
+    <zhou.widget.RichText
         android:id="@+id/id_notification_body"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
