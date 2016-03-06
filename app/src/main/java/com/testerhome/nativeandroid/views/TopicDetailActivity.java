@@ -277,49 +277,64 @@ public class TopicDetailActivity extends BackBaseActivity implements TopicReplyF
             }
         }
 
-        // TODO: check login and token not expire
-        Call<CollectTopicResonse> call;
-        if (FavoriteUtil.hasFavorite(TopicDetailActivity.this, mTopicId)) {
-            // 取消收藏
-            call = TesterHomeApi.getInstance().getTopicsService().uncollectTopic(mTopicId, mCurrentUser.getAccess_token());
-            isFavorite = true;
+
+
+
+        if (FavoriteUtil.hasFavorite(this,mTopicId)) {
+            RestAdapterUtils.getRestAPI(this).uncollectTopic(mTopicId,mCurrentUser.getAccess_token())
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<CollectTopicResonse>() {
+                        @Override
+                        public void onCompleted() {
+
+                        }
+
+                        @Override
+                        public void onError(Throwable t) {
+                            Snackbar.make(mFabAddComment, "Error:" + t.getMessage(), Snackbar.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onNext(CollectTopicResonse collectTopicResonse) {
+                            if (collectTopicResonse != null) {
+                                Snackbar.make(mFabAddComment, "取消收藏成功", Snackbar.LENGTH_SHORT).show();
+                                FavoriteUtil.delFavorite(TopicDetailActivity.this, mTopicId);
+                                if (tvDetailCollect != null) {
+                                    tvDetailCollect.setCompoundDrawablesWithIntrinsicBounds(R.drawable.bookmark_off, 0, 0, 0);
+                                }
+                            }
+                        }
+                    });
         } else {
-            call = TesterHomeApi.getInstance().getTopicsService().collectTopic(mTopicId, mCurrentUser.getAccess_token());
-            isFavorite = false;
+            RestAdapterUtils.getRestAPI(this).collectTopic(mTopicId,mCurrentUser.getAccess_token())
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<CollectTopicResonse>() {
+                        @Override
+                        public void onCompleted() {
+
+                        }
+
+                        @Override
+                        public void onError(Throwable t) {
+                            Snackbar.make(mFabAddComment, "Error:" + t.getMessage(), Snackbar.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onNext(CollectTopicResonse collectTopicResonse) {
+                            if (collectTopicResonse != null) {
+                                Snackbar.make(mFabAddComment, "收藏成功", Snackbar.LENGTH_SHORT).show();
+
+                                if (tvDetailCollect != null && mTopicEntity != null) {
+                                    FavoriteUtil.addTopicToFavorite(TopicDetailActivity.this, mTopicEntity);
+                                    tvDetailCollect.setCompoundDrawablesWithIntrinsicBounds(R.drawable.bookmark_on, 0, 0, 0);
+                                }
+                            }
+                        }
+                    });
         }
 
-        call.enqueue(new Callback<CollectTopicResonse>() {
-            @Override
-            public void onResponse(Response<CollectTopicResonse> response, Retrofit retrofit) {
-                if (response.body() != null){
-                    if (isFavorite){
-                        if (response.body().getOk() == 1) {
-                            Snackbar.make(mFabAddComment, "取消收藏成功", Snackbar.LENGTH_SHORT).show();
-                            FavoriteUtil.delFavorite(TopicDetailActivity.this, mTopicId);
-                            if (tvDetailCollect != null) {
-                                tvDetailCollect.setCompoundDrawablesWithIntrinsicBounds(R.drawable.btn_bookmark, 0, 0, 0);
-                            }
-
-                        }
-                    } else {
-                        if (response.body().getOk() == 1) {
-                            Snackbar.make(mFabAddComment, "收藏成功", Snackbar.LENGTH_SHORT).show();
-
-                            if (tvDetailCollect != null && mTopicEntity != null) {
-                                FavoriteUtil.addTopicToFavorite(TopicDetailActivity.this, mTopicEntity);
-                                tvDetailCollect.setCompoundDrawablesWithIntrinsicBounds(R.drawable.btn_bookmark_off, 0, 0, 0);
-                            }
-
-                        }
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-                Snackbar.make(mFabAddComment, "Error:" + t.getMessage(), Snackbar.LENGTH_SHORT).show();
-            }
-        });
     }
 
     boolean isPraised = false;
@@ -334,41 +349,64 @@ public class TopicDetailActivity extends BackBaseActivity implements TopicReplyF
         }
         // TODO: check login and token not expire
 
-        Call<PraiseEntity> call;
+
+
         if (PraiseUtil.hasPraised(TopicDetailActivity.this, mTopicId)) {
-            call = TesterHomeApi.getInstance().getTopicsService().unLikeTopic(Config.PRAISE_TOPIC, mTopicId, mCurrentUser.getAccess_token());
-            isPraised = true;
-        } else {
-            call = TesterHomeApi.getInstance().getTopicsService().praiseTopic(Config.PRAISE_TOPIC, mTopicId, mCurrentUser.getAccess_token());
-            isPraised = false;
+            RestAdapterUtils.getRestAPI(this).unLikeTopic(Config.PRAISE_TOPIC, mTopicId, mCurrentUser.getAccess_token())
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<PraiseEntity>() {
+                        @Override
+                        public void onCompleted() {
+
+                        }
+
+                        @Override
+                        public void onError(Throwable t) {
+                            Snackbar.make(mFabAddComment, "Error:" + t.getMessage(), Snackbar.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onNext(PraiseEntity praiseEntity) {
+                            if (praiseEntity != null) {
+                                Snackbar.make(mFabAddComment, "取消点赞成功", Snackbar.LENGTH_SHORT).show();
+                                PraiseUtil.delPraise(TopicDetailActivity.this, mTopicId);
+                                if (tvDetailPraise != null) {
+                                    tvDetailPraise.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_heart_outline_grey, 0, 0, 0);
+                                }
+                            }
+
+                        }
+                    });
+        }else {
+            RestAdapterUtils.getRestAPI(this).praiseTopic(Config.PRAISE_TOPIC, mTopicId, mCurrentUser.getAccess_token())
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<PraiseEntity>() {
+                        @Override
+                        public void onCompleted() {
+
+                        }
+
+                        @Override
+                        public void onError(Throwable t) {
+                            Snackbar.make(mFabAddComment, "Error:" + t.getMessage(), Snackbar.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onNext(PraiseEntity praiseEntity) {
+                            if (praiseEntity != null) {
+                                Snackbar.make(mFabAddComment, "点赞成功", Snackbar.LENGTH_SHORT).show();
+                                if (tvDetailPraise != null && mTopicEntity != null) {
+                                    PraiseUtil.addPraise(TopicDetailActivity.this, mTopicEntity);
+                                    tvDetailPraise.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_heart_red, 0, 0, 0);
+                                }
+                            }
+
+                        }
+                    });
         }
 
-        call.enqueue(new Callback<PraiseEntity>() {
-            @Override
-            public void onResponse(Response<PraiseEntity> response, Retrofit retrofit) {
-                if (response.body() != null){
-                    if (isPraised){
-                        Snackbar.make(mFabAddComment, "取消点赞成功", Snackbar.LENGTH_SHORT).show();
-                        PraiseUtil.delPraise(TopicDetailActivity.this, mTopicId);
-                        if (tvDetailPraise != null) {
-                            tvDetailPraise.setCompoundDrawablesWithIntrinsicBounds(R.drawable.btn_heart, 0, 0, 0);
-                        }
-                    } else {
-                        Snackbar.make(mFabAddComment, "点赞成功", Snackbar.LENGTH_SHORT).show();
-                        if (tvDetailPraise != null && mTopicEntity != null) {
-                            PraiseUtil.addPraise(TopicDetailActivity.this, mTopicEntity);
-                            tvDetailPraise.setCompoundDrawablesWithIntrinsicBounds(R.drawable.btn_heart_off, 0, 0, 0);
-                        }
-
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-                Snackbar.make(mFabAddComment, "Error:" + t.getMessage(), Snackbar.LENGTH_SHORT).show();
-            }
-        });
 
     }
 
@@ -416,37 +454,38 @@ public class TopicDetailActivity extends BackBaseActivity implements TopicReplyF
             }
 
 
-            Call<CreateReplyResponse> call =
-            TesterHomeApi.getInstance().getTopicsService()
-                    .createReply(mTopicId,
-                            replyBody,
-                            mCurrentUser.getAccess_token());
+            RestAdapterUtils.getRestAPI(this).createReply(mTopicId,replyBody,mCurrentUser.getAccess_token())
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Observer<CreateReplyResponse>() {
+                        @Override
+                        public void onCompleted() {
 
-            call.enqueue(new Callback<CreateReplyResponse>() {
-                @Override
-                public void onResponse(Response<CreateReplyResponse> response, Retrofit retrofit) {
-
-                    if (response.body() != null) {
-                        // 发送成功
-                        mEtComment.setText("");
-                        DeviceUtil.hideSoftInput(TopicDetailActivity.this);
-                        mAddCommentPanel.setVisibility(View.GONE);
-                        mTopicReplyFragment.refreshReply();
-                        // refresh reply count
-                        if (response.body().getMeta() != null && response.body().getMeta().getCurrent_reply_count() > 0) {
-                            updateReplyCount(response.body().getMeta().getCurrent_reply_count() + 1);
                         }
-                    }
-                }
 
-                @Override
-                public void onFailure(Throwable t) {
-                    Snackbar.make(mFabAddComment,
-                            t.getMessage(),
-                            Snackbar.LENGTH_SHORT)
-                            .show();
-                }
-            });
+                        @Override
+                        public void onError(Throwable t) {
+                            Snackbar.make(mFabAddComment,
+                                    t.getMessage(),
+                                    Snackbar.LENGTH_SHORT)
+                                    .show();
+                        }
+
+                        @Override
+                        public void onNext(CreateReplyResponse response) {
+                            if (response != null) {
+                                // 发送成功
+                                mEtComment.setText("");
+                                DeviceUtil.hideSoftInput(TopicDetailActivity.this);
+                                mAddCommentPanel.setVisibility(View.GONE);
+                                mTopicReplyFragment.refreshReply();
+                                // refresh reply count
+                                if (response.getMeta() != null && response.getMeta().getCurrent_reply_count() > 0) {
+                                    updateReplyCount(response.getMeta().getCurrent_reply_count() + 1);
+                                }
+                            }
+                        }
+                    });
 
         }
     }

@@ -25,6 +25,7 @@ import com.testerhome.nativeandroid.fragments.AccountNotificationFragment;
 import com.testerhome.nativeandroid.fragments.AccountTopicsFragment;
 import com.testerhome.nativeandroid.models.TesterUser;
 import com.testerhome.nativeandroid.models.UserResponse;
+import com.testerhome.nativeandroid.networks.RestAdapterUtils;
 import com.testerhome.nativeandroid.networks.TesterHomeApi;
 import com.testerhome.nativeandroid.views.base.BackBaseActivity;
 
@@ -32,6 +33,10 @@ import butterknife.Bind;
 import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Retrofit;
+import rx.Observable;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by cvtpc on 2016/1/21.
@@ -84,23 +89,19 @@ public class UserInfoActivity extends BackBaseActivity {
     }
 
     private void loadUserInfo() {
-        Call<UserResponse> call =
-                TesterHomeApi.getInstance().getTopicsService().getUserInfo(loginName);
+        RestAdapterUtils.getRestAPI(this).getUserInfo(loginName)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<UserResponse>() {
+                    @Override
+                    public void call(UserResponse userResponse) {
+                        if (userResponse != null && userResponse.getUser() != null) {
+                            mTesterHomeAccount = userResponse.getUser();
+                            initUserInfo();
+                        }
+                    }
+                });
 
-        call.enqueue(new Callback<UserResponse>() {
-            @Override
-            public void onResponse(retrofit.Response<UserResponse> response, Retrofit retrofit) {
-                if (response.body() != null && response.body().getUser() != null) {
-                    mTesterHomeAccount = response.body().getUser();
-                    initUserInfo();
-                }
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-                Toast.makeText(UserInfoActivity.this,t.getMessage(),Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
 

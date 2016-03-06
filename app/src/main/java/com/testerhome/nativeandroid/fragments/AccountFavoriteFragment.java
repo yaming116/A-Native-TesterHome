@@ -10,6 +10,7 @@ import com.testerhome.nativeandroid.R;
 import com.testerhome.nativeandroid.auth.TesterHomeAccountService;
 import com.testerhome.nativeandroid.models.TesterUser;
 import com.testerhome.nativeandroid.models.TopicsResponse;
+import com.testerhome.nativeandroid.networks.RestAdapterUtils;
 import com.testerhome.nativeandroid.networks.TesterHomeApi;
 import com.testerhome.nativeandroid.views.adapters.TopicsListAdapter;
 import com.testerhome.nativeandroid.views.widgets.DividerItemDecoration;
@@ -19,6 +20,9 @@ import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
+import rx.Observer;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by vclub on 15/10/14.
@@ -99,45 +103,51 @@ public class AccountFavoriteFragment extends BaseFragment {
         if (showloading)
             showEmptyView();
 
-        Call<TopicsResponse> call = TesterHomeApi.getInstance().getTopicsService().getUserFavorite(loginName,
-                mTesterHomeAccount.getAccess_token(),
-                mNextCursor * 20);
 
-        call.enqueue(new Callback<TopicsResponse>() {
-            @Override
-            public void onResponse(Response<TopicsResponse> response, Retrofit retrofit) {
-                hideEmptyView();
-                if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
-                    swipeRefreshLayout.setRefreshing(false);
-                }
-                if (response.body() != null && response.body().getTopics().size() > 0) {
+        RestAdapterUtils.getRestAPI(getActivity()).getUserFavorite(loginName,
+                mTesterHomeAccount.getAccess_token(), mNextCursor * 20)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<TopicsResponse>() {
+                    @Override
+                    public void onCompleted() {
 
-                    if (mNextCursor == 0) {
-                        mAdatper.setItems(response.body().getTopics());
-                    } else {
-                        mAdatper.addItems(response.body().getTopics());
                     }
 
-                    if (response.body().getTopics().size() == 20) {
-                        mNextCursor += 1;
-                    } else {
-                        mNextCursor = 0;
+                    @Override
+                    public void onError(Throwable t) {
+                        hideEmptyView();
+                        if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
+                            swipeRefreshLayout.setRefreshing(false);
+                        }
+                        Log.e("demo", "failure() called with: " + "error = [" + t.getMessage() + "]"
+                                , t);
                     }
-                } else {
-                    mNextCursor = 0;
-                }
-            }
 
-            @Override
-            public void onFailure(Throwable t) {
-                hideEmptyView();
-                if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
-                    swipeRefreshLayout.setRefreshing(false);
-                }
-                Log.e("demo", "failure() called with: " + "error = [" + t.getMessage() + "]"
-                        , t);
-            }
-        });
+                    @Override
+                    public void onNext(TopicsResponse response) {
+                        hideEmptyView();
+                        if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
+                            swipeRefreshLayout.setRefreshing(false);
+                        }
+                        if (response != null && response.getTopics().size() > 0) {
+
+                            if (mNextCursor == 0) {
+                                mAdatper.setItems(response.getTopics());
+                            } else {
+                                mAdatper.addItems(response.getTopics());
+                            }
+
+                            if (response.getTopics().size() == 20) {
+                                mNextCursor += 1;
+                            } else {
+                                mNextCursor = 0;
+                            }
+                        } else {
+                            mNextCursor = 0;
+                        }
+                    }
+                });
 
     }
 }

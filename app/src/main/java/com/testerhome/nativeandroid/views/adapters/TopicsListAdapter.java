@@ -34,6 +34,9 @@ import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
+import rx.Observer;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Bin Li on 2015/9/16.
@@ -236,46 +239,51 @@ public class TopicsListAdapter extends BaseAdapter<TopicEntity> {
 
     // region
     private void loadToutiao(final ViewGroup viewGroup) {
-        Call<ToutiaoResponse> call = RestAdapterUtils.getRestAPI(mContext).getToutiao();
 
-        call.enqueue(new Callback<ToutiaoResponse>() {
-            @Override
-            public void onResponse(Response<ToutiaoResponse> response, Retrofit retrofit) {
-                if (response.body() != null) {
+        RestAdapterUtils.getRestAPI(mContext).getToutiao()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<ToutiaoResponse>() {
+                    @Override
+                    public void onCompleted() {
 
-                    imageViews = new View[response.body().getAds().size()];
-                    for (int i = 0; i < imageViews.length; i++) {
-                        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
-                                ViewGroup.LayoutParams.MATCH_PARENT,
-                                ViewGroup.LayoutParams.MATCH_PARENT);
-                        layoutParams.weight = 1;
+                    }
 
-                        View imageView = new View(context);
-                        imageViews[i] = imageView;
-                        if (i == 0) {
-                            imageViews[i].setBackgroundResource(R.color.colorAccent);
-                        } else {
-                            imageViews[i].setBackgroundResource(R.color.tab_item_tint_default);
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(ToutiaoResponse toutiaoResponse) {
+                        if (toutiaoResponse != null) {
+                            imageViews = new View[toutiaoResponse.getAds().size()];
+                            for (int i = 0; i < imageViews.length; i++) {
+                                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(
+                                        ViewGroup.LayoutParams.MATCH_PARENT,
+                                        ViewGroup.LayoutParams.MATCH_PARENT);
+                                layoutParams.weight = 1;
+
+                                View imageView = new View(context);
+                                imageViews[i] = imageView;
+                                if (i == 0) {
+                                    imageViews[i].setBackgroundResource(R.color.colorAccent);
+                                } else {
+                                    imageViews[i].setBackgroundResource(R.color.tab_item_tint_default);
+                                }
+                                viewGroup.addView(imageViews[i], layoutParams);
+                            }
+
+                            if (toutiaoResponse.getAds().size() > 0) {
+                                mBannerAdapter.setItems(toutiaoResponse.getAds());
+                                if (mBannerAdapter != null)
+                                    mTopicBannerTitle.setText(mBannerAdapter.getPageTitle(0));
+                            } else {
+                                // no info
+                            }
                         }
-                        viewGroup.addView(imageViews[i], layoutParams);
                     }
-
-                    if (response.body().getAds().size() > 0) {
-                        mBannerAdapter.setItems(response.body().getAds());
-                        if (mBannerAdapter != null)
-                            mTopicBannerTitle.setText(mBannerAdapter.getPageTitle(0));
-                    } else {
-                        // no info
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-                Log.e("TopicsListAdapter", t.getMessage());
-            }
-        });
-
+                });
     }
     // endregion
 }

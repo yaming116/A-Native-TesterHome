@@ -33,7 +33,7 @@ import rx.schedulers.Schedulers;
 /**
  * Created by Bin Li on 2015/9/16.
  */
-public class TopicsListFragment extends BaseFragment implements Callback<TopicsResponse> {
+public class TopicsListFragment extends BaseFragment implements Observer<TopicsResponse> {
 
     @Bind(R.id.rv_topic_list)
     RecyclerView recyclerViewTopicList;
@@ -123,96 +123,58 @@ public class TopicsListFragment extends BaseFragment implements Callback<TopicsR
 
         if (showloading)
             showEmptyView();
-
-        Call<TopicsResponse> call;
         if (type != null) {
 
             RestAdapterUtils.getRestAPI(getActivity()).getTopicsByType(type,mNextCursor * 20)
 
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(new Observer<TopicsResponse>() {
-                        @Override
-                        public void onCompleted() {
-
-                        }
-
-                        @Override
-                        public void onError(Throwable e) {
-                            hideEmptyView();
-                            if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
-                                swipeRefreshLayout.setRefreshing(false);
-                            }
-                            if (BuildConfig.DEBUG)
-                                Log.e("cache", "failure() called with: " + "error = [" + e.getMessage() + "]", e);
-                            if (mNextCursor == 0){
-                                showErrorView("无法加载数据,请检查网络");
-                            }
-                        }
-
-                        @Override
-                        public void onNext(TopicsResponse response) {
-                            hideEmptyView();
-                            if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
-                                swipeRefreshLayout.setRefreshing(false);
-                            }
-
-//                            Log.e("retrofit", response.raw().request().urlString());
-                            if (response != null && response.getTopics().size() > 0) {
-                                if (mNextCursor == 0) {
-                                    if (!TextUtils.isEmpty(type) && type.equals(Config.TOPICS_TYPE_RECENT)) {
-                                        response.getTopics().add(0, new TopicEntity(TopicsListAdapter.TOPIC_LIST_TYPE_BANNER, new ArrayList<BannerEntity>()));
-                                    }
-                                    mAdatper.setItems(response.getTopics());
-                                } else {
-                                    mAdatper.addItems(response.getTopics());
-                                }
-                                if (response.getTopics().size() >= 20) {
-                                    mNextCursor += 1;
-                                } else {
-                                    mNextCursor = 0;
-                                }
-
-                            } else {
-                                if (mNextCursor == 0){
-                                    showErrorView("无法加载数据,请检查网络");
-                                }
-                                mNextCursor = 0;
-                            }
-                        }
-                    });
+                    .subscribe(this);
             
             
         } else {
-            call = RestAdapterUtils.getRestAPI(getActivity()).getTopicsByNodeId(nodeId,
-                    mNextCursor * 20);
-            call.enqueue(this);
+            RestAdapterUtils.getRestAPI(getActivity()).getTopicsByNodeId(nodeId, mNextCursor * 20)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(this);
         }
 
     }
 
     @Override
-    public void onResponse(Response<TopicsResponse> response, Retrofit retrofit) {
+    public void onCompleted() {
 
-        if (BuildConfig.DEBUG)
-            Log.e("cache", "cache header = [" + response.headers().toString() + "]");
+    }
 
+    @Override
+    public void onError(Throwable e) {
         hideEmptyView();
         if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
             swipeRefreshLayout.setRefreshing(false);
         }
+        if (BuildConfig.DEBUG)
+            Log.e("cache", "failure() called with: " + "error = [" + e.getMessage() + "]", e);
+        if (mNextCursor == 0){
+            showErrorView("无法加载数据,请检查网络");
+        }
+    }
 
-        Log.e("retrofit", response.raw().request().urlString());
-        if (response.body() != null && response.body().getTopics().size() > 0) {
+    @Override
+    public void onNext(TopicsResponse response) {
+        hideEmptyView();
+        if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
+            swipeRefreshLayout.setRefreshing(false);
+        }
+        if (response != null && response.getTopics().size() > 0) {
             if (mNextCursor == 0) {
                 if (!TextUtils.isEmpty(type) && type.equals(Config.TOPICS_TYPE_RECENT)) {
-                    response.body().getTopics().add(0, new TopicEntity(TopicsListAdapter.TOPIC_LIST_TYPE_BANNER, new ArrayList<BannerEntity>()));
+                    response.getTopics().add(0, new TopicEntity(TopicsListAdapter.TOPIC_LIST_TYPE_BANNER, new ArrayList<BannerEntity>()));
                 }
-                mAdatper.setItems(response.body().getTopics());
+                mAdatper.setItems(response.getTopics());
             } else {
-                mAdatper.addItems(response.body().getTopics());
+                mAdatper.addItems(response.getTopics());
             }
-            if (response.body().getTopics().size() >= 20) {
+            if (response.getTopics().size() >= 20) {
                 mNextCursor += 1;
             } else {
                 mNextCursor = 0;
@@ -223,19 +185,6 @@ public class TopicsListFragment extends BaseFragment implements Callback<TopicsR
                 showErrorView("无法加载数据,请检查网络");
             }
             mNextCursor = 0;
-        }
-    }
-
-    @Override
-    public void onFailure(Throwable t) {
-        hideEmptyView();
-        if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
-            swipeRefreshLayout.setRefreshing(false);
-        }
-        if (BuildConfig.DEBUG)
-            Log.e("cache", "failure() called with: " + "error = [" + t.getMessage() + "]", t);
-        if (mNextCursor == 0){
-            showErrorView("无法加载数据,请检查网络");
         }
     }
 }

@@ -8,6 +8,7 @@ import android.util.Log;
 
 import com.testerhome.nativeandroid.R;
 import com.testerhome.nativeandroid.models.TopicReplyResponse;
+import com.testerhome.nativeandroid.networks.RestAdapterUtils;
 import com.testerhome.nativeandroid.networks.TesterHomeApi;
 import com.testerhome.nativeandroid.views.adapters.TopicReplyAdapter;
 import com.testerhome.nativeandroid.views.widgets.DividerItemDecoration;
@@ -17,6 +18,9 @@ import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Response;
 import retrofit.Retrofit;
+import rx.Observer;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by cvtpc on 2015/10/16.
@@ -103,45 +107,50 @@ public class TopicReplyFragment extends BaseFragment {
         if (showloading)
             showEmptyView();
 
-        Call<TopicReplyResponse> call=
-        TesterHomeApi.getInstance().getTopicsService().getTopicsReplies(mTopicId,
-                mNextCursor * 20);
+        RestAdapterUtils.getRestAPI(getActivity()).getTopicsReplies(mTopicId,
+                mNextCursor * 20)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Observer<TopicReplyResponse>() {
+                    @Override
+                    public void onCompleted() {
 
-        call.enqueue(new Callback<TopicReplyResponse>() {
-            @Override
-            public void onResponse(Response<TopicReplyResponse> response, Retrofit retrofit) {
-                hideEmptyView();
-                if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
-                    swipeRefreshLayout.setRefreshing(false);
-                }
-                if (response.body()!=null && response.body().getTopicReply().size() > 0) {
-
-                    if (mNextCursor == 0) {
-                        mAdatper.setItems(response.body().getTopicReply());
-                    } else {
-                        mAdatper.addItems(response.body().getTopicReply());
                     }
 
-                    if (response.body().getTopicReply().size() == 20) {
-                        mNextCursor += 1;
-                    } else {
-                        mNextCursor = 0;
+                    @Override
+                    public void onError(Throwable t) {
+                        hideEmptyView();
+                        if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
+                            swipeRefreshLayout.setRefreshing(false);
+                        }
+                        Log.e("demo", "failure() called with: " + "error = [" + t.getMessage() + "]"
+                                , t);
                     }
-                } else {
-                    mNextCursor = 0;
-                }
-            }
 
-            @Override
-            public void onFailure(Throwable t) {
-                hideEmptyView();
-                if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
-                    swipeRefreshLayout.setRefreshing(false);
-                }
-                Log.e("demo", "failure() called with: " + "error = [" + t.getMessage() + "]"
-                        , t);
-            }
-        });
+                    @Override
+                    public void onNext(TopicReplyResponse response) {
+                        hideEmptyView();
+                        if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
+                            swipeRefreshLayout.setRefreshing(false);
+                        }
+                        if (response!=null && response.getTopicReply().size() > 0) {
+
+                            if (mNextCursor == 0) {
+                                mAdatper.setItems(response.getTopicReply());
+                            } else {
+                                mAdatper.addItems(response.getTopicReply());
+                            }
+
+                            if (response.getTopicReply().size() == 20) {
+                                mNextCursor += 1;
+                            } else {
+                                mNextCursor = 0;
+                            }
+                        } else {
+                            mNextCursor = 0;
+                        }
+                    }
+                });
 
     }
 

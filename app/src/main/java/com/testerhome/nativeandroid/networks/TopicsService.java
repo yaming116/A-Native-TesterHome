@@ -26,7 +26,7 @@ import rx.Observable;
 public interface TopicsService {
 
     @GET("ads/toutiao.json")
-    Call<ToutiaoResponse> getToutiao();
+    Observable<ToutiaoResponse> getToutiao();
 
 
     @GET("topics.json")
@@ -39,7 +39,7 @@ public interface TopicsService {
 
 
     @GET("topics.json")
-    Call<TopicsResponse> getTopicsByNodeId(@Query("node_id") int nodeId,
+    Observable<TopicsResponse> getTopicsByNodeId(@Query("node_id") int nodeId,
                                            @Query("offset") int offset
     );
 
@@ -50,24 +50,13 @@ public interface TopicsService {
 
 
     @GET("users/{username}/topics.json")
-    Call<TopicsResponse> getUserTopics(@Path("username") String username,
+    Observable<TopicsResponse> getUserTopics(@Path("username") String username,
                                        @Query("access_token") String accessToken,
                                        @Query("offset") int offset
     );
 
-    @GET("users/{username}/favorites.json")
-    Call<TopicsResponse> getUserFavorite(@Path("username") String username,
-                                         @Query("access_token") String accessToken,
-                                         @Query("offset") int offset
-    );
-
     @GET("users/{username}.json")
-    Call<UserResponse> getUserInfo(@Path("username") String username,
-                                   @Query("access_token") String accessToken
-    );
-
-    @GET("users/{username}.json")
-    Call<UserResponse> getUserInfo(
+    Observable<UserResponse> getUserInfo(
             @Path("username") String username
     );
 
@@ -77,7 +66,7 @@ public interface TopicsService {
     );
 
     @GET("topics/{id}/replies.json")
-    Call<TopicReplyResponse> getTopicsReplies(@Path("id") String id,
+    Observable<TopicReplyResponse> getTopicsReplies(@Path("id") String id,
                                               @Query("offset") int offset
     );
 
@@ -87,29 +76,35 @@ public interface TopicsService {
     );
 
     @POST("topics/{id}/replies.json")
-    Call<CreateReplyResponse> createReply(@Path("id") String id,
+    Observable<CreateReplyResponse> createReply(@Path("id") String id,
                                           @Query("body") String body,
                                           @Query("access_token") String accessToken
     );
 
     @POST("topics/{id}/favorite.json")
-    Call<CollectTopicResonse> collectTopic(@Path("id") String id,
+    Observable<CollectTopicResonse> collectTopic(@Path("id") String id,
                                            @Query("access_token") String accessToken
     );
 
+    @GET("users/{username}/favorites.json")
+    Observable<TopicsResponse> getUserFavorite(@Path("username") String username,
+                                         @Query("access_token") String accessToken,
+                                         @Query("offset") int offset
+    );
+
     @POST("topics/{id}/unfavorite.json")
-    Call<CollectTopicResonse> uncollectTopic(@Path("id") String id,
+    Observable<CollectTopicResonse> uncollectTopic(@Path("id") String id,
                                              @Query("access_token") String accessToken
     );
 
     @POST("likes.json")
-    Call<PraiseEntity> praiseTopic(@Query("obj_type") String objType,
+    Observable<PraiseEntity> praiseTopic(@Query("obj_type") String objType,
                                    @Query("obj_id") String objId,
                                    @Query("access_token") String accessToken
     );
 
     @DELETE("likes.json")
-    Call<PraiseEntity> unLikeTopic(@Query("obj_type") String objType,
+    Observable<PraiseEntity> unLikeTopic(@Query("obj_type") String objType,
                                    @Query("obj_id") String objId,
                                    @Query("access_token") String accessToken);
 }
