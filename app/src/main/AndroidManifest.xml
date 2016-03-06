@@ -119,6 +119,16 @@
                 <action android:name="android.service.chooser.ChooserTargetService" />
             </intent-filter>
         </service>
+
+        <service
+            android:name="com.umeng.update.net.DownloadingService"
+            android:process=":DownloadingService" >
+        </service>
+        <activity
+            android:name="com.umeng.update.UpdateDialogActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
+        </activity>
+
     </application>
 
 </manifest>
