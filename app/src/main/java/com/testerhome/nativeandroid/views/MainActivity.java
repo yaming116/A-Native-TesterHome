@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -41,6 +42,7 @@ import com.testerhome.nativeandroid.views.widgets.ThemeUtils;
 import com.umeng.update.UmengUpdateAgent;
 
 import butterknife.Bind;
+import butterknife.OnClick;
 
 public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener, SearchView.OnQueryTextListener {
 
@@ -50,6 +52,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     @Bind(R.id.drawer_layout)
     DrawerLayout drawer;
+
 
     private ImageView navBackGround;
     // 是否启用夜间模式
@@ -291,5 +294,11 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     public boolean onQueryTextChange(String newText) {
         // do nothing
         return false;
+    }
+
+
+    @OnClick(R.id.fab_new_topic)
+    public void newTopic(){
+        startActivity(new Intent().setClass(MainActivity.this,NewTopicActivity.class));
     }
 }
