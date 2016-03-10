@@ -7,11 +7,19 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
 import com.testerhome.nativeandroid.R;
+import com.testerhome.nativeandroid.auth.TesterHomeAccountService;
+import com.testerhome.nativeandroid.models.TesterUser;
+import com.testerhome.nativeandroid.models.TopicReplyEntity;
 import com.testerhome.nativeandroid.models.TopicReplyResponse;
+import com.testerhome.nativeandroid.models.UserEntity;
 import com.testerhome.nativeandroid.networks.RestAdapterUtils;
 import com.testerhome.nativeandroid.networks.TesterHomeApi;
+import com.testerhome.nativeandroid.utils.StringUtils;
 import com.testerhome.nativeandroid.views.adapters.TopicReplyAdapter;
 import com.testerhome.nativeandroid.views.widgets.DividerItemDecoration;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.Bind;
 import retrofit.Call;
@@ -98,6 +106,37 @@ public class TopicReplyFragment extends BaseFragment {
         loadTopicReplies(true);
     }
 
+
+    public void updateReplyInfo(String content) {
+        if (mAdatper.getItemCount() < 20) {
+            content = "<p>" + content + "</p>";
+            content = content.concat("\n\n").concat("<p>—— 来自TesterHome官方 <a href=\"http://fir.im/p9vs\" target=\"_blank\">安卓客户端</a></p>");
+            TesterUser mTesterHomeAccount = TesterHomeAccountService.getInstance(getActivity()).getActiveAccountInfo();
+            TopicReplyEntity topicReplyEntity = new TopicReplyEntity();
+            UserEntity userEntity = new UserEntity();
+            userEntity.setAvatar_url(mTesterHomeAccount.getAvatar_url());
+            userEntity.setId(Integer.parseInt(mTesterHomeAccount.getId()));
+            userEntity.setLogin(mTesterHomeAccount.getLogin());
+            userEntity.setName(mTesterHomeAccount.getName());
+            topicReplyEntity.setBody_html(content);
+            String timeStamp = StringUtils.timeStampToTime(System.currentTimeMillis()/1000);
+            //生成一个假的数据先
+            topicReplyEntity.setId(100001);
+            topicReplyEntity.setCreated_at(timeStamp);
+            topicReplyEntity.setUpdated_at(timeStamp);
+            topicReplyEntity.setDeleted(false);
+            topicReplyEntity.setUser(userEntity);
+            List<TopicReplyEntity> topicReplyEntities = new ArrayList<>();
+            topicReplyEntities.add(topicReplyEntity);
+            mAdatper.addItems(topicReplyEntities);
+        }
+
+
+    }
+
+
+
+
     private void loadTopicReplies(boolean showloading) {
 
         if (swipeRefreshLayout != null) {
@@ -134,7 +173,6 @@ public class TopicReplyFragment extends BaseFragment {
                             swipeRefreshLayout.setRefreshing(false);
                         }
                         if (response!=null && response.getTopicReply().size() > 0) {
-
                             if (mNextCursor == 0) {
                                 mAdatper.setItems(response.getTopicReply());
                             } else {

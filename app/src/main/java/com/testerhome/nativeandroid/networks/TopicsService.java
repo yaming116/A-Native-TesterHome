@@ -76,8 +76,7 @@ public interface TopicsService {
     );
 
     @POST("topics/{id}/replies.json")
-    Observable<CreateReplyResponse> createReply(@Path("id") String id,
-                                          @Query("body") String body,
+    Observable<CreateReplyResponse> createReply(@Path("id") String id, @Query("body")   String body,
                                           @Query("access_token") String accessToken
     );
 

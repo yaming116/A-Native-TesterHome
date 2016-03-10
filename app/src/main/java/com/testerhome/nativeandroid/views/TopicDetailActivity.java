@@ -65,7 +65,7 @@ public class TopicDetailActivity extends BackBaseActivity implements TopicReplyF
         SwipeBackHelper.getCurrentPage(this)
                 .setSwipeBackEnable(true)
                 .setSwipeEdge(200)
-                .setSwipeEdgePercent(0.2f)//可滑动的范围。百分比。0.2表示为左边20%的屏幕
+                .setSwipeEdgePercent(0.1f)//可滑动的范围。百分比。0.2表示为左边20%的屏幕
                 .setSwipeSensitivity(0.5f)//对横向滑动手势的敏感程度。0为迟钝 1为敏感
                 .setClosePercent(0.8f)//触发关闭Activity百分比
                 .setSwipeRelateEnable(false)//是否与下一级activity联动(微信效果)。默认关
@@ -229,7 +229,8 @@ public class TopicDetailActivity extends BackBaseActivity implements TopicReplyF
                             sdvDetailUserAvatar.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
-                                    startActivity(new Intent(TopicDetailActivity.this,UserInfoActivity.class).putExtra("loginName",mTopicEntity.getUser()
+                                    startActivity(new Intent().setClass(TopicDetailActivity.this,UserInfoActivity.class).
+                                            putExtra("loginName",mTopicEntity.getUser()
                                             .getLogin()));
                                 }
                             });
@@ -430,6 +431,7 @@ public class TopicDetailActivity extends BackBaseActivity implements TopicReplyF
     void onSendCommentClick() {
         mEtComment.setError(null);
 
+
         if (mCurrentUser == null) {
             mCurrentUser = TesterHomeAccountService.getInstance(this).getActiveAccountInfo();
         }
@@ -444,16 +446,18 @@ public class TopicDetailActivity extends BackBaseActivity implements TopicReplyF
 
         if (TextUtils.isEmpty(mEtComment.getText().toString())) {
             mEtComment.setError("请输入回复内容");
-        } else {
-            String replyBody = mEtComment.getText().toString();
 
+        } else {
+            String replyContent = mEtComment.getText().toString();
+            String replyBody = "";
             if (PreferenceManager.getDefaultSharedPreferences(this)
                     .getBoolean(SettingsFragment.KEY_PREF_COMMENT_WITH_SNACK, true)) {
-                replyBody = replyBody.concat("\n\n")
+                replyBody = replyContent.concat("\n\n")
                         .concat("—— 来自TesterHome官方 [安卓客户端](http://fir.im/p9vs)");
             }
 
 
+            final String finalReplyBody = replyContent;
             RestAdapterUtils.getRestAPI(this).createReply(mTopicId,replyBody,mCurrentUser.getAccess_token())
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -475,10 +479,11 @@ public class TopicDetailActivity extends BackBaseActivity implements TopicReplyF
                         public void onNext(CreateReplyResponse response) {
                             if (response != null) {
                                 // 发送成功
+                                Log.d("detailActivity","回帖成功");
                                 mEtComment.setText("");
                                 DeviceUtil.hideSoftInput(TopicDetailActivity.this);
                                 mAddCommentPanel.setVisibility(View.GONE);
-                                mTopicReplyFragment.refreshReply();
+                                mTopicReplyFragment.updateReplyInfo(finalReplyBody);
                                 // refresh reply count
                                 if (response.getMeta() != null && response.getMeta().getCurrent_reply_count() > 0) {
                                     updateReplyCount(response.getMeta().getCurrent_reply_count() + 1);
