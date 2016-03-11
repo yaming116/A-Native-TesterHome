@@ -37,6 +37,7 @@ import com.testerhome.nativeandroid.fragments.HomeFragment;
 import com.testerhome.nativeandroid.fragments.SettingsFragment;
 import com.testerhome.nativeandroid.fragments.TopicsListFragment;
 import com.testerhome.nativeandroid.models.TesterUser;
+import com.testerhome.nativeandroid.utils.DeviceUtil;
 import com.testerhome.nativeandroid.views.base.BaseActivity;
 import com.testerhome.nativeandroid.views.widgets.ThemeUtils;
 import com.umeng.update.UmengUpdateAgent;
@@ -110,6 +111,9 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         mAccountAvatar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (DeviceUtil.isFastClick()) {
+                    return;
+                }
                 onAvatarClick();
             }
         });

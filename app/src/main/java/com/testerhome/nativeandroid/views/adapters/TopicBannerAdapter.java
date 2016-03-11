@@ -11,6 +11,7 @@ import com.facebook.drawee.view.SimpleDraweeView;
 import com.testerhome.nativeandroid.Config;
 import com.testerhome.nativeandroid.R;
 import com.testerhome.nativeandroid.models.AdsEntity;
+import com.testerhome.nativeandroid.utils.DeviceUtil;
 import com.testerhome.nativeandroid.views.TopicDetailActivity;
 
 import java.util.ArrayList;
@@ -71,6 +72,9 @@ public class TopicBannerAdapter extends PagerAdapter implements View.OnClickList
 
     @Override
     public void onClick(View v) {
+        if (DeviceUtil.isFastClick()) {
+            return;
+        }
         String topicId = (String) v.getTag();
         v.getContext().startActivity(new Intent(v.getContext(), TopicDetailActivity.class)
                 .putExtra("topic_id", topicId));

@@ -22,6 +22,7 @@ import com.testerhome.nativeandroid.R;
 import com.testerhome.nativeandroid.models.TopicEntity;
 import com.testerhome.nativeandroid.models.ToutiaoResponse;
 import com.testerhome.nativeandroid.networks.RestAdapterUtils;
+import com.testerhome.nativeandroid.utils.DeviceUtil;
 import com.testerhome.nativeandroid.utils.StringUtils;
 import com.testerhome.nativeandroid.views.TopicDetailActivity;
 
@@ -110,6 +111,9 @@ public class TopicsListAdapter extends BaseAdapter<TopicEntity> {
                 holder.topicItem.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        if (DeviceUtil.isFastClick()) {
+                            return;
+                        }
                         String topicId = (String) v.getTag();
                         mContext.startActivity(new Intent(mContext, TopicDetailActivity.class).putExtra("topic_id", topicId));
                     }
