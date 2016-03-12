@@ -1,6 +1,6 @@
 package com.testerhome.nativeandroid.views;
 
-import android.app.ProgressDialog;
+
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,6 +23,9 @@ import com.testerhome.nativeandroid.models.UserDetailResponse;
 import com.testerhome.nativeandroid.networks.RestAdapterUtils;
 import com.testerhome.nativeandroid.oauth2.AuthenticationService;
 import com.testerhome.nativeandroid.views.base.BackBaseActivity;
+import com.testerhome.nativeandroid.views.dialog.DialogUtils;
+import com.testerhome.nativeandroid.views.dialog.ProgressDialog;
+
 import rx.functions.Action1;
 
 
@@ -81,7 +84,11 @@ public class AuthActivity extends BackBaseActivity {
 
         @Override
         protected void onPreExecute() {
-            pd = ProgressDialog.show(AuthActivity.this, "", "Loading...", true);
+            pd = DialogUtils.createProgressDialog(AuthActivity.this);
+            pd.setMessage("正在登录");
+            pd.setCancelable(false);
+            pd.show();
+
         }
 
         @Override

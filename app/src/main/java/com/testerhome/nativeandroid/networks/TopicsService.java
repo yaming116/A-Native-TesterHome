@@ -6,7 +6,9 @@ import com.testerhome.nativeandroid.models.NotificationResponse;
 import com.testerhome.nativeandroid.models.PraiseEntity;
 import com.testerhome.nativeandroid.models.SearchResponse;
 import com.testerhome.nativeandroid.models.TopicDetailResponse;
+import com.testerhome.nativeandroid.models.TopicEntity;
 import com.testerhome.nativeandroid.models.TopicReplyResponse;
+import com.testerhome.nativeandroid.models.TopicResponse;
 import com.testerhome.nativeandroid.models.TopicsResponse;
 import com.testerhome.nativeandroid.models.ToutiaoResponse;
 import com.testerhome.nativeandroid.models.UserDetailResponse;
@@ -106,4 +108,10 @@ public interface TopicsService {
     Observable<PraiseEntity> unLikeTopic(@Query("obj_type") String objType,
                                    @Query("obj_id") String objId,
                                    @Query("access_token") String accessToken);
+
+    @POST("topics.json")
+    Observable<TopicResponse> createTopic(@Query("access_token") String accessToken,
+                                          @Query("node_id") String nodeId,
+                                          @Query("title") String title,
+                                          @Query(value = "body", encoded = true) String body);
 }

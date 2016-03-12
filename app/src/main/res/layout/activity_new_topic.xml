@@ -17,12 +17,14 @@
             app:layout_scrollFlags="scroll|enterAlways|snap">
 
             <android.support.v7.widget.Toolbar
-                android:id="@+id/new_topic_toolbar"
+                android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:title="新建帖子"
-                app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+                android:layout_height="?attr/actionBarSize"
+                android:background="?attr/colorPrimary"
+                android:elevation="@dimen/default_elevation"
+                app:contentInsetEnd="?attr/actionBarSize"
+                app:theme="@style/AppTheme.AppBarOverlay"
+                 />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -40,15 +42,16 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="16dp"
                     android:layout_marginRight="16dp"
-                    android:text="发送"
-                    android:textColor="@color/text_color_light"
+                    android:text="@string/send_to_type"
+                    android:textColor="@color/bg_second_normal"
                     android:textSize="16sp" />
 
                 <Spinner
                     android:id="@+id/new_topic_spn_tab"
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
-                    android:entries="@array/tabs" />
+                    android:entries="@array/tabs"
+                    android:popupBackground="?attr/widgetBackground"/>
 
             </LinearLayout>
 
@@ -98,7 +101,7 @@
             android:hint="请输入内容"
             android:textSize="16sp"
             android:minLines="30"
-            android:background="?attr/colorPrimaryDark" />
+            android:background="?attr/widgetBackgroundDark" />
 
     </android.support.v4.widget.NestedScrollView>
 

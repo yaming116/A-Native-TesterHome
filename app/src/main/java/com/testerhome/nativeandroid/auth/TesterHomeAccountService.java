@@ -84,8 +84,10 @@ public class TesterHomeAccountService {
     public TesterUser getActiveAccountInfo() {
         if (null != activeAccount)
             return getAccountInfo(activeAccount);
-        else
+        else {
             return new TesterUser();
+        }
+
     }
 
     public Account getActiveAccount() {

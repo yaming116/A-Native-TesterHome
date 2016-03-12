@@ -5,6 +5,7 @@
     </declare-styleable>
     <attr name="navigationItemTextColor" format="color|reference"/>
     <attr name="widgetBackgroundTitle" format="color|reference"/>
+    <attr name="widgetBackgroundDark" format="color|reference" />
     <attr name="widgetBackground" format="color|reference" />
     <attr name="main_bg" format="reference|color"/>
     <attr name="main_text_color" format="reference|color"/>

@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -38,6 +39,7 @@ import com.testerhome.nativeandroid.fragments.SettingsFragment;
 import com.testerhome.nativeandroid.fragments.TopicsListFragment;
 import com.testerhome.nativeandroid.models.TesterUser;
 import com.testerhome.nativeandroid.utils.DeviceUtil;
+import com.testerhome.nativeandroid.utils.ToastUtils;
 import com.testerhome.nativeandroid.views.base.BaseActivity;
 import com.testerhome.nativeandroid.views.widgets.ThemeUtils;
 import com.umeng.update.UmengUpdateAgent;
@@ -301,8 +303,17 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
 
+    TesterUser mCurrentUser;
     @OnClick(R.id.fab_new_topic)
     public void newTopic(){
+
+        mCurrentUser = TesterHomeAccountService.getInstance(this).getActiveAccountInfo();
+        if (mCurrentUser.getAccess_token() == null) {
+                ToastUtils.with(this).show("请先登录");
+                return;
+        }
+        Log.d("mainactivity",mCurrentUser.getAccess_token());
         startActivity(new Intent().setClass(MainActivity.this,NewTopicActivity.class));
+
     }
 }

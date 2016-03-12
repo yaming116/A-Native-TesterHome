@@ -14,6 +14,11 @@
     <string name="main_tab_job">招聘</string>
     <string name="follow">开始关注你了。</string>
     <string name="action_topic_detail_share">分享</string>
+    <string name="action_topic_new">发表</string>
+    <string name="posting_$_">正在发布中&#8230;</string>
+    <string name="post_success">发布成功</string>
+    <string name="title_empty_error_tip">标题不能为空</string>
+    <string name="content_empty_error_tip">内容不能为空</string>
     <string name="logout">注销</string>
     <string name="string_loading">Loading&#8230;</string>
     <string name="user_info_name">unKnow</string>
@@ -22,7 +27,14 @@
     <string name="main_drawer_settings">设置</string>
     <string name="main_drawer_about">关于</string>
     <string name="send">发送</string>
+    <string name="send_to_type">发布到分类:</string>
     <string name="error_view_oops">Oops</string>
+    <string name="confirm">确定</string>
+    <string name="cancel">取消</string>
+    <string name="title">标题</string>
+    <string name="add_link">添加连接</string>
+    <string name="link">连接</string>
+    <string name="http_$">http://</string>
 
     <!-- Strings related to Settings -->
 

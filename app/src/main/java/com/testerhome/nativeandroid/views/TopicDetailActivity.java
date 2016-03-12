@@ -343,10 +343,12 @@ public class TopicDetailActivity extends BackBaseActivity implements TopicReplyF
     void onDetailPraiseClick() {
         if (mCurrentUser == null) {
             mCurrentUser = TesterHomeAccountService.getInstance(this).getActiveAccountInfo();
-            if (TextUtils.isEmpty(mCurrentUser.getLogin())) {
-                Snackbar.make(mFabAddComment, "请先登录客户端", Snackbar.LENGTH_SHORT).show();
-                return;
-            }
+
+        }
+
+        if (TextUtils.isEmpty(mCurrentUser.getLogin())) {
+            Snackbar.make(mFabAddComment, "请先登录客户端", Snackbar.LENGTH_SHORT).show();
+            return;
         }
         // TODO: check login and token not expire
 
