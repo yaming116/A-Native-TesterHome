@@ -81,18 +81,18 @@ public class TopicReplyAdapter extends BaseAdapter<TopicReplyEntity> {
             html = html.replaceAll("src=\"/photo", "src=\"https://testerhome.com/photo");
 
 
-            holder.topicItemBody.setOnURLClickListener(new RichText.OnURLClickListener() {
-                @Override
-                public boolean urlClicked(String url) {
-                    CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-                    builder.setToolbarColor(context.getResources().getColor(R.color.colorPrimary));
-
-                    CustomTabsIntent customTabsIntent = builder.build();
-
-                    customTabsIntent.launchUrl((Activity) context, Uri.parse(url));
-                    return true;
-                }
-            });
+//            holder.topicItemBody.setOnURLClickListener(new RichText.OnURLClickListener() {
+//                @Override
+//                public boolean urlClicked(String url) {
+//                    CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+//                    builder.setToolbarColor(context.getResources().getColor(R.color.colorPrimary));
+//
+//                    CustomTabsIntent customTabsIntent = builder.build();
+//
+//                    customTabsIntent.launchUrl((Activity) context, Uri.parse(url));
+//                    return true;
+//                }
+//            });
 
             holder.topicItemBody.setRichText(html);
             holder.topicItemBody.setMovementMethod(LinkMovementMethod.getInstance());
