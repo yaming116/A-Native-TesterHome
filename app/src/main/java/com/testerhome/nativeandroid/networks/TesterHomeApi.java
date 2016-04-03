@@ -2,8 +2,8 @@ package com.testerhome.nativeandroid.networks;
 
 import com.testerhome.nativeandroid.Config;
 
-import retrofit.GsonConverterFactory;
-import retrofit.Retrofit;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by Bin Li on 2015/9/16.

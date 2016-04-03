@@ -11,15 +11,10 @@ import com.testerhome.nativeandroid.auth.TesterHomeAccountService;
 import com.testerhome.nativeandroid.models.TesterUser;
 import com.testerhome.nativeandroid.models.TopicsResponse;
 import com.testerhome.nativeandroid.networks.RestAdapterUtils;
-import com.testerhome.nativeandroid.networks.TesterHomeApi;
 import com.testerhome.nativeandroid.views.adapters.TopicsListAdapter;
 import com.testerhome.nativeandroid.views.widgets.DividerItemDecoration;
 
 import butterknife.Bind;
-import retrofit.Call;
-import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;

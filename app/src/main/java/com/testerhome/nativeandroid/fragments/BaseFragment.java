@@ -9,14 +9,18 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.testerhome.nativeandroid.R;
+import com.testerhome.nativeandroid.application.NativeApp;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import rx.Subscription;
 
 /**
  * Created by Bin Li on 2015/9/15.
  */
 public abstract class BaseFragment extends Fragment {
+
+    protected Subscription mSubscription;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -37,6 +41,14 @@ public abstract class BaseFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.unbind(this);
+        unsubscribe();
+        NativeApp.getRefWatcher().watch(this);
+    }
+
+    protected void unsubscribe() {
+        if (mSubscription != null && !mSubscription.isUnsubscribed()) {
+            mSubscription.unsubscribe();
+        }
     }
 
     @Nullable

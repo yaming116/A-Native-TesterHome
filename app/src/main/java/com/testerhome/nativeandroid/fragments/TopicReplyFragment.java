@@ -13,7 +13,6 @@ import com.testerhome.nativeandroid.models.TopicReplyEntity;
 import com.testerhome.nativeandroid.models.TopicReplyResponse;
 import com.testerhome.nativeandroid.models.UserEntity;
 import com.testerhome.nativeandroid.networks.RestAdapterUtils;
-import com.testerhome.nativeandroid.networks.TesterHomeApi;
 import com.testerhome.nativeandroid.utils.StringUtils;
 import com.testerhome.nativeandroid.views.adapters.TopicReplyAdapter;
 import com.testerhome.nativeandroid.views.widgets.DividerItemDecoration;
@@ -22,10 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
-import retrofit.Call;
-import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;

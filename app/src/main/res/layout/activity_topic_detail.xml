@@ -64,7 +64,7 @@
         android:layout_margin="@dimen/fab_margin"
         android:clickable="true"
         android:src="@drawable/ic_discuss"
-        app:layout_anchor="@id/coordinatorLayout"
+        app:layout_anchor="@+id/view_pager"
         app:layout_anchorGravity="bottom|right|end"
         app:layout_behavior="@string/fab_scrolling_view_behavior" />
 
@@ -74,7 +74,7 @@
         android:layout_height="wrap_content"
         android:background="@color/bg_comments"
         android:elevation="@dimen/default_elevation"
-        app:layout_anchor="@id/coordinatorLayout"
+        app:layout_anchor="@+id/view_pager"
         app:layout_anchorGravity="bottom|end"
         android:gravity="center_vertical"
         android:paddingBottom="4dp"

@@ -6,7 +6,6 @@ import com.testerhome.nativeandroid.models.NotificationResponse;
 import com.testerhome.nativeandroid.models.PraiseEntity;
 import com.testerhome.nativeandroid.models.SearchResponse;
 import com.testerhome.nativeandroid.models.TopicDetailResponse;
-import com.testerhome.nativeandroid.models.TopicEntity;
 import com.testerhome.nativeandroid.models.TopicReplyResponse;
 import com.testerhome.nativeandroid.models.TopicResponse;
 import com.testerhome.nativeandroid.models.TopicsResponse;
@@ -14,12 +13,11 @@ import com.testerhome.nativeandroid.models.ToutiaoResponse;
 import com.testerhome.nativeandroid.models.UserDetailResponse;
 import com.testerhome.nativeandroid.models.UserResponse;
 
-import retrofit.Call;
-import retrofit.http.DELETE;
-import retrofit.http.GET;
-import retrofit.http.POST;
-import retrofit.http.Path;
-import retrofit.http.Query;
+import retrofit2.http.DELETE;
+import retrofit2.http.GET;
+import retrofit2.http.POST;
+import retrofit2.http.Path;
+import retrofit2.http.Query;
 import rx.Observable;
 
 /**
@@ -36,7 +34,7 @@ public interface TopicsService {
                                                @Query("offset") int offset);
 
     @GET("search.json")
-    Call<SearchResponse> searchTopicsByKeyword(@Query("q") String keyword,
+    Observable<SearchResponse> searchTopicsByKeyword(@Query("q") String keyword,
                                          @Query("page") int page);
 
 

@@ -8,9 +8,13 @@ import android.webkit.WebView;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.imagepipeline.backends.okhttp.OkHttpImagePipelineConfigFactory;
 import com.facebook.imagepipeline.core.ImagePipelineConfig;
+import com.facebook.stetho.Stetho;
+import com.facebook.stetho.okhttp.StethoInterceptor;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 import com.google.gson.Gson;
+import com.squareup.leakcanary.LeakCanary;
+import com.squareup.leakcanary.RefWatcher;
 import com.squareup.okhttp.FormEncodingBuilder;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -22,8 +26,6 @@ import com.testerhome.nativeandroid.auth.TesterHomeAccountService;
 import com.testerhome.nativeandroid.models.OAuth;
 import com.testerhome.nativeandroid.models.TesterUser;
 import com.testerhome.nativeandroid.oauth2.AuthenticationService;
-
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.Timer;
@@ -47,13 +49,13 @@ public class NativeApp extends Application {
         return instance;
     }
 
-    public void startTimer(){
+    public void startTimer() {
         TesterUser testerUser = TesterHomeAccountService.getInstance(this).getActiveAccountInfo();
         Log.d(TAG, testerUser.getCreate_at() + "");
         Log.d(TAG, testerUser.getExpireDate() + "");
-        Log.d(TAG,System.currentTimeMillis()+"");
-        long leftTime = timerTime -(System.currentTimeMillis()/1000-testerUser.getCreate_at());
-        if (leftTime < 0 ){
+        Log.d(TAG, System.currentTimeMillis() + "");
+        long leftTime = timerTime - (System.currentTimeMillis() / 1000 - testerUser.getCreate_at());
+        if (leftTime < 0) {
             leftTime = 0;
         }
 
@@ -71,7 +73,7 @@ public class NativeApp extends Application {
                             .add("client_id", AuthenticationService.getAuthorize_client_id())
                             .add("grant_type", "refresh_token")
                             .add("client_secret", "3a20127eb087257ad7196098bfd8240746a66b0550d039eb2c1901c025e7cbea")
-                            .add("refresh_token",testerUser.getRefresh_token())
+                            .add("refresh_token", testerUser.getRefresh_token())
                             .build();
 
                     Request request = new Request.Builder()
@@ -79,16 +81,16 @@ public class NativeApp extends Application {
                             .post(formBody)
                             .build();
 
-                    Response response = null;
+                    Response response;
                     try {
                         response = okHttpClient.newCall(request).execute();
 
                         if (response.isSuccessful()) {
                             String responseStr = response.body().string();
-                            Log.d(TAG,responseStr);
+                            Log.d(TAG, responseStr);
                             Gson gson = new Gson();
                             OAuth oAuth = gson.fromJson(responseStr, OAuth.class);
-                            if (oAuth.getExpires_in()> 0 && oAuth.getAccess_token() != null) {
+                            if (oAuth.getExpires_in() > 0 && oAuth.getAccess_token() != null) {
                                 TesterHomeAccountService.getInstance(instance).updateAccountToken(oAuth);
                             }
                         } else {
@@ -96,22 +98,17 @@ public class NativeApp extends Application {
                         }
                     } catch (IOException e) {
                         e.printStackTrace();
-                    } catch (Exception e) {
-                        e.printStackTrace();
                     }
-
-
-
                 }
             }
         };
-        timer.schedule(timerTask, leftTime*1000);
+        timer.schedule(timerTask, leftTime * 1000);
     }
 
 
-    public void cancelTimerTask(){
-        Log.d(TAG,"i have cancel");
-        if (timer != null ) {
+    public void cancelTimerTask() {
+        Log.d(TAG, "i have cancel");
+        if (timer != null) {
             timer.cancel();
         }
     }
@@ -122,8 +119,10 @@ public class NativeApp extends Application {
         super.onCreate();
 
         // initialize fresco with OK HTTP
+        OkHttpClient okHttpClient = new OkHttpClient();
+        okHttpClient.networkInterceptors().add(new StethoInterceptor());
         ImagePipelineConfig config = OkHttpImagePipelineConfigFactory
-                .newBuilder(this, new OkHttpClient())
+                .newBuilder(this, okHttpClient)
                 .build();
         Fresco.initialize(this, config);
 
@@ -136,12 +135,23 @@ public class NativeApp extends Application {
         mTracker.enableAutoActivityTracking(true);
 
         startTimer();
+
+        sRefWatcher = LeakCanary.install(this);
+
+        Stetho.initializeWithDefaults(this);
     }
 
+    private static RefWatcher sRefWatcher;
+
+    public static RefWatcher getRefWatcher() {
+        return sRefWatcher;
+    }
 
     private Tracker mTracker;
+
     /**
      * Gets the default {@link Tracker} for this {@link Application}.
+     *
      * @return tracker
      */
     synchronized public Tracker getDefaultTracker() {

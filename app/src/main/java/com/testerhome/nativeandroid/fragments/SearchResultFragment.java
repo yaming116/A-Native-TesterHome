@@ -4,9 +4,7 @@ import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 
-import com.testerhome.nativeandroid.BuildConfig;
 import com.testerhome.nativeandroid.R;
 import com.testerhome.nativeandroid.models.SearchResponse;
 import com.testerhome.nativeandroid.networks.RestAdapterUtils;
@@ -14,14 +12,14 @@ import com.testerhome.nativeandroid.views.adapters.TopicsListAdapter;
 import com.testerhome.nativeandroid.views.widgets.DividerItemDecoration;
 
 import butterknife.Bind;
-import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
+import rx.Observer;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 /**
  * Created by Bin Li on 2015/9/16.
  */
-public class SearchResultFragment extends BaseFragment implements Callback<SearchResponse> {
+public class SearchResultFragment extends BaseFragment {
 
     @Bind(R.id.rv_topic_list)
     RecyclerView recyclerViewTopicList;
@@ -100,48 +98,52 @@ public class SearchResultFragment extends BaseFragment implements Callback<Searc
 
 
         if (keyword != null) {
-            RestAdapterUtils.getRestAPI(getActivity()).searchTopicsByKeyword(keyword,
-                    mNextCursor * 20).enqueue(this);
+            mSubscription = RestAdapterUtils.getRestAPI(getActivity())
+                    .searchTopicsByKeyword(keyword, mNextCursor * 20)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(mObservable);
         }
 
     }
 
-    @Override
-    public void onResponse(Response<SearchResponse> response, Retrofit retrofit) {
+    Observer<SearchResponse> mObservable = new Observer<SearchResponse>() {
 
-        if (BuildConfig.DEBUG)
-            Log.e("cache", "cache header = [" + response.headers().toString() + "]");
+        @Override
+        public void onCompleted() {
+            hideEmptyView();
 
-        hideEmptyView();
-        if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
-            swipeRefreshLayout.setRefreshing(false);
+            if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
+                swipeRefreshLayout.setRefreshing(false);
+            }
         }
 
-        Log.e("retrofit", response.raw().request().urlString());
-        if (response.body() != null && response.body().getTopics().size() > 0) {
-            if (mNextCursor == 1) {
-                mAdatper.setItems(response.body().getTopics());
-            } else {
-                mAdatper.addItems(response.body().getTopics());
+        @Override
+        public void onError(Throwable e) {
+            if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
+                swipeRefreshLayout.setRefreshing(false);
             }
-            if (response.body().getTopics().size() >= 10) {
-                mNextCursor += 1;
+        }
+
+        @Override
+        public void onNext(SearchResponse response) {
+
+            if (response != null && response.getTopics().size() > 0) {
+                if (mNextCursor == 1) {
+                    mAdatper.setItems(response.getTopics());
+                } else {
+                    mAdatper.addItems(response.getTopics());
+                }
+                if (response.getTopics().size() >= 10) {
+                    mNextCursor += 1;
+                } else {
+                    mNextCursor = 1;
+                }
+
             } else {
                 mNextCursor = 1;
             }
-
-        } else {
-            mNextCursor = 1;
         }
-    }
+    };
 
-    @Override
-    public void onFailure(Throwable t) {
-        hideEmptyView();
-        if (swipeRefreshLayout != null && swipeRefreshLayout.isRefreshing()) {
-            swipeRefreshLayout.setRefreshing(false);
-        }
-        if (BuildConfig.DEBUG)
-            Log.e("cache", "failure() called with: " + "error = [" + t.getMessage() + "]", t);
-    }
 }

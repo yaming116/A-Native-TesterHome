@@ -6,7 +6,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.testerhome.nativeandroid.BuildConfig;
 import com.testerhome.nativeandroid.Config;
@@ -21,11 +20,6 @@ import com.testerhome.nativeandroid.views.widgets.DividerItemDecoration;
 import java.util.ArrayList;
 
 import butterknife.Bind;
-import retrofit.Call;
-import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
-import rx.Observable;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
