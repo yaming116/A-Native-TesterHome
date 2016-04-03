@@ -119,6 +119,7 @@ public class NativeApp extends Application {
         super.onCreate();
 
         // initialize fresco with OK HTTP
+
         OkHttpClient okHttpClient = new OkHttpClient();
         okHttpClient.networkInterceptors().add(new StethoInterceptor());
         ImagePipelineConfig config = OkHttpImagePipelineConfigFactory
