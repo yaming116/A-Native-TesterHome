@@ -172,7 +172,13 @@ public class AuthActivity extends BackBaseActivity {
             });
     }
 
-
-
-
+    @Override
+    protected void onDestroy() {
+        if (mWebView != null){
+            mWebView.stopLoading();
+            mWebView.removeAllViews();
+            mWebView.destroy();
+        }
+        super.onDestroy();
+    }
 }
