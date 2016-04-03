@@ -1,17 +1,11 @@
 package com.testerhome.nativeandroid.views.adapters;
 
-import android.app.Activity;
 import android.content.Context;
 import android.graphics.Paint;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.support.customtabs.CustomTabsIntent;
 import android.support.v7.widget.RecyclerView;
-import android.text.Html;
-import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,9 +17,6 @@ import com.testerhome.nativeandroid.Config;
 import com.testerhome.nativeandroid.R;
 import com.testerhome.nativeandroid.models.TopicReplyEntity;
 import com.testerhome.nativeandroid.utils.StringUtils;
-import com.testerhome.nativeandroid.utils.URLImageParser;
-
-import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -39,7 +30,8 @@ public class TopicReplyAdapter extends BaseAdapter<TopicReplyEntity> {
     public static String TAG = "TopicReplyAdapter";
     private final int VIEW_ITEM = 1;
     private final int VIEW_DELETE_ITEM = 0;
-    private  Context context;
+    private Context context;
+
     public TopicReplyAdapter(Context context) {
         super(context);
         this.context = context;

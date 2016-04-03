@@ -26,7 +26,7 @@ public class MarkdownFragment extends BaseFragment {
 
     @Override
     protected void setupView() {
-        mTopicBody.setWebViewClient(new WebViewClient(){
+        mTopicBody.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
 
