@@ -37,7 +37,7 @@
 
     <zhou.widget.RichText
         android:id="@+id/id_topic_item_content"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/id_topic_item_author"
         android:layout_marginLeft="20dp"

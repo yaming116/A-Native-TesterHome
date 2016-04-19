@@ -68,27 +68,13 @@ public class TopicReplyAdapter extends BaseAdapter<TopicReplyEntity> {
             holder.topicItemAuthor.setVisibility(View.VISIBLE);
             holder.topicTime.setVisibility(View.VISIBLE);
             holder.topicTime.setText(StringUtils.formatPublishDateTime(topicReplyEntity.getCreated_at()));
-            holder.topicItemAuthor.setText(TextUtils.isEmpty(topicReplyEntity.getUser().getName()) ? topicReplyEntity.getUser().getLogin() : topicReplyEntity.getUser().getName());
+            holder.topicItemAuthor.setText(TextUtils.isEmpty(topicReplyEntity.getUser().getName()) ?
+                    topicReplyEntity.getUser().getLogin() : topicReplyEntity.getUser().getName());
             String html = topicReplyEntity.getBody_html();
             html = html.replaceAll("src=\"/photo", "src=\"https://testerhome.com/photo");
 
-
-//            holder.topicItemBody.setOnURLClickListener(new RichText.OnURLClickListener() {
-//                @Override
-//                public boolean urlClicked(String url) {
-//                    CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-//                    builder.setToolbarColor(context.getResources().getColor(R.color.colorPrimary));
-//
-//                    CustomTabsIntent customTabsIntent = builder.build();
-//
-//                    customTabsIntent.launchUrl((Activity) context, Uri.parse(url));
-//                    return true;
-//                }
-//            });
-
             holder.topicItemBody.setRichText(html);
             holder.topicItemBody.setMovementMethod(LinkMovementMethod.getInstance());
-            holder.topicItemBody.getPaint().setFlags(0);
 
             holder.userAvatar.setImageURI(Uri.parse(Config.getImageUrl(topicReplyEntity.getUser().getAvatar_url())));
 
@@ -105,8 +91,6 @@ public class TopicReplyAdapter extends BaseAdapter<TopicReplyEntity> {
             DeleteFloorHolder holder = (DeleteFloorHolder) viewHolder;
             holder.topicItemBody.setText("该楼层已被删除");
             holder.topicItemBody.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG); //中划线
-
-
         }
 
         if (position == mItems.size() - 1 && mListener != null) {
