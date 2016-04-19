@@ -16,8 +16,8 @@
 #   public *;
 #}
 
--dontwarn retrofit.**
--keep class retrofit.** { *; }
+-dontwarn retrofit2.**
+-keep class retrofit2.** { *; }
 -keepattributes Signature
 -keepattributes Exceptions
 -keepattributes SourceFile,LineNumberTable
@@ -67,9 +67,8 @@
 -keep class com.umeng.update.** {*;}
 -keep class com.umeng.analytics.** {*;}
 
--keep class com.tencent.mm.sdk.** {
-   *;
-}
+-dontwarn com.tencent.**
+-keep class com.tencent.** {*;}
 
 
 
@@ -81,9 +80,6 @@
 }
 -keepclassmembers class rx.internal.util.unsafe.BaseLinkedQueueProducerNodeRef {
     rx.internal.util.atomic.LinkedQueueNode producerNode;
-}
--keepclassmembers class rx.internal.util.unsafe.BaseLinkedQueueConsumerNodeRef {
-    rx.internal.util.atomic.LinkedQueueNode consumerNode;
 }
 # RxJava 1.1.0 --end--
 
@@ -98,6 +94,12 @@ public static int w(...);
 public static int d(...);
 public static int e(...);
 }
+
+-keepclassmembers class * extends de.greenrobot.dao.AbstractDao {
+public static java.lang.String TABLENAME;
+}
+-keep class **$Properties
+
 
 ## Android 6.0
 -dontwarn org.apache.http.**

@@ -44,7 +44,7 @@
         android:layout_marginRight="5dp"
         android:layout_marginTop="5dp"
         android:layout_toRightOf="@+id/id_user_avatar"
-        android:autoLink="all"
+        android:autoLink="email|web"
         tools:text="topic content" />
 
     <LinearLayout
