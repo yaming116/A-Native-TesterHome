@@ -7,7 +7,7 @@ def outputDir = "../app/src/main/java"
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'de.greenrobot:greendao-generator:2.1.0'
+    compile 'org.greenrobot:greendao-generator:2.2.0'
 }
 
 task createDocs {

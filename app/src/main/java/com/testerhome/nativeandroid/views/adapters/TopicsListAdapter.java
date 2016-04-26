@@ -28,7 +28,7 @@ import com.testerhome.nativeandroid.views.TopicDetailActivity;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
@@ -56,6 +56,11 @@ public class TopicsListAdapter extends BaseAdapter<TopicEntity> {
         switch (viewType) {
             case TOPIC_LIST_TYPE_BANNER:
                 view = LayoutInflater.from(mContext).inflate(R.layout.list_item_banner, parent, false);
+                ViewGroup.LayoutParams bannerLayoutParams = view.findViewById(R.id.banner_layout).getLayoutParams();
+                bannerLayoutParams.width = DeviceUtil.getDeviceWidth(mContext);
+                bannerLayoutParams.height = (bannerLayoutParams.width * 9 / 16);
+                view.findViewById(R.id.banner_layout).setLayoutParams(bannerLayoutParams);
+
                 ViewGroup viewGroup = (ViewGroup) view.findViewById(R.id.view_group);
                 loadToutiao(viewGroup);
                 return new TopicBannerViewHolder(view);
@@ -123,8 +128,8 @@ public class TopicsListAdapter extends BaseAdapter<TopicEntity> {
 
     private Timer timer;
 
-    private void startPlay(final ViewPager banner){
-        if (timer != null){
+    private void startPlay(final ViewPager banner) {
+        if (timer != null) {
             timer.cancel();
         }
 
@@ -137,7 +142,7 @@ public class TopicsListAdapter extends BaseAdapter<TopicEntity> {
                     @Override
                     public void run() {
                         int cur = banner.getCurrentItem() + 1;
-                        if ( cur >= banner.getAdapter().getCount()){
+                        if (cur >= banner.getAdapter().getCount()) {
                             cur = 0;
                         }
                         banner.setCurrentItem(cur);
@@ -159,25 +164,25 @@ public class TopicsListAdapter extends BaseAdapter<TopicEntity> {
 
     public class TopicItemViewHolder extends RecyclerView.ViewHolder {
 
-        @Bind(R.id.sdv_topic_user_avatar)
+        @BindView(R.id.sdv_topic_user_avatar)
         SimpleDraweeView topicUserAvatar;
 
-        @Bind(R.id.tv_topic_title)
+        @BindView(R.id.tv_topic_title)
         TextView textViewTopicTitle;
 
-        @Bind(R.id.tv_topic_username)
+        @BindView(R.id.tv_topic_username)
         TextView topicUsername;
 
-        @Bind(R.id.tv_topic_publish_date)
+        @BindView(R.id.tv_topic_publish_date)
         TextView topicPublishDate;
 
-        @Bind(R.id.tv_topic_name)
+        @BindView(R.id.tv_topic_name)
         TextView topicName;
 
-        @Bind(R.id.tv_topic_replies_count)
+        @BindView(R.id.tv_topic_replies_count)
         TextView topicRepliesCount;
 
-        @Bind(R.id.rl_topic_item)
+        @BindView(R.id.rl_topic_item)
         View topicItem;
 
         BadgeView badgeView;
@@ -192,10 +197,10 @@ public class TopicsListAdapter extends BaseAdapter<TopicEntity> {
 
     public class TopicBannerViewHolder extends RecyclerView.ViewHolder {
 
-        @Bind(R.id.vp_topic_banner)
+        @BindView(R.id.vp_topic_banner)
         ViewPager mTopicBanner;
 
-        @Bind(R.id.tv_banner_title)
+        @BindView(R.id.tv_banner_title)
         TextView mTopicBannerTitle;
 
 

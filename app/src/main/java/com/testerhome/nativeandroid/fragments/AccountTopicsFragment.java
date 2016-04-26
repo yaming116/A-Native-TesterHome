@@ -14,7 +14,7 @@ import com.testerhome.nativeandroid.networks.RestAdapterUtils;
 import com.testerhome.nativeandroid.views.adapters.TopicsListAdapter;
 import com.testerhome.nativeandroid.views.widgets.DividerItemDecoration;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -24,10 +24,10 @@ import rx.schedulers.Schedulers;
  */
 public class AccountTopicsFragment extends BaseFragment {
 
-    @Bind(R.id.rv_topic_list)
+    @BindView(R.id.rv_topic_list)
     RecyclerView recyclerViewTopicList;
 
-    @Bind(R.id.srl_refresh)
+    @BindView(R.id.srl_refresh)
     SwipeRefreshLayout swipeRefreshLayout;
 
     private int mNextCursor = 0;

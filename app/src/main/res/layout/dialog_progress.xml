@@ -8,12 +8,11 @@
     android:gravity="center_vertical"
     android:orientation="horizontal">
 
-    <com.pnikosis.materialishprogress.ProgressWheel
+    <ProgressBar
         android:layout_width="48dp"
         android:layout_height="48dp"
-        app:matProg_barColor="?attr/colorAccent"
-        app:matProg_progressIndeterminate="true"
-        app:matProg_barWidth="4dp" />
+        android:id="@+id/progressBar"
+        style="@style/Base.Widget.AppCompat.ProgressBar"/>
 
     <TextView
         android:visibility="gone"

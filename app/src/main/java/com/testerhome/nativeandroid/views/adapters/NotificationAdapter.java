@@ -19,7 +19,7 @@ import com.testerhome.nativeandroid.models.TopicDetailResponse;
 import com.testerhome.nativeandroid.networks.RestAdapterUtils;
 import com.testerhome.nativeandroid.networks.TesterHomeApi;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import zhou.widget.RichText;
 
@@ -177,13 +177,13 @@ public class NotificationAdapter extends BaseAdapter<NotificationEntity> {
 
     class NotificationHolder extends RecyclerView.ViewHolder{
 
-        @Bind(R.id.id_user_avatar)
+        @BindView(R.id.id_user_avatar)
         SimpleDraweeView userAvatar;
 
-        @Bind(R.id.id_notification_title)
+        @BindView(R.id.id_notification_title)
         TextView notificationTitle;
 
-        @Bind(R.id.id_notification_body)
+        @BindView(R.id.id_notification_body)
         RichText notificationBody;
 
         NotificationEntity notification;
@@ -198,7 +198,7 @@ public class NotificationAdapter extends BaseAdapter<NotificationEntity> {
     public static class DeleteFloorHolder extends RecyclerView.ViewHolder {
 
 
-        @Bind(R.id.id_topic_item_content)
+        @BindView(R.id.id_topic_item_content)
         TextView topicItemBody;
 
         public DeleteFloorHolder(View itemView) {
@@ -210,10 +210,10 @@ public class NotificationAdapter extends BaseAdapter<NotificationEntity> {
 
     class NotificationSingleHolder extends RecyclerView.ViewHolder{
 
-        @Bind(R.id.id_user_avatar)
+        @BindView(R.id.id_user_avatar)
         SimpleDraweeView userAvatar;
 
-        @Bind(R.id.id_notification_title)
+        @BindView(R.id.id_notification_title)
         TextView notificationTitle;
 
         NotificationEntity notification;

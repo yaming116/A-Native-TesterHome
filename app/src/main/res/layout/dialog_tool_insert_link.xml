@@ -7,7 +7,7 @@
     android:paddingRight="24dp"
     android:orientation="vertical">
 
-    <com.rengwuxian.materialedittext.MaterialEditText
+    <android.support.design.widget.TextInputEditText
         android:id="@+id/dialog_tool_insert_link_edt_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -17,13 +17,9 @@
         android:hint="@string/title"
         android:inputType="text"
         android:singleLine="true"
-        app:met_floatingLabel="highlight"
-        app:met_primaryColor="@color/colorAccent"
-        app:met_textColor="?android:attr/textColorPrimary"
-        app:met_textColorHint="?android:attr/textColorHint"
-        app:met_floatingLabelTextColor="?android:attr/textColorSecondary" />
+ />
 
-    <com.rengwuxian.materialedittext.MaterialEditText
+    <android.support.design.widget.TextInputEditText
         android:id="@+id/dialog_tool_insert_link_edt_link"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -34,10 +30,6 @@
         android:hint="@string/link"
         android:inputType="text"
         android:singleLine="true"
-        app:met_floatingLabel="highlight"
-        app:met_primaryColor="@color/colorAccent"
-        app:met_textColor="?android:attr/textColorPrimary"
-        app:met_textColorHint="?android:attr/textColorHint"
-        app:met_floatingLabelTextColor="?android:attr/textColorSecondary" />
+ />
 
 </LinearLayout>

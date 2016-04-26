@@ -18,7 +18,7 @@ import com.testerhome.nativeandroid.R;
 import com.testerhome.nativeandroid.models.TopicReplyEntity;
 import com.testerhome.nativeandroid.utils.StringUtils;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import zhou.widget.RichText;
 
@@ -112,21 +112,21 @@ public class TopicReplyAdapter extends BaseAdapter<TopicReplyEntity> {
 
     public static class ReplyViewHolder extends RecyclerView.ViewHolder {
 
-        @Bind(R.id.id_praise_reply_layout)
+        @BindView(R.id.id_praise_reply_layout)
         LinearLayout praiseReplyLayout;
 
-        @Bind(R.id.id_topic_item_author)
+        @BindView(R.id.id_topic_item_author)
         TextView topicItemAuthor;
 
-        @Bind(R.id.id_topic_item_content)
+        @BindView(R.id.id_topic_item_content)
         RichText topicItemBody;
-        @Bind(R.id.id_topic_time)
+        @BindView(R.id.id_topic_time)
         TextView topicTime;
 
-        @Bind(R.id.id_user_avatar)
+        @BindView(R.id.id_user_avatar)
         SimpleDraweeView userAvatar;
 
-        @Bind(R.id.tv_reply_to_reply)
+        @BindView(R.id.tv_reply_to_reply)
         TextView mToReply;
 
         public ReplyViewHolder(View itemView) {
@@ -139,7 +139,7 @@ public class TopicReplyAdapter extends BaseAdapter<TopicReplyEntity> {
     public static class DeleteFloorHolder extends RecyclerView.ViewHolder {
 
 
-        @Bind(R.id.id_topic_item_content)
+        @BindView(R.id.id_topic_item_content)
         TextView topicItemBody;
 
         public DeleteFloorHolder(View itemView) {

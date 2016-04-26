@@ -6,20 +6,15 @@ import android.util.Log;
 import android.webkit.WebView;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
-import com.facebook.imagepipeline.backends.okhttp.OkHttpImagePipelineConfigFactory;
+import com.facebook.imagepipeline.backends.okhttp3.OkHttpImagePipelineConfigFactory;
 import com.facebook.imagepipeline.core.ImagePipelineConfig;
 import com.facebook.stetho.Stetho;
-import com.facebook.stetho.okhttp.StethoInterceptor;
+import com.facebook.stetho.okhttp3.StethoInterceptor;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 import com.google.gson.Gson;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.leakcanary.RefWatcher;
-import com.squareup.okhttp.FormEncodingBuilder;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.RequestBody;
-import com.squareup.okhttp.Response;
 import com.testerhome.nativeandroid.BuildConfig;
 import com.testerhome.nativeandroid.R;
 import com.testerhome.nativeandroid.auth.TesterHomeAccountService;
@@ -30,6 +25,11 @@ import com.testerhome.nativeandroid.oauth2.AuthenticationService;
 import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 /**
  * Created by Bin Li on 2015/9/15.
@@ -69,7 +69,7 @@ public class NativeApp extends Application {
 
                     OkHttpClient okHttpClient = new OkHttpClient();
 
-                    RequestBody formBody = new FormEncodingBuilder()
+                    FormBody formBody = new FormBody.Builder()
                             .add("client_id", AuthenticationService.getAuthorize_client_id())
                             .add("grant_type", "refresh_token")
                             .add("client_secret", "3a20127eb087257ad7196098bfd8240746a66b0550d039eb2c1901c025e7cbea")
@@ -119,11 +119,8 @@ public class NativeApp extends Application {
         super.onCreate();
 
         // initialize fresco with OK HTTP
-
-        OkHttpClient okHttpClient = new OkHttpClient();
-        okHttpClient.networkInterceptors().add(new StethoInterceptor());
         ImagePipelineConfig config = OkHttpImagePipelineConfigFactory
-                .newBuilder(this, okHttpClient)
+                .newBuilder(this, new OkHttpClient().newBuilder().addInterceptor(new StethoInterceptor()).build())
                 .build();
         Fresco.initialize(this, config);
 

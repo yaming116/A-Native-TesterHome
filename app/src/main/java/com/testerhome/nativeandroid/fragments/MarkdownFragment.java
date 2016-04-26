@@ -13,7 +13,7 @@ import com.testerhome.nativeandroid.R;
 import java.io.IOException;
 import java.io.InputStream;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import us.feras.mdv.MarkdownView;
 
 /**
@@ -21,7 +21,7 @@ import us.feras.mdv.MarkdownView;
  */
 public class MarkdownFragment extends BaseFragment {
 
-    @Bind(R.id.markdown_topic_body)
+    @BindView(R.id.markdown_topic_body)
     MarkdownView mTopicBody;
 
     @Override

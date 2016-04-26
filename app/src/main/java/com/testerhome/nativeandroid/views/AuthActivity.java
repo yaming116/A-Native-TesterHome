@@ -10,11 +10,6 @@ import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 
 import com.google.gson.Gson;
-import com.squareup.okhttp.FormEncodingBuilder;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.RequestBody;
-import com.squareup.okhttp.Response;
 import com.testerhome.nativeandroid.R;
 import com.testerhome.nativeandroid.application.NativeApp;
 import com.testerhome.nativeandroid.auth.TesterHomeAccountService;
@@ -26,6 +21,10 @@ import com.testerhome.nativeandroid.views.base.BackBaseActivity;
 import com.testerhome.nativeandroid.views.dialog.DialogUtils;
 import com.testerhome.nativeandroid.views.dialog.ProgressDialog;
 
+import okhttp3.FormBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import rx.functions.Action1;
 
 
@@ -98,7 +97,8 @@ public class AuthActivity extends BackBaseActivity {
                 String url = urls[0];
                 OkHttpClient okHttpClient = new OkHttpClient();
 
-                RequestBody formBody = new FormEncodingBuilder()
+
+                FormBody formBody =  new FormBody.Builder()
                         .add("client_id", AuthenticationService.getAuthorize_client_id())
                         .add("code", auth_code)
                         .add("grant_type", "authorization_code")

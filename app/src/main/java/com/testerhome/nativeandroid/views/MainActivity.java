@@ -1,13 +1,10 @@
 package com.testerhome.nativeandroid.views;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -44,7 +41,7 @@ import com.testerhome.nativeandroid.views.base.BaseActivity;
 import com.testerhome.nativeandroid.views.widgets.ThemeUtils;
 import com.umeng.update.UmengUpdateAgent;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.OnClick;
 
 public class MainActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener, SearchView.OnQueryTextListener {
@@ -53,7 +50,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     private Fragment jobFragment;
     private Fragment topicFragment;
 
-    @Bind(R.id.drawer_layout)
+    @BindView(R.id.drawer_layout)
     DrawerLayout drawer;
 
 

@@ -12,7 +12,7 @@ import android.widget.TextView;
 import com.testerhome.nativeandroid.R;
 import com.testerhome.nativeandroid.views.base.BackBaseActivity;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.OnClick;
 
 /**
@@ -20,7 +20,7 @@ import butterknife.OnClick;
  */
 public class AboutActivity extends BackBaseActivity {
 
-    @Bind(R.id.tv_app_version)
+    @BindView(R.id.tv_app_version)
     TextView tvVersion;
 
     UiModeManager uiModeManager;

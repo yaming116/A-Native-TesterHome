@@ -19,7 +19,7 @@ import com.testerhome.nativeandroid.views.widgets.DividerItemDecoration;
 
 import java.util.ArrayList;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -29,10 +29,10 @@ import rx.schedulers.Schedulers;
  */
 public class TopicsListFragment extends BaseFragment implements Observer<TopicsResponse> {
 
-    @Bind(R.id.rv_topic_list)
+    @BindView(R.id.rv_topic_list)
     RecyclerView recyclerViewTopicList;
 
-    @Bind(R.id.srl_refresh)
+    @BindView(R.id.srl_refresh)
     SwipeRefreshLayout swipeRefreshLayout;
 
     private int mNextCursor = 0;
@@ -118,14 +118,10 @@ public class TopicsListFragment extends BaseFragment implements Observer<TopicsR
         if (showloading)
             showEmptyView();
         if (type != null) {
-
             RestAdapterUtils.getRestAPI(getActivity()).getTopicsByType(type,mNextCursor * 20)
-
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(this);
-            
-            
         } else {
             RestAdapterUtils.getRestAPI(getActivity()).getTopicsByNodeId(nodeId, mNextCursor * 20)
                     .subscribeOn(Schedulers.io())

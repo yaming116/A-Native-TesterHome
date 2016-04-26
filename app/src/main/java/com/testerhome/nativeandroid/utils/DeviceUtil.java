@@ -2,7 +2,9 @@ package com.testerhome.nativeandroid.utils;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Point;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 
 /**
@@ -39,5 +41,13 @@ public class DeviceUtil {
         }
         lastClickTime = time;
         return false;
+    }
+
+    public static int getDeviceWidth(Context context){
+        WindowManager wm = (WindowManager)context.getSystemService(Context.WINDOW_SERVICE);
+        Point size = new Point();
+        wm.getDefaultDisplay().getSize(size);
+
+        return Math.min(size.x, size.y);
     }
 }

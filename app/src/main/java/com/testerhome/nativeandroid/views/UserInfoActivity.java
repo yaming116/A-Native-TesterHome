@@ -22,7 +22,7 @@ import com.testerhome.nativeandroid.models.UserResponse;
 import com.testerhome.nativeandroid.networks.RestAdapterUtils;
 import com.testerhome.nativeandroid.views.base.BackBaseActivity;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.schedulers.Schedulers;
@@ -33,15 +33,15 @@ import rx.schedulers.Schedulers;
 public class UserInfoActivity extends BackBaseActivity {
 
 
-    @Bind(R.id.viewPager)
+    @BindView(R.id.viewPager)
     ViewPager viewPager;
-    @Bind(R.id.tabLayout)
+    @BindView(R.id.tabLayout)
     TabLayout tabLayout;
-    @Bind(R.id.id_user_avatar)
+    @BindView(R.id.id_user_avatar)
     SimpleDraweeView userAvatar;
-    @Bind(R.id.login_name)
+    @BindView(R.id.login_name)
     TextView userName;
-    @Bind(R.id.id_tag_line)
+    @BindView(R.id.id_tag_line)
     TextView tagLine;
 
     private TesterUser mTesterHomeAccount;

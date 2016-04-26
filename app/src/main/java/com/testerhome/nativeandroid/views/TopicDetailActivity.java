@@ -40,7 +40,7 @@ import com.testerhome.nativeandroid.utils.PraiseUtil;
 import com.testerhome.nativeandroid.utils.StringUtils;
 import com.testerhome.nativeandroid.views.base.BackBaseActivity;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.OnClick;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
@@ -61,9 +61,9 @@ public class TopicDetailActivity extends BackBaseActivity implements TopicReplyF
         SwipeBackHelper.getCurrentPage(this)
                 .setSwipeBackEnable(true)
                 .setSwipeEdge(200)
-                .setSwipeEdgePercent(0.1f)//可滑动的范围。百分比。0.2表示为左边20%的屏幕
+                .setSwipeEdgePercent(0.2f)//可滑动的范围。百分比。0.2表示为左边20%的屏幕
                 .setSwipeSensitivity(0.5f)//对横向滑动手势的敏感程度。0为迟钝 1为敏感
-                .setClosePercent(0.8f)//触发关闭Activity百分比
+                .setClosePercent(0.2f)//触发关闭Activity百分比
                 .setSwipeRelateEnable(false)//是否与下一级activity联动(微信效果)。默认关
                 .setSwipeRelateOffset(500);//activity联动时的偏移量。默认500px。
 
@@ -114,10 +114,10 @@ public class TopicDetailActivity extends BackBaseActivity implements TopicReplyF
         return super.onOptionsItemSelected(item);
     }
 
-    @Bind(R.id.tab_layout)
+    @BindView(R.id.tab_layout)
     TabLayout tabLayoutTopicsTab;
 
-    @Bind(R.id.view_pager)
+    @BindView(R.id.view_pager)
     ViewPager viewPagerTopics;
 
     private TopicDetailPagerAdapter mAdapter;
@@ -174,17 +174,17 @@ public class TopicDetailActivity extends BackBaseActivity implements TopicReplyF
         }
     }
 
-    @Bind(R.id.tv_detail_title)
+    @BindView(R.id.tv_detail_title)
     TextView tvDetailTitle;
-    @Bind(R.id.sdv_detail_user_avatar)
+    @BindView(R.id.sdv_detail_user_avatar)
     SimpleDraweeView sdvDetailUserAvatar;
-    @Bind(R.id.tv_detail_name)
+    @BindView(R.id.tv_detail_name)
     TextView tvDetailName;
-    @Bind(R.id.tv_detail_username)
+    @BindView(R.id.tv_detail_username)
     TextView tvDetailUsername;
-    @Bind(R.id.tv_detail_publish_date)
+    @BindView(R.id.tv_detail_publish_date)
     TextView tvDetailPublishDate;
-    @Bind(R.id.tv_detail_replies_count)
+    @BindView(R.id.tv_detail_replies_count)
     TextView tvDetailRepliesCount;
 
     TopicDetailEntity mTopicEntity;
@@ -257,9 +257,9 @@ public class TopicDetailActivity extends BackBaseActivity implements TopicReplyF
     }
 
     private TesterUser mCurrentUser;
-    @Bind(R.id.tv_detail_collect)
+    @BindView(R.id.tv_detail_collect)
     TextView tvDetailCollect;
-    @Bind(R.id.tv_detail_praise)
+    @BindView(R.id.tv_detail_praise)
     TextView tvDetailPraise;
 
     boolean isFavorite = false;
@@ -409,10 +409,10 @@ public class TopicDetailActivity extends BackBaseActivity implements TopicReplyF
 
     }
 
-    @Bind(R.id.llAddComment)
+    @BindView(R.id.llAddComment)
     View mAddCommentPanel;
 
-    @Bind(R.id.fab_add_comment)
+    @BindView(R.id.fab_add_comment)
     FloatingActionButton mFabAddComment;
 
     @OnClick(R.id.fab_add_comment)
@@ -421,7 +421,7 @@ public class TopicDetailActivity extends BackBaseActivity implements TopicReplyF
         mFabAddComment.setVisibility(View.GONE);
     }
 
-    @Bind(R.id.etComment)
+    @BindView(R.id.etComment)
     EditText mEtComment;
 
     // 回帖子

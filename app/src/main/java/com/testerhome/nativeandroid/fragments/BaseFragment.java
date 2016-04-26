@@ -11,8 +11,9 @@ import android.widget.TextView;
 import com.testerhome.nativeandroid.R;
 import com.testerhome.nativeandroid.application.NativeApp;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 import rx.Subscription;
 
 /**
@@ -21,11 +22,11 @@ import rx.Subscription;
 public abstract class BaseFragment extends Fragment {
 
     protected Subscription mSubscription;
-
+    protected Unbinder mUnbinder;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(getLayoutRes(), container, false);
-        ButterKnife.bind(this, view);
+        mUnbinder = ButterKnife.bind(this, view);
 
         setupView();
         return view;
@@ -39,9 +40,9 @@ public abstract class BaseFragment extends Fragment {
 
     @Override
     public void onDestroyView() {
-        super.onDestroyView();
-        ButterKnife.unbind(this);
+        mUnbinder.unbind();
         unsubscribe();
+        super.onDestroyView();
         NativeApp.getRefWatcher().watch(this);
     }
 
@@ -52,7 +53,7 @@ public abstract class BaseFragment extends Fragment {
     }
 
     @Nullable
-    @Bind(android.R.id.empty)
+    @BindView(android.R.id.empty)
     View mEmptyView;
 
     protected void showEmptyView(){
@@ -68,7 +69,7 @@ public abstract class BaseFragment extends Fragment {
     }
 
     @Nullable
-    @Bind(R.id.empty_load)
+    @BindView(R.id.empty_load)
     View mEmptyLoad;
     protected void hideLoading(){
         if (mEmptyLoad != null){
@@ -77,11 +78,11 @@ public abstract class BaseFragment extends Fragment {
     }
 
     @Nullable
-    @Bind(R.id.error_panel)
+    @BindView(R.id.error_panel)
     View mErrorView;
 
     @Nullable
-    @Bind(R.id.error_subtitle)
+    @BindView(R.id.error_subtitle)
     TextView mErrorText;
 
     protected void showErrorView(String errorMessage){

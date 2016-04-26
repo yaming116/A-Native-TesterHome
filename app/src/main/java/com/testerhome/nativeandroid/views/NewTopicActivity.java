@@ -31,26 +31,26 @@ import com.testerhome.nativeandroid.views.widgets.ThemeUtils;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 public class NewTopicActivity extends BackBaseActivity {
-    @Bind(R.id.toolbar)
+    @BindView(R.id.toolbar)
     protected Toolbar toolbar;
 
-    @Bind(R.id.new_topic_spn_tab)
+    @BindView(R.id.new_topic_spn_tab)
     protected Spinner spnTab;
 
-    @Bind(R.id.new_topic_edt_title)
+    @BindView(R.id.new_topic_edt_title)
     protected EditText edtTitle;
 
-    @Bind(R.id.editor_bar_layout_root)
+    @BindView(R.id.editor_bar_layout_root)
     protected ViewGroup editorBar;
 
-    @Bind(R.id.new_topic_edt_content)
+    @BindView(R.id.new_topic_edt_content)
     protected EditText edtContent;
 
     private ProgressDialog dialog;

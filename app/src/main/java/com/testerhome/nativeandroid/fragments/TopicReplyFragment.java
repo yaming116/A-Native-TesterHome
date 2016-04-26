@@ -20,7 +20,7 @@ import com.testerhome.nativeandroid.views.widgets.DividerItemDecoration;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import rx.Observer;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -29,10 +29,10 @@ import rx.schedulers.Schedulers;
  * Created by cvtpc on 2015/10/16.
  */
 public class TopicReplyFragment extends BaseFragment {
-    @Bind(R.id.rv_topic_list)
+    @BindView(R.id.rv_topic_list)
     RecyclerView recyclerViewTopicList;
 
-    @Bind(R.id.srl_refresh)
+    @BindView(R.id.srl_refresh)
     SwipeRefreshLayout swipeRefreshLayout;
 
     private int mNextCursor = 0;

@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.testerhome.nativeandroid.R;
 
-import butterknife.Bind;
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -33,7 +33,7 @@ public class ProgressDialog extends AppCompatDialog {
         init();
     }
 
-    @Bind(R.id.dialog_progress_tv_message)
+    @BindView(R.id.dialog_progress_tv_message)
     protected TextView tvMessage;
 
     private void init() {
