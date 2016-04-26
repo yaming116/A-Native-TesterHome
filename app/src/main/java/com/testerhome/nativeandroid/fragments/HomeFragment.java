@@ -38,8 +38,6 @@ public class HomeFragment extends BaseFragment {
         viewPagerTopics.setOffscreenPageLimit(4);
 
         tabLayoutTopicsTab.setupWithViewPager(viewPagerTopics);
-        tabLayoutTopicsTab.setTabsFromPagerAdapter(mAdapter);
-
     }
 
     public class TopicViewPagerAdapter extends FragmentPagerAdapter {

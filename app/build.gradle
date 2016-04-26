@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.neenbedankt.android-apt'
+apply plugin: 'me.tatarka.retrolambda'
 
 def buildTime() {
     return new Date().format("yyyy-MM-dd'T'HH:mm'Z'", TimeZone.getTimeZone("UTC"))
@@ -49,8 +50,15 @@ android {
         abortOnError false
     }
 
-}
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 
+}
+retrolambda {
+    jvmArgs '-noverify'
+}
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
@@ -76,7 +84,6 @@ dependencies {
     //    compile 'com.pnikosis:materialish-progress:1.7'
 
     //    compile 'com.rengwuxian.materialedittext:library:2.1.4'
-
     compile 'org.tautua.markdownpapers:markdownpapers-core:1.4.2'
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.4-beta2'
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.4-beta2'

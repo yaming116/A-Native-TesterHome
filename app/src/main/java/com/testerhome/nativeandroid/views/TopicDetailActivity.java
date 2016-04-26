@@ -127,7 +127,6 @@ public class TopicDetailActivity extends BackBaseActivity implements TopicReplyF
         viewPagerTopics.setAdapter(mAdapter);
 
         tabLayoutTopicsTab.setupWithViewPager(viewPagerTopics);
-        tabLayoutTopicsTab.setTabsFromPagerAdapter(mAdapter);
     }
 
     private MarkdownFragment mMarkdownFragment;

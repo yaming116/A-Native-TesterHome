@@ -109,3 +109,6 @@ public static java.lang.String TABLENAME;
 -keep class com.google.android.** {*;}
 
 -keep class android.support.v7.** {*;}
+
+## retrolambda
+-dontwarn java.lang.invoke.*

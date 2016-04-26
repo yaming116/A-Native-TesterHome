@@ -18,13 +18,11 @@ import com.testerhome.nativeandroid.fragments.AccountFavoriteFragment;
 import com.testerhome.nativeandroid.fragments.AccountNotificationFragment;
 import com.testerhome.nativeandroid.fragments.AccountTopicsFragment;
 import com.testerhome.nativeandroid.models.TesterUser;
-import com.testerhome.nativeandroid.models.UserResponse;
 import com.testerhome.nativeandroid.networks.RestAdapterUtils;
 import com.testerhome.nativeandroid.views.base.BackBaseActivity;
 
 import butterknife.BindView;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Action1;
 import rx.schedulers.Schedulers;
 
 /**
@@ -81,13 +79,10 @@ public class UserInfoActivity extends BackBaseActivity {
         RestAdapterUtils.getRestAPI(this).getUserInfo(loginName)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Action1<UserResponse>() {
-                    @Override
-                    public void call(UserResponse userResponse) {
-                        if (userResponse != null && userResponse.getUser() != null) {
-                            mTesterHomeAccount = userResponse.getUser();
-                            initUserInfo();
-                        }
+                .subscribe(userResponse -> {
+                    if (userResponse != null && userResponse.getUser() != null) {
+                        mTesterHomeAccount = userResponse.getUser();
+                        initUserInfo();
                     }
                 });
 
@@ -122,13 +117,7 @@ public class UserInfoActivity extends BackBaseActivity {
         viewPager.setOffscreenPageLimit(3);
 
         tabLayout.setupWithViewPager(viewPager);
-        tabLayout.setTabsFromPagerAdapter(userInfoViewPagerAdapter);
-
-
-
-//        toolbar.setTitle("");
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-//        setCustomTitle();
     }
 
 
