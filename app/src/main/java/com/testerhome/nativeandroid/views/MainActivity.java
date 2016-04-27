@@ -18,8 +18,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.webkit.CookieManager;
-import android.webkit.CookieSyncManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,7 +27,6 @@ import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
 import com.testerhome.nativeandroid.Config;
 import com.testerhome.nativeandroid.R;
-import com.testerhome.nativeandroid.application.NativeApp;
 import com.testerhome.nativeandroid.auth.TesterHomeAccountService;
 import com.testerhome.nativeandroid.fragments.HomeFragment;
 import com.testerhome.nativeandroid.fragments.SettingsFragment;
@@ -88,8 +85,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     }
 
-
-
     private void setupView() {
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -100,39 +95,30 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         homeFragment = new HomeFragment();
         getSupportFragmentManager().beginTransaction().replace(R.id.realtabcontent, homeFragment).commit();
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        if (navigationView == null) return;
+
         navigationView.setNavigationItemSelectedListener(this);
         navigationView.setCheckedItem(R.id.nav_home);
+
         View headerLayout = navigationView.inflateHeaderView(R.layout.nav_header_main);
         darkImage = (ImageView)headerLayout.findViewById(R.id.main_nav_btn_theme_dark);
         navBackGround = (ImageView)headerLayout.findViewById(R.id.main_nav_img_top_background);
         mAccountAvatar = (SimpleDraweeView) headerLayout.findViewById(R.id.sdv_account_avatar);
         logout = (TextView) headerLayout.findViewById(R.id.main_nav_btn_logout);
-        mAccountAvatar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (DeviceUtil.isFastClick()) {
-                    return;
-                }
-                onAvatarClick();
+        mAccountAvatar.setOnClickListener(v -> {
+            if (DeviceUtil.isFastClick()) {
+                return;
             }
+            onAvatarClick();
         });
-        logout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                CookieSyncManager.createInstance(MainActivity.this);
-                CookieSyncManager.getInstance().startSync();
-                CookieManager.getInstance().removeSessionCookie();
-                TesterHomeAccountService.getInstance(MainActivity.this).logout();
-                NativeApp.getInstance().cancelTimerTask();
-                updateUserInfo();
-            }
+        logout.setOnClickListener(view -> {
+            TesterHomeAccountService.getInstance(MainActivity.this).logout();
+            updateUserInfo();
         });
         mAccountUsername = (TextView) headerLayout.findViewById(R.id.tv_account_username);
         mAccountEmail = (TextView) headerLayout.findViewById(R.id.tv_account_email);
         navBackGround.setVisibility(appTheme ? View.INVISIBLE:View.VISIBLE);
     }
-
-
 
     SearchView searchView;
     @Override

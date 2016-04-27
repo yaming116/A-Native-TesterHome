@@ -3,6 +3,7 @@ package com.testerhome.nativeandroid.networks;
 import com.testerhome.nativeandroid.models.CollectTopicResonse;
 import com.testerhome.nativeandroid.models.CreateReplyResponse;
 import com.testerhome.nativeandroid.models.NotificationResponse;
+import com.testerhome.nativeandroid.models.OAuth;
 import com.testerhome.nativeandroid.models.PraiseEntity;
 import com.testerhome.nativeandroid.models.SearchResponse;
 import com.testerhome.nativeandroid.models.TopicDetailResponse;
@@ -112,4 +113,11 @@ public interface TopicsService {
                                           @Query("node_id") String nodeId,
                                           @Query("title") String title,
                                           @Query(value = "body", encoded = true) String body);
+
+    @POST("https://testerhome.com/oauth/token")
+    Observable<OAuth> refreshToken(@Query("client_id") String clientId,
+                                   @Query("grant_type") String grantType,
+                                   @Query("client_secret") String clientSecret,
+                                   @Query("refresh_token") String refreshToken
+                                   );
 }

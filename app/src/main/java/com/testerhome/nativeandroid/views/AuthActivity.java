@@ -11,10 +11,8 @@ import android.widget.FrameLayout;
 
 import com.google.gson.Gson;
 import com.testerhome.nativeandroid.R;
-import com.testerhome.nativeandroid.application.NativeApp;
 import com.testerhome.nativeandroid.auth.TesterHomeAccountService;
 import com.testerhome.nativeandroid.models.OAuth;
-import com.testerhome.nativeandroid.models.UserDetailResponse;
 import com.testerhome.nativeandroid.networks.RestAdapterUtils;
 import com.testerhome.nativeandroid.oauth2.AuthenticationService;
 import com.testerhome.nativeandroid.views.base.BackBaseActivity;
@@ -25,7 +23,6 @@ import okhttp3.FormBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import rx.functions.Action1;
 
 
 /**
@@ -47,7 +44,8 @@ public class AuthActivity extends BackBaseActivity {
 
         mWebView = new WebView(this);
 
-        layout.addView(mWebView);
+        if (layout != null)
+            layout.addView(mWebView);
 
         mWebView.getSettings().getJavaScriptEnabled();
         mWebView.setWebViewClient(new WebViewClient() {
@@ -152,24 +150,24 @@ public class AuthActivity extends BackBaseActivity {
     }
 
 
-
-
+    private static final String TAG = "AuthActivity";
     private void getUserInfo(final OAuth oAuth) {
 
-        RestAdapterUtils.getRestAPI(this).getCurrentUserInfo(oAuth.getAccess_token())
-                .subscribe(new Action1<UserDetailResponse>() {
-                    @Override
-                    public void call(UserDetailResponse userDetailResponse) {
-                        if (userDetailResponse != null) {
+        Log.d(TAG, "getUserInfo() called with: " + "oAuth = [" + oAuth.toString() + "]");
 
-                            TesterHomeAccountService.getInstance(AuthActivity.this)
-                                    .signIn(userDetailResponse.getUser().getLogin(), userDetailResponse.getUser(), oAuth);
-                            AuthActivity.this.finish();
+        RestAdapterUtils.getRestAPI(this)
+                .getCurrentUserInfo(oAuth.getAccess_token())
+                .subscribe(userDetailResponse -> {
+                    if (userDetailResponse != null) {
 
-                            NativeApp.getInstance().startTimer();
-                        }
+                        long timeout = System.currentTimeMillis() + userDetailResponse.getUser().getExpireDate() * 1000;
+                        userDetailResponse.getUser().setExpireDate(timeout);
+
+                        TesterHomeAccountService.getInstance(AuthActivity.this)
+                                .signIn(userDetailResponse.getUser().getLogin(), userDetailResponse.getUser(), oAuth);
+                        AuthActivity.this.finish();
                     }
-            });
+                });
     }
 
     @Override

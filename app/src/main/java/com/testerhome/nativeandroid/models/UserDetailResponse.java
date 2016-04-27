@@ -5,7 +5,6 @@ package com.testerhome.nativeandroid.models;
  */
 public class UserDetailResponse {
 
-
         private TesterUser user_detail;
 
         public TesterUser getUser() {

@@ -4,6 +4,7 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.Context;
 import android.util.Log;
+import android.webkit.CookieManager;
 
 import com.testerhome.nativeandroid.R;
 import com.testerhome.nativeandroid.models.OAuth;
@@ -204,6 +205,9 @@ public class TesterHomeAccountService {
             mAccountManager.removeAccount(account, null, null);
             spfHelper.remove(KEY_DEFAULT_ACCOUNT);
             activeAccount = null;
+
+            // clean cookie
+            CookieManager.getInstance().removeSessionCookie();
         }
     }
 
