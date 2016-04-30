@@ -31,6 +31,7 @@ import com.testerhome.nativeandroid.fragments.HomeFragment;
 import com.testerhome.nativeandroid.fragments.SettingsFragment;
 import com.testerhome.nativeandroid.fragments.TopicsListFragment;
 import com.testerhome.nativeandroid.models.TesterUser;
+import com.testerhome.nativeandroid.oauth2.AuthenticationService;
 import com.testerhome.nativeandroid.utils.DeviceUtil;
 import com.testerhome.nativeandroid.utils.ToastUtils;
 import com.testerhome.nativeandroid.views.base.BaseActivity;
@@ -69,7 +70,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         setupWX();
     }
 
-    private void setupWX(){
+    private void setupWX() {
         WXAPIFactory.createWXAPI(this.getApplicationContext(), Config.APP_ID, true).registerApp(Config.APP_ID);
     }
 
@@ -77,10 +78,14 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     protected void onResume() {
         super.onResume();
         updateUserInfo();
-        if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(SettingsFragment.KEY_PREF_THEME, false) != appTheme ) {
+        if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean(SettingsFragment.KEY_PREF_THEME, false) != appTheme) {
             ThemeUtils.recreateActivity(this);
         }
 
+        if (mCurrentUser.getExpireDate() >= System.currentTimeMillis()) {
+            // expire
+            AuthenticationService.refreshToken(getApplicationContext(), mCurrentUser.getRefresh_token());
+        }
     }
 
     private void setupView() {
@@ -99,8 +104,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         navigationView.setCheckedItem(R.id.nav_home);
 
         View headerLayout = navigationView.inflateHeaderView(R.layout.nav_header_main);
-        darkImage = (ImageView)headerLayout.findViewById(R.id.main_nav_btn_theme_dark);
-        navBackGround = (ImageView)headerLayout.findViewById(R.id.main_nav_img_top_background);
+        darkImage = (ImageView) headerLayout.findViewById(R.id.main_nav_btn_theme_dark);
+        navBackGround = (ImageView) headerLayout.findViewById(R.id.main_nav_img_top_background);
         mAccountAvatar = (SimpleDraweeView) headerLayout.findViewById(R.id.sdv_account_avatar);
         logout = (TextView) headerLayout.findViewById(R.id.main_nav_btn_logout);
         mAccountAvatar.setOnClickListener(v -> {
@@ -115,10 +120,11 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         });
         mAccountUsername = (TextView) headerLayout.findViewById(R.id.tv_account_username);
         mAccountEmail = (TextView) headerLayout.findViewById(R.id.tv_account_email);
-        navBackGround.setVisibility(appTheme ? View.INVISIBLE:View.VISIBLE);
+        navBackGround.setVisibility(appTheme ? View.INVISIBLE : View.VISIBLE);
     }
 
     SearchView searchView;
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -127,7 +133,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         MenuItem searchItem = menu.findItem(R.id.action_search);
 
         searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
-        if (searchView != null){
+        if (searchView != null) {
             searchView.setOnQueryTextListener(this);
         }
 
@@ -143,7 +149,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_search) {
-            Log.e("search","search clicked");
+            Log.e("search", "search clicked");
             searchView.onActionViewExpanded();
             return true;
         }
@@ -225,10 +231,9 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     TextView mAccountEmail;
 
 
-
     void onAvatarClick() {
         if (mTesterHomeAccount != null && !TextUtils.isEmpty(mTesterHomeAccount.getLogin())) {
-            startActivity(new Intent(this, UserInfoActivity.class).putExtra("loginName",mTesterHomeAccount.getLogin()));
+            startActivity(new Intent(this, UserInfoActivity.class).putExtra("loginName", mTesterHomeAccount.getLogin()));
         } else {
             startActivity(new Intent(this, AuthActivity.class));
         }
@@ -271,7 +276,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     public boolean onQueryTextSubmit(String query) {
         Log.e("search", "search:" + query);
 
-        if (!TextUtils.isEmpty(query)){
+        if (!TextUtils.isEmpty(query)) {
             startActivity(new Intent(this, SearchActivity.class).putExtra("keyword", query));
         }
         return false;
@@ -285,16 +290,17 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
 
     TesterUser mCurrentUser;
+
     @OnClick(R.id.fab_new_topic)
-    public void newTopic(){
+    public void newTopic() {
 
         mCurrentUser = TesterHomeAccountService.getInstance(this).getActiveAccountInfo();
         if (mCurrentUser.getAccess_token() == null) {
-                ToastUtils.with(this).show("请先登录");
-                return;
+            ToastUtils.with(this).show("请先登录");
+            return;
         }
-        Log.d("mainactivity",mCurrentUser.getAccess_token());
-        startActivity(new Intent().setClass(MainActivity.this,NewTopicActivity.class));
+        Log.d("mainactivity", mCurrentUser.getAccess_token());
+        startActivity(new Intent().setClass(MainActivity.this, NewTopicActivity.class));
 
     }
 }

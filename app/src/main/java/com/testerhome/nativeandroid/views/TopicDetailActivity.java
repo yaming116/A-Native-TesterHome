@@ -90,8 +90,12 @@ public class TopicDetailActivity extends BackBaseActivity implements TopicReplyF
     protected void onResume() {
         super.onResume();
 
-        if (mCurrentUser == null){
+        if (mCurrentUser == null) {
             mCurrentUser = TesterHomeAccountService.getInstance(this).getActiveAccountInfo();
+
+            if (mCurrentUser.getExpireDate() >= System.currentTimeMillis()) {
+                AuthenticationService.refreshToken(getApplicationContext(), mCurrentUser.getRefresh_token());
+            }
         }
     }
 
@@ -345,13 +349,6 @@ public class TopicDetailActivity extends BackBaseActivity implements TopicReplyF
         if (mCurrentUser == null || TextUtils.isEmpty(mCurrentUser.getLogin())) {
             Snackbar.make(mFabAddComment, "请先登录客户端", Snackbar.LENGTH_SHORT).show();
             return;
-        }
-        // TODO: check login and token not expire
-
-        if (mCurrentUser.getExpireDate() >= System.currentTimeMillis()) {
-            // expire
-            AuthenticationService.refreshToken(getApplicationContext(),
-                    mCurrentUser.getRefresh_token());
         }
 
         if (PraiseUtil.hasPraised(TopicDetailActivity.this, mTopicId)) {

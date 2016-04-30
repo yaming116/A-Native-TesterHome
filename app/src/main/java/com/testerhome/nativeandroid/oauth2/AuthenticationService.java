@@ -1,6 +1,7 @@
 package com.testerhome.nativeandroid.oauth2;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.testerhome.nativeandroid.auth.TesterHomeAccountService;
 import com.testerhome.nativeandroid.networks.RestAdapterUtils;
@@ -101,6 +102,7 @@ public class AuthenticationService {
                 + SECRET_KEY_PARAM + EQUALS + SECRET_KEY;
     }
 
+    private static final String TAG = "AuthenticationService";
     public static void refreshToken(Context context, String refresh_token) {
         RestAdapterUtils.getRestAPI(context)
                 .refreshToken(API_KEY,
@@ -111,12 +113,15 @@ public class AuthenticationService {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(oAuth -> {
                             TesterHomeAccountService.getInstance(context).updateAccountToken(oAuth);
+                            Log.d(TAG, "refreshToken: success");
                         },
                         throwable -> {
                             // can't get new token
+                            Log.d(TAG, "refreshToken: fail");
                         },
                         () -> {
                             // on complete
                         });
     }
+
 }
