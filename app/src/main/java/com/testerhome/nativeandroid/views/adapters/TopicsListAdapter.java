@@ -3,8 +3,6 @@ package com.testerhome.nativeandroid.views.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -24,9 +22,6 @@ import com.testerhome.nativeandroid.networks.RestAdapterUtils;
 import com.testerhome.nativeandroid.utils.DeviceUtil;
 import com.testerhome.nativeandroid.utils.StringUtils;
 import com.testerhome.nativeandroid.views.TopicDetailActivity;
-
-import java.util.Timer;
-import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -58,7 +53,7 @@ public class TopicsListAdapter extends BaseAdapter<TopicEntity> {
                 view = LayoutInflater.from(mContext).inflate(R.layout.list_item_banner, parent, false);
                 ViewGroup.LayoutParams bannerLayoutParams = view.findViewById(R.id.banner_layout).getLayoutParams();
                 bannerLayoutParams.width = DeviceUtil.getDeviceWidth(mContext);
-                bannerLayoutParams.height = (bannerLayoutParams.width * 9 / 16);
+                bannerLayoutParams.height = (bannerLayoutParams.width / 2);
                 view.findViewById(R.id.banner_layout).setLayoutParams(bannerLayoutParams);
 
                 ViewGroup viewGroup = (ViewGroup) view.findViewById(R.id.view_group);
@@ -88,7 +83,7 @@ public class TopicsListAdapter extends BaseAdapter<TopicEntity> {
                     mBannerAdapter = new TopicBannerAdapter();
                 }
                 bannerViewHolder.mTopicBanner.setAdapter(mBannerAdapter);
-                startPlay(bannerViewHolder.mTopicBanner);
+                startPlayNext(bannerViewHolder.mTopicBanner);
                 mTopicBannerTitle = bannerViewHolder.mTopicBannerTitle;
                 break;
             default:
@@ -108,15 +103,12 @@ public class TopicsListAdapter extends BaseAdapter<TopicEntity> {
                 holder.badgeView.setHideOnNull(false);
                 holder.badgeView.setBadgeCount(topic.getReplies_count());
                 holder.topicItem.setTag(topic.getId());
-                holder.topicItem.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (DeviceUtil.isFastClick()) {
-                            return;
-                        }
-                        String topicId = (String) v.getTag();
-                        mContext.startActivity(new Intent(mContext, TopicDetailActivity.class).putExtra("topic_id", topicId));
+                holder.topicItem.setOnClickListener(v -> {
+                    if (DeviceUtil.isFastClick()) {
+                        return;
                     }
+                    String topicId = (String) v.getTag();
+                    mContext.startActivity(new Intent(mContext, TopicDetailActivity.class).putExtra("topic_id", topicId));
                 });
                 break;
         }
@@ -126,30 +118,17 @@ public class TopicsListAdapter extends BaseAdapter<TopicEntity> {
         }
     }
 
-    private Timer timer;
-
-    private void startPlay(final ViewPager banner) {
-        if (timer != null) {
-            timer.cancel();
-        }
-
-        long delay = 3000;
-        timer = new Timer();
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                new Handler(Looper.getMainLooper()).post(new Runnable() {
-                    @Override
-                    public void run() {
-                        int cur = banner.getCurrentItem() + 1;
-                        if (cur >= banner.getAdapter().getCount()) {
-                            cur = 0;
-                        }
-                        banner.setCurrentItem(cur);
-                    }
-                });
+    private void startPlayNext(ViewPager banner){
+        banner.postDelayed(() -> {
+            int cur = banner.getCurrentItem() + 1;
+            if (cur>= banner.getAdapter().getCount()){
+                cur = 0;
             }
-        }, delay, delay);
+            banner.setCurrentItem(cur);
+
+            if (banner.getWindowToken() != null)
+                startPlayNext(banner);
+        }, 3000);
     }
 
     private EndlessListener mListener;
