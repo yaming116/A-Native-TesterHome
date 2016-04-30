@@ -1,5 +1,13 @@
 package com.testerhome.nativeandroid.oauth2;
 
+import android.content.Context;
+
+import com.testerhome.nativeandroid.auth.TesterHomeAccountService;
+import com.testerhome.nativeandroid.networks.RestAdapterUtils;
+
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
+
 /**
  * Created by vclub on 15/9/18.
  */
@@ -91,5 +99,24 @@ public class AuthenticationService {
                 + REDIRECT_URI_PARAM + EQUALS + REDIRECT_URI
                 + AMPERSAND
                 + SECRET_KEY_PARAM + EQUALS + SECRET_KEY;
+    }
+
+    public static void refreshToken(Context context, String refresh_token) {
+        RestAdapterUtils.getRestAPI(context)
+                .refreshToken(API_KEY,
+                        REFRESH_TOKEN,
+                        SECRET_KEY,
+                        refresh_token)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(oAuth -> {
+                            TesterHomeAccountService.getInstance(context).updateAccountToken(oAuth);
+                        },
+                        throwable -> {
+                            // can't get new token
+                        },
+                        () -> {
+                            // on complete
+                        });
     }
 }

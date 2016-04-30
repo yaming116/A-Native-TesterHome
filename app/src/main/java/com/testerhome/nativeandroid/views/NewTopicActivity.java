@@ -3,6 +3,7 @@ package com.testerhome.nativeandroid.views;
 /**
  * Created by cvter on 8/3/16.
  */
+
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -12,21 +13,17 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Spinner;
 
-
 import com.testerhome.nativeandroid.R;
 import com.testerhome.nativeandroid.auth.TesterHomeAccountService;
 import com.testerhome.nativeandroid.models.TesterUser;
-import com.testerhome.nativeandroid.models.TopicEntity;
 import com.testerhome.nativeandroid.models.TopicResponse;
 import com.testerhome.nativeandroid.networks.RestAdapterUtils;
 import com.testerhome.nativeandroid.storage.TopicShared;
 import com.testerhome.nativeandroid.utils.ToastUtils;
 import com.testerhome.nativeandroid.views.base.BackBaseActivity;
-import com.testerhome.nativeandroid.views.base.BaseActivity;
 import com.testerhome.nativeandroid.views.dialog.DialogUtils;
 import com.testerhome.nativeandroid.views.dialog.ProgressDialog;
 import com.testerhome.nativeandroid.views.widgets.EditorBarHandler;
-import com.testerhome.nativeandroid.views.widgets.ThemeUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -101,7 +98,7 @@ public class NewTopicActivity extends BackBaseActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_send) {
-            if (edtTitle.length() == 0 ) {
+            if (edtTitle.length() == 0) {
                 edtTitle.requestFocus();
                 ToastUtils.with(this).show(R.string.title_empty_error_tip);
             } else if (edtContent.length() == 0) {
@@ -120,16 +117,17 @@ public class NewTopicActivity extends BackBaseActivity {
         dialog.show();
         String a[] = getResources().getStringArray(R.array.tab_value);
         int po = spnTab.getSelectedItemPosition();
-        String content = edtContent.getText().toString()+
+        String content = edtContent.getText().toString() +
                 "\n\n" + "—— 来自TesterHome官方 [安卓客户端](http://fir.im/p9vs)";
-        Log.d("new",content);
+        Log.d("new", content);
         try {
             final String encodedData = URLEncoder.encode(content, "UTF-8");
-            Log.d("new",getResources().getIntArray(R.array.tab_value)[spnTab.getSelectedItemPosition()]+"");
+            Log.d("new", getResources().getIntArray(R.array.tab_value)[spnTab.getSelectedItemPosition()] + "");
             TesterUser mTesterHomeAccount = TesterHomeAccountService.getInstance(this).getActiveAccountInfo();
-            RestAdapterUtils.getRestAPI(this).createTopic(mTesterHomeAccount.getAccess_token(),
-                    getResources().getStringArray(R.array.tab_value)[spnTab.getSelectedItemPosition()],
-                    edtTitle.getText().toString(),encodedData)
+            RestAdapterUtils.getRestAPI(this)
+                    .createTopic(mTesterHomeAccount.getAccess_token(),
+                            getResources().getStringArray(R.array.tab_value)[spnTab.getSelectedItemPosition()],
+                            edtTitle.getText().toString(), encodedData)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Observer<TopicResponse>() {
@@ -141,7 +139,7 @@ public class NewTopicActivity extends BackBaseActivity {
                         @Override
                         public void onError(Throwable e) {
                             dialog.dismiss();
-                            Log.d("newActivity",e.getMessage().toString());
+                            Log.d("newActivity", e.getMessage());
                             ToastUtils.with(NewTopicActivity.this).show(e.getMessage());
                         }
 

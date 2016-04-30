@@ -34,6 +34,7 @@ import com.testerhome.nativeandroid.models.TesterUser;
 import com.testerhome.nativeandroid.models.TopicDetailEntity;
 import com.testerhome.nativeandroid.models.TopicDetailResponse;
 import com.testerhome.nativeandroid.networks.RestAdapterUtils;
+import com.testerhome.nativeandroid.oauth2.AuthenticationService;
 import com.testerhome.nativeandroid.utils.DeviceUtil;
 import com.testerhome.nativeandroid.utils.FavoriteUtil;
 import com.testerhome.nativeandroid.utils.PraiseUtil;
@@ -83,6 +84,15 @@ public class TopicDetailActivity extends BackBaseActivity implements TopicReplyF
     public void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         SwipeBackHelper.onPostCreate(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (mCurrentUser == null){
+            mCurrentUser = TesterHomeAccountService.getInstance(this).getActiveAccountInfo();
+        }
     }
 
     @Override
@@ -189,6 +199,7 @@ public class TopicDetailActivity extends BackBaseActivity implements TopicReplyF
     TopicDetailEntity mTopicEntity;
 
     private void loadInfo() {
+
         RestAdapterUtils.getRestAPI(this).getTopicById(mTopicId)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -211,22 +222,22 @@ public class TopicDetailActivity extends BackBaseActivity implements TopicReplyF
                         if (topicDetailResponse != null) {
                             mTopicEntity = topicDetailResponse.getTopic();
                             if (tvDetailTitle == null) {
-                                return ;
+                                return;
                             }
                             tvDetailTitle.setText(mTopicEntity.getTitle());
-                            tvDetailName.setText(mTopicEntity.getNode_name().concat("."));
+                            tvDetailName.setText(mTopicEntity.getNode_name().concat(" • "));
                             tvDetailUsername.setText(TextUtils.isEmpty(mTopicEntity.getUser().getLogin()) ?
                                     "匿名用户" : mTopicEntity.getUser().getName());
                             tvDetailPublishDate.setText(StringUtils.formatPublishDateTime(
-                                    mTopicEntity.getCreated_at()).concat(".")
+                                    mTopicEntity.getCreated_at()).concat(" • ")
                                     .concat(mTopicEntity.getHits()).concat("次阅读"));
                             sdvDetailUserAvatar.setImageURI(Uri.parse(Config.getImageUrl(mTopicEntity.getUser().getAvatar_url())));
                             sdvDetailUserAvatar.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
-                                    startActivity(new Intent().setClass(TopicDetailActivity.this,UserInfoActivity.class).
-                                            putExtra("loginName",mTopicEntity.getUser()
-                                            .getLogin()));
+                                    startActivity(new Intent().setClass(TopicDetailActivity.this, UserInfoActivity.class).
+                                            putExtra("loginName", mTopicEntity.getUser()
+                                                    .getLogin()));
                                 }
                             });
                             // 用户回复数
@@ -252,7 +263,6 @@ public class TopicDetailActivity extends BackBaseActivity implements TopicReplyF
                 });
 
 
-
     }
 
     private TesterUser mCurrentUser;
@@ -265,19 +275,13 @@ public class TopicDetailActivity extends BackBaseActivity implements TopicReplyF
 
     @OnClick(R.id.tv_detail_collect)
     void onDetailCollectClick() {
-        if (mCurrentUser == null) {
-            mCurrentUser = TesterHomeAccountService.getInstance(this).getActiveAccountInfo();
-            if (TextUtils.isEmpty(mCurrentUser.getLogin())) {
-                Snackbar.make(mFabAddComment, "请先登录客户端", Snackbar.LENGTH_SHORT).show();
-                return;
-            }
+        if (mCurrentUser == null || TextUtils.isEmpty(mCurrentUser.getLogin())) {
+            Snackbar.make(mFabAddComment, "请先登录客户端", Snackbar.LENGTH_SHORT).show();
+            return;
         }
 
-
-
-
-        if (FavoriteUtil.hasFavorite(this,mTopicId)) {
-            RestAdapterUtils.getRestAPI(this).uncollectTopic(mTopicId,mCurrentUser.getAccess_token())
+        if (FavoriteUtil.hasFavorite(this, mTopicId)) {
+            RestAdapterUtils.getRestAPI(this).uncollectTopic(mTopicId, mCurrentUser.getAccess_token())
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Observer<CollectTopicResonse>() {
@@ -303,7 +307,7 @@ public class TopicDetailActivity extends BackBaseActivity implements TopicReplyF
                         }
                     });
         } else {
-            RestAdapterUtils.getRestAPI(this).collectTopic(mTopicId,mCurrentUser.getAccess_token())
+            RestAdapterUtils.getRestAPI(this).collectTopic(mTopicId, mCurrentUser.getAccess_token())
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Observer<CollectTopicResonse>() {
@@ -334,23 +338,25 @@ public class TopicDetailActivity extends BackBaseActivity implements TopicReplyF
     }
 
     boolean isPraised = false;
+
     @OnClick(R.id.tv_detail_praise)
     void onDetailPraiseClick() {
-        if (mCurrentUser == null) {
-            mCurrentUser = TesterHomeAccountService.getInstance(this).getActiveAccountInfo();
 
-        }
-
-        if (TextUtils.isEmpty(mCurrentUser.getLogin())) {
+        if (mCurrentUser == null || TextUtils.isEmpty(mCurrentUser.getLogin())) {
             Snackbar.make(mFabAddComment, "请先登录客户端", Snackbar.LENGTH_SHORT).show();
             return;
         }
         // TODO: check login and token not expire
 
-
+        if (mCurrentUser.getExpireDate() >= System.currentTimeMillis()) {
+            // expire
+            AuthenticationService.refreshToken(getApplicationContext(),
+                    mCurrentUser.getRefresh_token());
+        }
 
         if (PraiseUtil.hasPraised(TopicDetailActivity.this, mTopicId)) {
-            RestAdapterUtils.getRestAPI(this).unLikeTopic(Config.PRAISE_TOPIC, mTopicId, mCurrentUser.getAccess_token())
+            RestAdapterUtils.getRestAPI(this)
+                    .unLikeTopic(Config.PRAISE_TOPIC, mTopicId, mCurrentUser.getAccess_token())
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Observer<PraiseEntity>() {
@@ -376,7 +382,7 @@ public class TopicDetailActivity extends BackBaseActivity implements TopicReplyF
 
                         }
                     });
-        }else {
+        } else {
             RestAdapterUtils.getRestAPI(this).praiseTopic(Config.PRAISE_TOPIC, mTopicId, mCurrentUser.getAccess_token())
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -429,11 +435,7 @@ public class TopicDetailActivity extends BackBaseActivity implements TopicReplyF
         mEtComment.setError(null);
 
 
-        if (mCurrentUser == null) {
-            mCurrentUser = TesterHomeAccountService.getInstance(this).getActiveAccountInfo();
-        }
-
-        if (TextUtils.isEmpty(mCurrentUser.getAccess_token())){
+        if (mCurrentUser == null || TextUtils.isEmpty(mCurrentUser.getAccess_token())) {
             Snackbar.make(mFabAddComment,
                     "请先登录",
                     Snackbar.LENGTH_SHORT)
@@ -455,7 +457,7 @@ public class TopicDetailActivity extends BackBaseActivity implements TopicReplyF
 
 
             final String finalReplyBody = replyContent;
-            RestAdapterUtils.getRestAPI(this).createReply(mTopicId,replyBody,mCurrentUser.getAccess_token())
+            RestAdapterUtils.getRestAPI(this).createReply(mTopicId, replyBody, mCurrentUser.getAccess_token())
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Observer<CreateReplyResponse>() {
@@ -476,7 +478,7 @@ public class TopicDetailActivity extends BackBaseActivity implements TopicReplyF
                         public void onNext(CreateReplyResponse response) {
                             if (response != null) {
                                 // 发送成功
-                                Log.d("detailActivity","回帖成功");
+                                Log.d("detailActivity", "回帖成功");
                                 mEtComment.setText("");
                                 DeviceUtil.hideSoftInput(TopicDetailActivity.this);
                                 mAddCommentPanel.setVisibility(View.GONE);
