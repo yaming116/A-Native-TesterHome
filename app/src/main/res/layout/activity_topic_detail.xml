@@ -22,14 +22,47 @@
             app:layout_scrollFlags="scroll|enterAlwaysCollapsed"
             app:theme="@style/AppTheme.AppBarOverlay">
 
-            <TextView
-                android:id="@+id/toolbar_title"
-                style="@style/ActionbarTitleStyle"
-                android:layout_width="match_parent"
+            <com.facebook.drawee.view.SimpleDraweeView
+                android:id="@+id/sdv_detail_user_avatar"
+                android:padding="5dp"
+                android:layout_width="?attr/actionBarSize"
                 android:layout_height="?attr/actionBarSize"
-                android:gravity="center"
-                android:singleLine="true"
-                tools:text="here is title" />
+                android:layout_alignParentRight="true"
+                app:placeholderImage="@mipmap/ic_launcher"
+                app:roundAsCircle="true" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical">
+                <TextView
+                    android:id="@+id/tv_detail_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tv_detail_title"
+                    android:textColor="@android:color/white"
+                    style="@style/TextAppearance.AppCompat.Caption"
+                    tools:text="node name." />
+
+                <TextView
+                    android:id="@+id/tv_detail_username"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tv_detail_title"
+                    android:layout_toRightOf="@+id/tv_detail_name"
+                    android:textColor="@android:color/white"
+                    style="@style/TextAppearance.AppCompat.Caption"
+                    tools:text="username•" />
+
+                <TextView
+                    android:id="@+id/tv_detail_publish_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/tv_detail_name"
+                    android:textColor="@android:color/white"
+                    style="@style/TextAppearance.AppCompat.Caption"
+                    tools:text="datetime." />
+            </RelativeLayout>
         </android.support.v7.widget.Toolbar>
 
         <include
