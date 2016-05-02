@@ -50,12 +50,13 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     @BindView(R.id.drawer_layout)
     DrawerLayout drawer;
 
-
     private ImageView navBackGround;
     // 是否启用夜间模式
     private boolean appTheme;
     private ImageView darkImage;
     private TextView logout;
+
+    private TesterUser mCurrentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +69,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         setupView();
 
         setupWX();
+
+        getUserInfo();
     }
 
     private void setupWX() {
@@ -82,7 +85,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             ThemeUtils.recreateActivity(this);
         }
 
-        if (mCurrentUser.getExpireDate() >= System.currentTimeMillis()) {
+        if (mCurrentUser != null && mCurrentUser.getExpireDate() <= System.currentTimeMillis()) {
             // expire
             AuthenticationService.refreshToken(getApplicationContext(), mCurrentUser.getRefresh_token());
         }
@@ -116,6 +119,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         });
         logout.setOnClickListener(view -> {
             TesterHomeAccountService.getInstance(MainActivity.this).logout();
+            mCurrentUser = null;
             updateUserInfo();
         });
         mAccountUsername = (TextView) headerLayout.findViewById(R.id.tv_account_username);
@@ -225,28 +229,24 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     }
 
     SimpleDraweeView mAccountAvatar;
-
     TextView mAccountUsername;
-
     TextView mAccountEmail;
 
-
     void onAvatarClick() {
-        if (mTesterHomeAccount != null && !TextUtils.isEmpty(mTesterHomeAccount.getLogin())) {
-            startActivity(new Intent(this, UserInfoActivity.class).putExtra("loginName", mTesterHomeAccount.getLogin()));
+        if (getUserInfo() != null && !TextUtils.isEmpty(mCurrentUser.getLogin())) {
+            startActivity(new Intent(this, UserInfoActivity.class).putExtra("loginName", mCurrentUser.getLogin()));
         } else {
             startActivity(new Intent(this, AuthActivity.class));
         }
     }
 
-    TesterUser mTesterHomeAccount;
-
     private void updateUserInfo() {
-        mTesterHomeAccount = TesterHomeAccountService.getInstance(this).getActiveAccountInfo();
-        if (!TextUtils.isEmpty(mTesterHomeAccount.getLogin())) {
-            mAccountAvatar.setImageURI(Uri.parse(Config.getImageUrl(mTesterHomeAccount.getAvatar_url())));
-            mAccountUsername.setText(mTesterHomeAccount.getName());
-            mAccountEmail.setText(mTesterHomeAccount.getEmail());
+        mCurrentUser = null;
+
+        if (!TextUtils.isEmpty(getUserInfo().getLogin())) {
+            mAccountAvatar.setImageURI(Uri.parse(Config.getImageUrl(mCurrentUser.getAvatar_url())));
+            mAccountUsername.setText(mCurrentUser.getName());
+            mAccountEmail.setText(mCurrentUser.getEmail());
             logout.setVisibility(View.VISIBLE);
         } else {
             mAccountAvatar.setImageResource(R.mipmap.ic_launcher);
@@ -288,19 +288,20 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         return false;
     }
 
-
-    TesterUser mCurrentUser;
-
     @OnClick(R.id.fab_new_topic)
     public void newTopic() {
-
-        mCurrentUser = TesterHomeAccountService.getInstance(this).getActiveAccountInfo();
-        if (mCurrentUser.getAccess_token() == null) {
+        if (getUserInfo().getAccess_token() == null) {
             ToastUtils.with(this).show("请先登录");
             return;
         }
         Log.d("mainactivity", mCurrentUser.getAccess_token());
         startActivity(new Intent().setClass(MainActivity.this, NewTopicActivity.class));
+    }
 
+    private TesterUser getUserInfo(){
+        if (mCurrentUser == null){
+            mCurrentUser = TesterHomeAccountService.getInstance(this).getActiveAccountInfo();
+        }
+        return mCurrentUser;
     }
 }

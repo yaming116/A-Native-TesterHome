@@ -33,6 +33,7 @@ import com.testerhome.nativeandroid.models.PraiseEntity;
 import com.testerhome.nativeandroid.models.TesterUser;
 import com.testerhome.nativeandroid.models.TopicDetailEntity;
 import com.testerhome.nativeandroid.models.TopicDetailResponse;
+import com.testerhome.nativeandroid.models.TopicEntity;
 import com.testerhome.nativeandroid.networks.RestAdapterUtils;
 import com.testerhome.nativeandroid.oauth2.AuthenticationService;
 import com.testerhome.nativeandroid.utils.DeviceUtil;
@@ -62,7 +63,7 @@ public class TopicDetailActivity extends BackBaseActivity implements TopicReplyF
         SwipeBackHelper.getCurrentPage(this)
                 .setSwipeBackEnable(true)
                 .setSwipeEdge(200)
-                .setSwipeEdgePercent(0.2f)//可滑动的范围。百分比。0.2表示为左边20%的屏幕
+                .setSwipeEdgePercent(0.02f)//可滑动的范围。百分比。0.2表示为左边20%的屏幕
                 .setSwipeSensitivity(0.5f)//对横向滑动手势的敏感程度。0为迟钝 1为敏感
                 .setClosePercent(0.2f)//触发关闭Activity百分比
                 .setSwipeRelateEnable(false)//是否与下一级activity联动(微信效果)。默认关
@@ -72,6 +73,15 @@ public class TopicDetailActivity extends BackBaseActivity implements TopicReplyF
 
         if (getIntent().hasExtra("topic_id")) {
             mTopicId = getIntent().getStringExtra("topic_id");
+
+            setupView();
+            loadInfo();
+        } else if (getIntent().hasExtra("topic")){
+
+            TopicEntity topic = getIntent().getParcelableExtra("topic");
+            mTopicId = topic.getId();
+
+            setTopicInfo(topic);
 
             setupView();
             loadInfo();
@@ -93,7 +103,7 @@ public class TopicDetailActivity extends BackBaseActivity implements TopicReplyF
         if (mCurrentUser == null) {
             mCurrentUser = TesterHomeAccountService.getInstance(this).getActiveAccountInfo();
 
-            if (mCurrentUser.getExpireDate() >= System.currentTimeMillis()) {
+            if (mCurrentUser.getExpireDate() <= System.currentTimeMillis()) {
                 AuthenticationService.refreshToken(getApplicationContext(), mCurrentUser.getRefresh_token());
             }
         }
@@ -141,6 +151,26 @@ public class TopicDetailActivity extends BackBaseActivity implements TopicReplyF
         viewPagerTopics.setAdapter(mAdapter);
 
         tabLayoutTopicsTab.setupWithViewPager(viewPagerTopics);
+    }
+
+    private void setTopicInfo(TopicEntity topicInfo){
+
+        tvDetailTitle.setText(topicInfo.getTitle());
+        tvDetailName.setText(topicInfo.getNode_name().concat(" • "));
+        tvDetailUsername.setText(TextUtils.isEmpty(topicInfo.getUser().getLogin()) ?
+                "匿名用户" : topicInfo.getUser().getName());
+        tvDetailPublishDate.setText(StringUtils.formatPublishDateTime(
+                topicInfo.getCreated_at()).concat(" • ")
+                .concat("-").concat("次阅读"));
+        sdvDetailUserAvatar.setImageURI(Uri.parse(Config.getImageUrl(topicInfo.getUser().getAvatar_url())));
+        sdvDetailUserAvatar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent().setClass(TopicDetailActivity.this, UserInfoActivity.class).
+                        putExtra("loginName", mTopicEntity.getUser()
+                                .getLogin()));
+            }
+        });
     }
 
     private MarkdownFragment mMarkdownFragment;

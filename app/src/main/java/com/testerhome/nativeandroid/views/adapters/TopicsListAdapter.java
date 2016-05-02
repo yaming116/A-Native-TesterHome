@@ -108,7 +108,8 @@ public class TopicsListAdapter extends BaseAdapter<TopicEntity> {
                         return;
                     }
                     String topicId = (String) v.getTag();
-                    mContext.startActivity(new Intent(mContext, TopicDetailActivity.class).putExtra("topic_id", topicId));
+                    mContext.startActivity(new Intent(mContext, TopicDetailActivity.class)
+                            .putExtra("topic", topic));
                 });
                 break;
         }

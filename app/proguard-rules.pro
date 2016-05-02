@@ -37,6 +37,11 @@
     native <methods>;
 }
 
+-dontwarn okhttp3.**
+-keep class okhttp3.** { *; }
+
+-dontwarn com.squareup.okhttp.**
+
 -dontwarn okio.**
 -dontwarn javax.annotation.**
 -dontwarn com.android.volley.toolbox.**

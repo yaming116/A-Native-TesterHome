@@ -42,7 +42,7 @@ public class AuthActivity extends BackBaseActivity {
 
         FrameLayout layout = (FrameLayout) findViewById(R.id.container);
 
-        mWebView = new WebView(this);
+        mWebView = new WebView(this.getApplicationContext());
 
         if (layout != null)
             layout.addView(mWebView);
@@ -160,8 +160,13 @@ public class AuthActivity extends BackBaseActivity {
                 .subscribe(userDetailResponse -> {
                     if (userDetailResponse != null) {
 
-                        long timeout = System.currentTimeMillis() + userDetailResponse.getUser().getExpireDate() * 1000;
+                        long timeout = System.currentTimeMillis() + oAuth.getExpires_in() * 1000;
+
+                        Log.d(TAG, "getUserInfo timeout: " + timeout
+                                + ", expire date:" + userDetailResponse.getUser().getExpireDate()
+                                + ", demo:" + oAuth.getExpireDate());
                         userDetailResponse.getUser().setExpireDate(timeout);
+                        oAuth.setExpireDate(timeout);
 
                         TesterHomeAccountService.getInstance(AuthActivity.this)
                                 .signIn(userDetailResponse.getUser().getLogin(), userDetailResponse.getUser(), oAuth);

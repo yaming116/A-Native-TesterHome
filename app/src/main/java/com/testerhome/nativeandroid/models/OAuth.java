@@ -9,6 +9,7 @@ public class OAuth {
     private long expires_in;
     private String refresh_token;
     private long create_at;
+    private long expireDate;
 
     public String getAccess_token() {
         return access_token;
@@ -50,14 +51,23 @@ public class OAuth {
         this.create_at = craete_at;
     }
 
+    public long getExpireDate() {
+        return expireDate;
+    }
+
+    public void setExpireDate(long expireDate) {
+        this.expireDate = expireDate;
+    }
+
     @Override
     public String toString() {
         return "OAuth{" +
                 "access_token='" + access_token + '\'' +
                 ", token_type='" + token_type + '\'' +
-                ", expires_in='" + expires_in + '\'' +
+                ", expires_in=" + expires_in +
                 ", refresh_token='" + refresh_token + '\'' +
-                ", craete_at='" + create_at + '\'' +
+                ", create_at=" + create_at +
+                ", expireDate=" + expireDate +
                 '}';
     }
 }
