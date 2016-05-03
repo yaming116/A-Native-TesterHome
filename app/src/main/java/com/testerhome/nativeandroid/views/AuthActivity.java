@@ -159,15 +159,6 @@ public class AuthActivity extends BackBaseActivity {
                 .getCurrentUserInfo(oAuth.getAccess_token())
                 .subscribe(userDetailResponse -> {
                     if (userDetailResponse != null) {
-
-                        long timeout = System.currentTimeMillis() + oAuth.getExpires_in() * 1000;
-
-                        Log.d(TAG, "getUserInfo timeout: " + timeout
-                                + ", expire date:" + userDetailResponse.getUser().getExpireDate()
-                                + ", demo:" + oAuth.getExpireDate());
-                        userDetailResponse.getUser().setExpireDate(timeout);
-                        oAuth.setExpireDate(timeout);
-
                         TesterHomeAccountService.getInstance(AuthActivity.this)
                                 .signIn(userDetailResponse.getUser().getLogin(), userDetailResponse.getUser(), oAuth);
                         AuthActivity.this.finish();
