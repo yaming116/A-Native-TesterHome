@@ -124,9 +124,10 @@ public class TesterHomeAccountService {
 
         user.setAccess_token(oAuth.getAccess_token());
         user.setRefresh_token(oAuth.getRefresh_token());
-//        user.setExpireDate(oAuth.getExpires_in());
         user.setCreate_at(oAuth.getCraete_at());
-        user.setExpireDate(oAuth.getExpireDate());
+
+        long timeout = System.currentTimeMillis() + oAuth.getExpires_in() * 1000 - (6 * 60 * 60 * 1000);
+        user.setExpireDate(timeout);
         updateAccountInfo(account, user);
 
         return true;
@@ -198,7 +199,8 @@ public class TesterHomeAccountService {
 
     public void updateAccountToken(OAuth oAuth){
         mAccountManager.setUserData(activeAccount, KEY_USER_DATA_TOKEN, oAuth.getAccess_token());
-        mAccountManager.setUserData(activeAccount, KEY_USER_DATA_EXPIRE_DATE, String.valueOf(oAuth.getExpires_in()));
+        long timeout = System.currentTimeMillis() + oAuth.getExpires_in() * 1000 - (6 * 60 * 60 * 1000);
+        mAccountManager.setUserData(activeAccount, KEY_USER_DATA_EXPIRE_DATE, String.valueOf(timeout));
         mAccountManager.setUserData(activeAccount,KEY_USER_DATA_REFRESH_TOKEN,oAuth.getRefresh_token());
         mAccountManager.setUserData(activeAccount,KEY_USER_DATA_CREATE_AT,String.valueOf(oAuth.getCraete_at()));
     }

@@ -80,12 +80,9 @@ public class TopicsListFragment extends BaseFragment implements Observer<TopicsR
     @Override
     protected void setupView() {
         mAdatper = new TopicsListAdapter(getActivity());
-        mAdatper.setListener(new TopicsListAdapter.EndlessListener() {
-            @Override
-            public void onListEnded() {
-                if (mNextCursor > 0) {
-                    loadTopics(false);
-                }
+        mAdatper.setListener(() -> {
+            if (mNextCursor > 0) {
+                loadTopics(false);
             }
         });
 

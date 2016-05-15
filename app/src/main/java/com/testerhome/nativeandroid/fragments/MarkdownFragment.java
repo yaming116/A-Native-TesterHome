@@ -1,5 +1,8 @@
 package com.testerhome.nativeandroid.fragments;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.Intent;
 import android.content.res.AssetManager;
 import android.net.Uri;
 import android.preference.PreferenceManager;
@@ -9,6 +12,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import com.testerhome.nativeandroid.R;
+import com.testerhome.nativeandroid.views.ShowWebImageActivity;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,13 +23,17 @@ import us.feras.mdv.MarkdownView;
 /**
  * Created by vclub on 15/10/25.
  */
+
 public class MarkdownFragment extends BaseFragment {
 
     @BindView(R.id.markdown_topic_body)
     MarkdownView mTopicBody;
 
+    @SuppressLint({"JavascriptInterface", "AddJavascriptInterface"})
     @Override
     protected void setupView() {
+        mTopicBody.addJavascriptInterface(new JavascriptInterface(getActivity()), "imagelistner");
+
         mTopicBody.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
@@ -36,10 +44,53 @@ public class MarkdownFragment extends BaseFragment {
                 CustomTabsIntent customTabsIntent = builder.build();
 
                 customTabsIntent.launchUrl(getActivity(), Uri.parse(url));
-//                return super.shouldOverrideUrlLoading(view, url);
                 return true;
             }
+
+            @SuppressLint("SetJavaScriptEnabled")
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                mTopicBody.getSettings().setJavaScriptEnabled(true);
+                super.onPageFinished(view, url);
+                addImageClickListener();
+            }
         });
+    }
+
+    // js通信接口
+    public class JavascriptInterface {
+
+        private Context context;
+
+        public JavascriptInterface(Context context) {
+            this.context = context;
+        }
+
+        @android.webkit.JavascriptInterface
+        public void openImage(String img) {
+            System.out.println(img);
+            //
+            Intent intent = new Intent();
+            intent.putExtra("image", img);
+            intent.setClass(context, ShowWebImageActivity.class);
+            context.startActivity(intent);
+            System.out.println(img);
+        }
+    }
+
+    // 注入js函数监听
+    private void addImageClickListener() {
+        // 这段js函数的功能就是，遍历所有的img几点，并添加onclick函数，函数的功能是在图片点击的时候调用本地java接口并传递url过去
+        mTopicBody.loadUrl("javascript:(function(){" +
+                "var objs = document.getElementsByTagName(\"img\"); " +
+                "for(var i=0;i<objs.length;i++)  " +
+                "{"
+                + "    objs[i].onclick=function()  " +
+                "    {  "
+                + "        window.imagelistner.openImage(this.src);  " +
+                "    }  " +
+                "}" +
+                "})()");
     }
 
     @Override

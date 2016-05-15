@@ -117,7 +117,7 @@ public class AuthenticationService {
                         },
                         throwable -> {
                             // can't get new token
-                            Log.d(TAG, "refreshToken: fail");
+                            Log.e(TAG, "refreshToken: fail", throwable);
                         },
                         () -> {
                             // on complete
