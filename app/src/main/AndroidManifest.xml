@@ -70,6 +70,9 @@
             android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity android:name=".views.MarkDownPreviewActivity"
             android:configChanges="keyboardHidden|orientation|screenSize" />
+
+        <activity android:name=".views.ShowWebImageActivity"
+            android:launchMode="singleTop"/>
         <service
             android:name=".auth.UserAccountService"
             tools:ignore="ExportedService">

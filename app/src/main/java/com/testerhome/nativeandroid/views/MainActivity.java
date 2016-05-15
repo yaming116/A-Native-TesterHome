@@ -85,7 +85,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             ThemeUtils.recreateActivity(this);
         }
 
-        if (mCurrentUser != null && mCurrentUser.getExpireDate() <= System.currentTimeMillis()) {
+        if (mCurrentUser != null && !TextUtils.isEmpty(mCurrentUser.getRefresh_token()) && mCurrentUser.getExpireDate() <= System.currentTimeMillis()) {
             // expire
             AuthenticationService.refreshToken(getApplicationContext(), mCurrentUser.getRefresh_token());
         }

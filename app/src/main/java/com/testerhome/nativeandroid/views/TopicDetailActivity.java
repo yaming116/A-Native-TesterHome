@@ -76,7 +76,7 @@ public class TopicDetailActivity extends BackBaseActivity implements TopicReplyF
 
             setupView();
             loadInfo();
-        } else if (getIntent().hasExtra("topic")){
+        } else if (getIntent().hasExtra("topic")) {
 
             TopicEntity topic = getIntent().getParcelableExtra("topic");
             mTopicId = topic.getId();
@@ -103,8 +103,10 @@ public class TopicDetailActivity extends BackBaseActivity implements TopicReplyF
         if (mCurrentUser == null) {
             mCurrentUser = TesterHomeAccountService.getInstance(this).getActiveAccountInfo();
 
-            if (mCurrentUser.getExpireDate() <= System.currentTimeMillis()) {
-                AuthenticationService.refreshToken(getApplicationContext(), mCurrentUser.getRefresh_token());
+            if (!TextUtils.isEmpty(mCurrentUser.getRefresh_token())
+                    && mCurrentUser.getExpireDate() <= System.currentTimeMillis()) {
+                AuthenticationService.refreshToken(getApplicationContext(),
+                        mCurrentUser.getRefresh_token());
             }
         }
     }
@@ -153,7 +155,7 @@ public class TopicDetailActivity extends BackBaseActivity implements TopicReplyF
         tabLayoutTopicsTab.setupWithViewPager(viewPagerTopics);
     }
 
-    private void setTopicInfo(TopicEntity topicInfo){
+    private void setTopicInfo(TopicEntity topicInfo) {
 
         tvDetailTitle.setText(topicInfo.getTitle());
         tvDetailName.setText(topicInfo.getNode_name().concat(" • "));
