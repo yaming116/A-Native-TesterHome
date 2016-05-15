@@ -12,9 +12,12 @@
 # If your project uses WebView with JS, uncomment the following
 # and specify the fully qualified class name to the JavaScript interface
 # class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+-keepclassmembers class com.testerhome.nativeandroid.fragments.MarkdownFragment$JavascriptInterface {
+   public *;
+}
+
+-keepattributes *Annotation*
+-keepattributes *JavascriptInterface*
 
 -dontwarn retrofit2.**
 -keep class retrofit2.** { *; }
