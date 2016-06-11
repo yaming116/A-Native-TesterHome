@@ -107,4 +107,14 @@
         <item name="windowMinWidthMajor">@fraction/dialog_min_width_major</item>
         <item name="windowMinWidthMinor">@fraction/dialog_min_width_minor</item>
     </style>
+
+    <!-- Customize theme for floating. -->
+    <style name="AppTheme.Transparent" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:backgroundDimEnabled">false</item>
+    </style>
 </resources>

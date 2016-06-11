@@ -56,6 +56,10 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".views.DummyActivity"
+            android:theme="@style/AppTheme.Transparent"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".views.AuthActivity"
             android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity

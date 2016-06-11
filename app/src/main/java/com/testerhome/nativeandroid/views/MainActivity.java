@@ -264,7 +264,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             drawer.closeDrawer(GravityCompat.START);
         } else {
             if (back_pressed + 2000 > System.currentTimeMillis()) {
-                super.onBackPressed();
+                startActivity(new Intent(this, DummyActivity.class));
+                finish();
             } else {
                 Toast.makeText(this, "再次点击退出", Toast.LENGTH_SHORT).show();
             }
