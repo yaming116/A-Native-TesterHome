@@ -71,7 +71,12 @@ public class TopicDetailActivity extends BackBaseActivity implements TopicReplyF
 
         setCustomTitle("帖子详情");
 
-        if (getIntent().hasExtra("topic_id")) {
+        Uri uri = getIntent().getData();
+        if (uri != null){
+            mTopicId = uri.getLastPathSegment();
+            setupView();
+            loadInfo();
+        }else if (getIntent().hasExtra("topic_id")) {
             mTopicId = getIntent().getStringExtra("topic_id");
 
             setupView();
@@ -165,13 +170,11 @@ public class TopicDetailActivity extends BackBaseActivity implements TopicReplyF
                 topicInfo.getCreated_at()).concat(" • ")
                 .concat("-").concat("次阅读"));
         sdvDetailUserAvatar.setImageURI(Uri.parse(Config.getImageUrl(topicInfo.getUser().getAvatar_url())));
-        sdvDetailUserAvatar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        sdvDetailUserAvatar.setOnClickListener(view -> {
+            if (mTopicEntity != null && mTopicEntity.getUser() != null)
                 startActivity(new Intent().setClass(TopicDetailActivity.this, UserInfoActivity.class).
                         putExtra("loginName", mTopicEntity.getUser()
                                 .getLogin()));
-            }
         });
     }
 
