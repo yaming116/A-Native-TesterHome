@@ -50,7 +50,9 @@ public class MarkdownFragment extends BaseFragment {
             @SuppressLint("SetJavaScriptEnabled")
             @Override
             public void onPageFinished(WebView view, String url) {
-                mTopicBody.getSettings().setJavaScriptEnabled(true);
+                if (mTopicBody != null) {
+                    mTopicBody.getSettings().setJavaScriptEnabled(true);
+                }
                 super.onPageFinished(view, url);
                 addImageClickListener();
             }
