@@ -12,6 +12,13 @@
     <string name="main_tab_home">社区</string>
     <string name="main_tab_topic">话题</string>
     <string name="main_tab_job">招聘</string>
+    <string name="main_tab_mooc">公开课</string>
+    <string name="main_tab_bugs">臭虫广播站</string>
+
+    <string name="main_drawer_wiki">Wiki</string>
+    <string name="main_drawer_settings">设置</string>
+    <string name="main_drawer_about">关于</string>
+
     <string name="follow">开始关注你了。</string>
     <string name="action_topic_detail_share">分享</string>
     <string name="action_topic_new">发表</string>
@@ -24,8 +31,7 @@
     <string name="user_info_name">unKnow</string>
     <string name="reply_count_info">%s条回复</string>
 
-    <string name="main_drawer_settings">设置</string>
-    <string name="main_drawer_about">关于</string>
+
     <string name="send">发送</string>
     <string name="send_to_type">发布到分类:</string>
     <string name="error_view_oops">Oops</string>

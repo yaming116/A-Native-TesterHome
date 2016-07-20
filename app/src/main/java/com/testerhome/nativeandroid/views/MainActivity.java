@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.support.customtabs.CustomTabsIntent;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -45,7 +46,9 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
     private Fragment homeFragment;
     private Fragment jobFragment;
+    private Fragment moocFragment;
     private Fragment topicFragment;
+    private Fragment bugsFragment;
 
     @BindView(R.id.drawer_layout)
     DrawerLayout drawer;
@@ -180,7 +183,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
             fragmentTransaction.show(homeFragment);
             if (toolbar != null) {
-                toolbar.setTitle("社区");
+                toolbar.setTitle(getString(R.string.main_tab_home));
             }
         } else if (id == R.id.nav_topic) {
             if (topicFragment == null) {
@@ -190,7 +193,27 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             }
             fragmentTransaction.show(topicFragment);
             if (toolbar != null) {
-                toolbar.setTitle("话题");
+                toolbar.setTitle(getString(R.string.main_tab_topic));
+            }
+        } else if (id == R.id.nav_mooc) {
+            if (moocFragment == null) {
+                moocFragment = TopicsListFragment.newInstance(Config.TOPIC_MOOC_NODE_ID);
+                fragmentTransaction.add(R.id.realtabcontent, moocFragment);
+
+            }
+            fragmentTransaction.show(moocFragment);
+            if (toolbar != null) {
+                toolbar.setTitle(getString(R.string.main_tab_mooc));
+            }
+        } else if (id == R.id.nav_bugs) {
+            if (bugsFragment == null) {
+                bugsFragment = TopicsListFragment.newInstance(Config.TOPIC_BUGS_NODE_ID);
+                fragmentTransaction.add(R.id.realtabcontent, bugsFragment);
+
+            }
+            fragmentTransaction.show(bugsFragment);
+            if (toolbar != null) {
+                toolbar.setTitle(getString(R.string.main_tab_bugs));
             }
         } else if (id == R.id.nav_job) {
             if (jobFragment == null) {
@@ -200,8 +223,18 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             }
             fragmentTransaction.show(jobFragment);
             if (toolbar != null) {
-                toolbar.setTitle("招聘");
+                toolbar.setTitle(getString(R.string.main_tab_job));
             }
+        } else if (id == R.id.nav_wiki) {
+            CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder()
+                    .setToolbarColor(getResources().getColor(R.color.colorPrimary))
+                    .build();
+
+            customTabsIntent.launchUrl(this, Uri.parse(Config.WIKI_URL));
+            return true;
+        } else if (id == R.id.nav_res) {
+            // startActivity(new Intent(this, SettingsActivity.class));
+            return true;
         } else if (id == R.id.nav_settings) {
             startActivity(new Intent(this, SettingsActivity.class));
             return true;
@@ -220,12 +253,19 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         if (homeFragment != null) {
             fragmentTransaction.hide(homeFragment);
         }
-        if (topicFragment != null) {
-            fragmentTransaction.hide(topicFragment);
-        }
         if (jobFragment != null) {
             fragmentTransaction.hide(jobFragment);
         }
+        if (moocFragment != null) {
+            fragmentTransaction.hide(moocFragment);
+        }
+        if (bugsFragment != null) {
+            fragmentTransaction.hide(bugsFragment);
+        }
+        if (topicFragment != null) {
+            fragmentTransaction.hide(topicFragment);
+        }
+
     }
 
     SimpleDraweeView mAccountAvatar;
@@ -299,8 +339,8 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         startActivity(new Intent().setClass(MainActivity.this, NewTopicActivity.class));
     }
 
-    private TesterUser getUserInfo(){
-        if (mCurrentUser == null){
+    private TesterUser getUserInfo() {
+        if (mCurrentUser == null) {
             mCurrentUser = TesterHomeAccountService.getInstance(this).getActiveAccountInfo();
         }
         return mCurrentUser;
