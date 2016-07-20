@@ -7,6 +7,10 @@
             android:icon="@drawable/tab_main_home"
             android:title="@string/main_tab_home"/>
         <item
+            android:id="@+id/nav_category"
+            android:icon="@drawable/tab_main_home"
+            android:title="@string/main_tab_category"/>
+        <item
             android:id="@+id/nav_job"
             android:icon="@drawable/tab_main_job"
             android:title="@string/main_tab_job" />

@@ -120,3 +120,6 @@ public static java.lang.String TABLENAME;
 
 ## retrolambda
 -dontwarn java.lang.invoke.*
+
+-dontwarn com.tonicartos.**
+-keep class com.tonicartos.** {*;}

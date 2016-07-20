@@ -28,6 +28,7 @@ import com.tencent.mm.sdk.openapi.WXAPIFactory;
 import com.testerhome.nativeandroid.Config;
 import com.testerhome.nativeandroid.R;
 import com.testerhome.nativeandroid.auth.TesterHomeAccountService;
+import com.testerhome.nativeandroid.fragments.CategoryFragment;
 import com.testerhome.nativeandroid.fragments.HomeFragment;
 import com.testerhome.nativeandroid.fragments.SettingsFragment;
 import com.testerhome.nativeandroid.fragments.TopicsListFragment;
@@ -49,6 +50,7 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
     private Fragment moocFragment;
     private Fragment topicFragment;
     private Fragment bugsFragment;
+    private Fragment categoryFragment;
 
     @BindView(R.id.drawer_layout)
     DrawerLayout drawer;
@@ -185,6 +187,16 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
             if (toolbar != null) {
                 toolbar.setTitle(getString(R.string.main_tab_home));
             }
+        } else if (id == R.id.nav_category) {
+            if (categoryFragment == null) {
+                categoryFragment = CategoryFragment.newInstance();
+                fragmentTransaction.add(R.id.realtabcontent, categoryFragment);
+
+            }
+            fragmentTransaction.show(categoryFragment);
+            if (toolbar != null) {
+                toolbar.setTitle(getString(R.string.main_tab_category));
+            }
         } else if (id == R.id.nav_topic) {
             if (topicFragment == null) {
                 topicFragment = TopicsListFragment.newInstance(Config.TOPICS_TYPE_LAST_ACTIVED);
@@ -232,9 +244,6 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
 
             customTabsIntent.launchUrl(this, Uri.parse(Config.WIKI_URL));
             return true;
-        } else if (id == R.id.nav_res) {
-            // startActivity(new Intent(this, SettingsActivity.class));
-            return true;
         } else if (id == R.id.nav_settings) {
             startActivity(new Intent(this, SettingsActivity.class));
             return true;
@@ -255,6 +264,9 @@ public class MainActivity extends BaseActivity implements NavigationView.OnNavig
         }
         if (jobFragment != null) {
             fragmentTransaction.hide(jobFragment);
+        }
+        if (categoryFragment != null) {
+            fragmentTransaction.hide(categoryFragment);
         }
         if (moocFragment != null) {
             fragmentTransaction.hide(moocFragment);

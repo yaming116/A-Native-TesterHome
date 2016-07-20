@@ -24,7 +24,7 @@ import rx.schedulers.Schedulers;
  */
 public class AccountNotificationFragment extends BaseFragment {
 
-    @BindView(R.id.rv_topic_list)
+    @BindView(R.id.rv_list)
     RecyclerView recyclerViewTopicList;
 
     @BindView(R.id.srl_refresh)
@@ -41,7 +41,7 @@ public class AccountNotificationFragment extends BaseFragment {
 
     @Override
     protected int getLayoutRes() {
-        return R.layout.fragment_topics;
+        return R.layout.fragment_base_recycler;
     }
 
     @Override

@@ -2,6 +2,7 @@ package com.testerhome.nativeandroid.networks;
 
 import com.testerhome.nativeandroid.models.CollectTopicResonse;
 import com.testerhome.nativeandroid.models.CreateReplyResponse;
+import com.testerhome.nativeandroid.models.GetNodesResponse;
 import com.testerhome.nativeandroid.models.NotificationResponse;
 import com.testerhome.nativeandroid.models.OAuth;
 import com.testerhome.nativeandroid.models.PraiseEntity;
@@ -29,6 +30,8 @@ public interface TopicsService {
     @GET("ads/toutiao.json")
     Observable<ToutiaoResponse> getToutiao();
 
+    @GET("nodes.json")
+    Observable<GetNodesResponse> getNodes();
 
     @GET("topics.json")
     Observable<TopicsResponse> getTopicsByType(@Query("type") String type,

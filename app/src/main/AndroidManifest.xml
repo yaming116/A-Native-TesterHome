@@ -78,6 +78,9 @@
             android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity android:name=".views.NewTopicActivity"
             android:configChanges="keyboardHidden|orientation|screenSize" />
+
+        <activity android:name=".views.TopicListActivity"
+                  android:configChanges="keyboardHidden|orientation|screenSize" />
         <activity android:name=".views.MarkDownPreviewActivity"
             android:configChanges="keyboardHidden|orientation|screenSize" />
 

@@ -10,6 +10,7 @@
     <string name="action_search">搜索</string>
 
     <string name="main_tab_home">社区</string>
+    <string name="main_tab_category">分类导航</string>
     <string name="main_tab_topic">话题</string>
     <string name="main_tab_job">招聘</string>
     <string name="main_tab_mooc">公开课</string>
