@@ -15,6 +15,7 @@ import com.tonicartos.superslim.GridSLM;
 import com.tonicartos.superslim.LinearSLM;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -93,7 +94,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<NodeViewHolder> {
 
 
     public void setNodes(List<NodeInfo> nodes) {
-
+        ArrayList<LineItem> items = new ArrayList<>();
         //Insert headers into list of items.
         String lastHeader = "";
         int headerCount = 0;
@@ -105,11 +106,14 @@ public class CategoryAdapter extends RecyclerView.Adapter<NodeViewHolder> {
                 sectionFirstPosition = i + headerCount;
                 lastHeader = header;
                 headerCount += 1;
-                mItems.add(new LineItem(nodes.get(i), true, sectionFirstPosition));
+                items.add(new LineItem(nodes.get(i), true, sectionFirstPosition));
             }
-            mItems.add(new LineItem(nodes.get(i), false, sectionFirstPosition));
+            items.add(new LineItem(nodes.get(i), false, sectionFirstPosition));
         }
 
+        mItems.clear();
+        mItems.addAll(items);
+        items = null;
         notifyDataSetChanged();
     }
 
