@@ -2,6 +2,7 @@ package com.testerhome.nativeandroid.views;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
@@ -70,6 +71,10 @@ public class TopicDetailActivity extends BackBaseActivity implements TopicReplyF
                 .setSwipeRelateOffset(500);//activity联动时的偏移量。默认500px。
 
         setCustomTitle("帖子详情");
+        getSupportActionBar().setElevation(0);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            toolbar.setElevation(0);
+        }
 
         Uri uri = getIntent().getData();
         if (uri != null){
