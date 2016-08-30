@@ -18,6 +18,9 @@ android:
     - sys-img-armeabi-v7a-android-23
     - sys-img-x86-android-23
 
+  licenses:
+    - 'android-sdk-license.*'
+
 
 # Emulator Management: Create, Start and Wait
 before_script:
