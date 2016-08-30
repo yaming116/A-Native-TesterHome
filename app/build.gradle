@@ -15,10 +15,24 @@ def versionBuild = 0 // bump for dogfood builds, public betas, etc.
 
 Properties properties = new Properties()
 // local.properties file in the root director
-properties.load(project.rootProject.file('local.properties').newDataInputStream())
+def f = project.rootProject.file('local.properties')
+if (f.exists()){
+    properties.load(f.newDataInputStream())
+}
 
-def keyStorePassWord = properties.getProperty('KEYSTORE_PASSWORD')
-def keyPassWord = properties.getProperty('KEY_PASSWORD')
+def isCi = "true".equals(System.getenv("CI"))
+def preDexEnabled = "true".equals(System.getProperty("pre-dex", "true"))
+
+def keyStorePassWord = null
+def keyPassWord = null
+
+if (isCi){
+    keyStorePassWord = System.getenv('KEYSTORE_PASSWORD')
+    keyPassWord = System.getenv('KEY_PASSWORD')
+}else{
+    keyStorePassWord = properties.getProperty('KEYSTORE_PASSWORD')
+    keyPassWord = properties.getProperty('KEY_PASSWORD')
+}
 
 
 android {
@@ -74,6 +88,8 @@ android {
         incremental true
         maxProcessCount 4
         javaMaxHeapSize "2g"
+        // Skip pre-dexing when running on Travis CI or when disabled via -Dpre-dex=false.
+        preDexLibraries = preDexEnabled && !isCi
     }
 
 }
